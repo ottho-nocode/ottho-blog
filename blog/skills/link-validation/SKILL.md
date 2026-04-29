@@ -170,7 +170,7 @@ Liens vérifiés : 14 (8 internes, 6 externes)
 
 ## Source canonique
 
-L'implémentation TypeScript de référence est dans `/Users/thibaultmarty/ottho-reforged/lib/link-validator.ts`. Cette skill décrit le contrat ; le code est le contrat.
+Une implémentation TypeScript de référence (fichier `lib/link-validator.ts`) est fournie dans le code de démonstration du formateur. Cette skill décrit le contrat ; le code est le contrat.
 
 ## Usage dans les commandes du plugin
 

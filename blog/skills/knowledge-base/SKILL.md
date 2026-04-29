@@ -110,4 +110,4 @@ Cette skill est invoquée par :
 
 ## Source canonique
 
-`lib/knowledge.ts` du repo de référence Ottho — version TypeScript de la même structure, utilisée en production sur le site `ottho-reforged`.
+Le pattern est implémenté dans le code de démonstration fourni par le formateur (fichier `lib/knowledge.ts`) — version TypeScript de la même structure, utilisée en production.

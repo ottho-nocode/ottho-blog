@@ -127,7 +127,7 @@ Sinon, attends `oui` et passe à la Phase 1.
 1. Annonce : « Phase 2-bis/6 — Intégration headless. ~10 min. On va scaffolder le code blog dans ton site Next.js / Astro / SvelteKit pour qu'il consomme la Ghost Content API et rende le blog directement à `<ton-site>/blog`. »
 2. Lance la logique de **`/blog:integrate-headless`**. La commande détecte le framework :
    - **Next.js 16** : génération automatique des 7 fichiers (lib, routes, sitemap, webhook, CSS) + guide pour env vars Vercel + webhook Ghost.
-   - **Astro / SvelteKit** : V1.5 — redirige vers le code de référence `ottho-reforged` à adapter manuellement.
+   - **Astro / SvelteKit** : V1.5 — redirige vers le code de démonstration fourni par le formateur à adapter manuellement.
    - **Autres frameworks** : non supporté en V1.
 3. À la fin de cette phase :
    - 7 fichiers générés dans le projet

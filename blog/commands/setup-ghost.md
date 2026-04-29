@@ -137,7 +137,7 @@ Stocke la réponse comme `<SCENARIO>` = `A` ou `B`.
 >
 > ✓ URL la plus propre (`<ton-site>/blog`), SEO unifié
 > ✓ Tu maîtrises 100% du rendu (theme = ton site)
-> ✓ Le plugin scaffolde tout via `/blog:integrate-headless` (Next.js 16 supporté en V1 ; Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de référence `ottho-reforged`)
+> ✓ Le plugin scaffolde tout via `/blog:integrate-headless` (Next.js 16 supporté en V1 ; Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de démonstration fourni par le formateur)
 > ✗ Demande d'écrire ~150 lignes de code dans ton framework (la commande s'en charge si tu es sur Next.js)
 > ✗ Le theme Ghost (chapitre 2) ne sert plus à rien — tu rends avec le HTML/CSS de ton site
 >

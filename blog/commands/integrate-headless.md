@@ -60,7 +60,7 @@ Pose les questions **UNE PAR UNE**. Attends la réponse avant de passer à la su
 > « Quel framework JS fait tourner ton site sur Vercel ?
 >
 > 1. **Next.js 16** (App Router) — supporté en V1, génération automatique
-> 2. **Astro** — V1.5 ; pour l'instant, lis le code de référence dans `ottho-reforged` (`lib/ghost.ts`, `app/blog/`) et adapte manuellement à `src/pages/blog/`
+> 2. **Astro** — V1.5 ; pour l'instant, lis le code de référence dans le code de démonstration fourni par le formateur (`lib/ghost.ts`, `app/blog/`) et adapte manuellement à `src/pages/blog/`
 > 3. **SvelteKit** — V1.5 ; idem, adapte manuellement à `src/routes/blog/`
 > 4. **Nuxt / Remix** — non supporté en V1, mais le pattern est identique : un client `lib/ghost.ts` + 2 routes serveur + un sitemap + un webhook
 >
@@ -72,7 +72,7 @@ Stocke la réponse comme `<FRAMEWORK>`.
 
 > « Très bien. La V1 du plugin scaffolde uniquement Next.js 16. Pour <FRAMEWORK>, voici la marche à suivre manuelle :
 >
-> 1. Va lire le repo de référence `ottho-reforged` (publié sur GitHub) : c'est l'implémentation Next.js 16 du scénario C qu'on cherche à reproduire.
+> 1. Va lire le code de démonstration fourni par le formateur (publié sur GitHub) : c'est l'implémentation Next.js 16 du scénario C qu'on cherche à reproduire.
 > 2. Les fichiers à reproduire dans ton projet :
 >    - `lib/ghost.ts` (~170 lignes, fetch Content API, fonctions `getAllPosts`, `getPostBySlug`, `getPostSlugs`)
 >    - Une page liste des articles (`/blog`)
@@ -101,7 +101,7 @@ Si `pages/` :
 > « Le Pages Router n'est pas supporté en V1. Tu as deux options :
 >
 > 1. Migrer vers l'App Router (recommandé, c'est le standard depuis Next.js 13)
-> 2. Adapter manuellement le code de `ottho-reforged` au Pages Router : `pages/blog/index.tsx` + `pages/blog/[slug].tsx` + `pages/api/revalidate-blog.ts` avec `getStaticProps` + `getStaticPaths` + `revalidate` (ISR classique)
+> 2. Adapter manuellement le code du code de démonstration fourni par le formateur au Pages Router : `pages/blog/index.tsx` + `pages/blog/[slug].tsx` + `pages/api/revalidate-blog.ts` avec `getStaticProps` + `getStaticPaths` + `revalidate` (ISR classique)
 >
 > La V1 ne scaffolde que l'App Router. Veux-tu stopper ici et migrer manuellement, ou continuer en sachant que tu devras faire l'adaptation à la main ? »
 
@@ -123,7 +123,7 @@ Si l'un manque :
 
 ### Question 4 — Couleur d'accent
 
-> « Quelle couleur d'accent veux-tu pour les liens, tags et CTA du blog ? Donne un hex (ex. `#7C4DFF`) ou laisse vide pour le défaut violet `#7C4DFF` (cohérent avec le repo de référence ottho-reforged). »
+> « Quelle couleur d'accent veux-tu pour les liens, tags et CTA du blog ? Donne un hex (ex. `#7C4DFF`) ou laisse vide pour le défaut violet `#7C4DFF` (cohérent avec le code de démonstration fourni par le formateur). »
 
 Stocke `<ACCENT_COLOR>` (par défaut `#7C4DFF`).
 
@@ -1524,5 +1524,5 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 - **Pas de theme Ghost en scénario C** : tu rends avec le HTML/CSS de ton site. Les fichiers `app/blog/styles.css` et `app/blog/list-styles.css` générés ici sont à customiser pour matcher 100% ta charte. Ce sont des bases volontairement neutres.
 - **`<Image unoptimized>`** : on évite de configurer `remotePatterns` dans `next.config.ts` (Ghost-hosted images). Si tu publies beaucoup d'images, bascule en `remotePatterns` explicite et enlève `unoptimized` pour bénéficier de l'optimisation Vercel.
 - **JSON-LD inline** : pas de wrapper `<JsonLd />` factorisé pour rester autonome. Si tu veux mutualiser, crée `components/JsonLd.tsx` qui prend `{ data }: { data: object | object[] }` et émet `<script type="application/ld+json">{JSON.stringify(data)}</script>`.
-- **Pas de TOC sticky / progress bar** : le code de référence `ottho-reforged` en a une (`BlogReadingChrome.tsx`) mais elle dépend de `transformBlogHtml` + `extractHeadings` (`lib/blog-html.ts`). Volontairement omis pour rester en scaffolding minimal. Tu peux l'ajouter ensuite en lisant le repo de référence.
-- **Pas de pages pilier (`/blog/pilier/<slug>`)** : également présentes dans `ottho-reforged`, dépendent de `lib/cocon.ts`. À ajouter manuellement si tu veux des pages pilier — la donnée vient de ton `cocon.json` généré par `/blog:cocon`.
+- **Pas de TOC sticky / progress bar** : le code de démonstration fourni par le formateur en a une (`BlogReadingChrome.tsx`) mais elle dépend de `transformBlogHtml` + `extractHeadings` (`lib/blog-html.ts`). Volontairement omis pour rester en scaffolding minimal. Tu peux l'ajouter ensuite en lisant le repo de référence.
+- **Pas de pages pilier (`/blog/pilier/<slug>`)** : également présentes dans le code de démonstration fourni par le formateur, dépendent de `lib/cocon.ts`. À ajouter manuellement si tu veux des pages pilier — la donnée vient de ton `cocon.json` généré par `/blog:cocon`.

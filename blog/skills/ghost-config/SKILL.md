@@ -15,7 +15,7 @@ Le choix dépend de la **techno du site existant** ET de la **disponibilité d'u
 |---|---|---|---|
 | **A — PikaPods URL** | `wonderful-caribou.pikapod.net` | toute (HTML pur OK) | par défaut, pas de DNS, pas de domaine custom |
 | **B — Sous-domaine custom** | `blog.<domaine>` | toute (HTML pur OK) | l'élève a un domaine custom, veut un blog branding clean |
-| **C — Headless API** | `<site>/blog` (rendu par le framework de l'élève) | Next.js / Astro / SvelteKit / Nuxt / Remix uniquement | architecture du repo de référence `ottho-reforged` ; demande d'écrire ~150 lignes côté framework |
+| **C — Headless API** | `<site>/blog` (rendu par le framework de l'élève) | Next.js / Astro / SvelteKit / Nuxt / Remix uniquement | demande d'écrire ~150 lignes côté framework ; scaffold automatique pour Next.js via `/blog:integrate-headless` |
 
 ⚠️ **Anti-pattern à NE PAS proposer** : un rewrite Vercel proxy `/blog/* → ghost.pikapod.net/blog/*`. Ghost servirait directement les pages mais croirait toujours vivre à son URL native (le template Ghost de PikaPods n'expose pas la variable `url` au top-level), ce qui casserait les `<link rel="canonical">`, le sitemap et les liens internes du theme. Pour avoir l'URL `<site>/blog` proprement, c'est scénario C uniquement (= rendu par framework JS, pas par Ghost).
 

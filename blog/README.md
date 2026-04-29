@@ -82,7 +82,7 @@ Support :
 | Framework | V1 | Notes |
 |---|---|---|
 | **Next.js 16** | scaffolding automatique | App Router uniquement (pas de Pages Router) |
-| **Astro** | V1.5 | redirige vers le repo de référence `ottho-reforged` à adapter manuellement |
+| **Astro** | V1.5 | redirige vers le code de démonstration fourni par le formateur à adapter manuellement |
 | **SvelteKit** | V1.5 | idem |
 | **Nuxt / Remix** | non supporté | pattern identique, à reproduire à la main |
 
