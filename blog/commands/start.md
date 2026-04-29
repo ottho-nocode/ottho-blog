@@ -70,7 +70,13 @@ Pré-requis vérifiés ?
 - [ ] Compte PikaPods (gratuit ou ~5 €/mois)
 - [ ] Compte fal.ai (déjà dans Claude Code, du cours précédent)
 
-⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel — y compris la `vercel.app` par défaut. Si tu n'as pas de domaine custom, ton blog vivra à son URL PikaPods native (ex. `https://wonderful-caribou.pikapod.net`) et tu mettras un lien « Blog » dans la nav de ton site. Si tu as un domaine custom, ton blog vivra à `blog.<ton-domaine>` via Custom Domain PikaPods.
+⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel — y compris la `vercel.app` par défaut.
+
+⚠️ **La techno de ton site change l'architecture du blog.** `/blog:setup-ghost` te demandera dès le début quelle techno fait tourner ton site sur Vercel :
+- **HTML/CSS/JS pur** → 2 scénarios disponibles (URL PikaPods native, ou sous-domaine custom `blog.<domaine>` si tu as un domaine).
+- **Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** → 3 scénarios disponibles (les 2 ci-dessus + headless API qui rend le blog directement à `<ton-site>/blog` via ton framework — c'est l'architecture du repo de référence `ottho-reforged`).
+
+Tu n'as pas à pré-juger ici, la commande `/blog:setup-ghost` détectera la techno et te proposera les bons choix.
 
 On y va ? (oui / non / précise un blocage)
 ```
@@ -81,9 +87,9 @@ Si l'utilisateur n'a pas un des pré-requis, redirige :
 - Pas de `charte.md` → cours « Claude + Site web » chapitre Design
 - Pas de compte PikaPods → continue, on en crée un en Phase 1
 
-**Ne pose JAMAIS de question sur un nom de domaine custom à ce stade.** Le scénario d'hébergement (URL PikaPods par défaut vs sous-domaine custom) est choisi à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel — peu importe son URL.
+**Ne pose JAMAIS de question sur un nom de domaine custom NI sur la techno à ce stade.** Le détecteur de techno (HTML pur vs framework JS) et le scénario d'hébergement (URL PikaPods, sous-domaine custom, ou headless API) sont gérés à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel — peu importe son URL et sa techno.
 
-**Ne propose JAMAIS le subpath `<site>/blog` via rewrite Vercel.** Cette option a été retirée du plugin parce que le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes du theme. Le sous-domaine custom (Scénario B de `/blog:setup-ghost`) est la seule manière propre d'avoir une URL avec ton domaine.
+**Ne propose JAMAIS le subpath `<site>/blog` via rewrite Vercel proxy.** Cette option a été retirée du plugin parce que le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes du theme. Pour obtenir `<site>/blog` proprement, il faut soit un sous-domaine custom (Scénario B), soit un framework JS qui consomme l'API Ghost (Scénario C, headless API — uniquement disponible si la techno détectée à l'étape 0 de `/blog:setup-ghost` est Next.js/Astro/SvelteKit/Nuxt/Remix).
 
 Sinon, attends `oui` et passe à la Phase 1.
 
@@ -91,15 +97,18 @@ Sinon, attends `oui` et passe à la Phase 1.
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 1/6 — Setup Ghost. ~15-30 min. On va créer ton instance Ghost sur PikaPods, choisir où vit ton blog (URL PikaPods native, ou sous-domaine custom si tu as un domaine), et installer le MCP Ghost dans Claude Code. »
-2. Lance la logique de **`/blog:setup-ghost`** (charge la skill `ghost-config`). C'est cette commande qui demandera à l'utilisateur quel scénario d'hébergement choisir (A = URL PikaPods par défaut / B = sous-domaine custom). Tu n'as PAS à pré-juger ici.
+1. Annonce : « Phase 1/6 — Setup Ghost. ~15-30 min. On va créer ton instance Ghost sur PikaPods, détecter la techno de ton site, choisir où vit ton blog (URL PikaPods native / sous-domaine custom / headless API selon la techno), et installer le MCP Ghost dans Claude Code. »
+2. Lance la logique de **`/blog:setup-ghost`** (charge la skill `ghost-config`). C'est cette commande qui détecte la techno (`<TECHNO>` = A pour HTML pur, B pour framework JS) puis demande à l'utilisateur quel scénario d'hébergement choisir : A (URL PikaPods par défaut) toujours dispo, B (sous-domaine custom) toujours dispo, C (headless API) **uniquement si `<TECHNO>` = B**. Tu n'as PAS à pré-juger ici.
 3. À la fin de cette phase, vérifie que `ghost-config.md` existe à la racine et que le MCP Ghost répond.
 4. **Checkpoint :** « Ghost est en ligne sur `<BLOG_URL>` (l'URL exacte dépend du scénario choisi dans setup-ghost). Le MCP répond bien. On passe au theme ? (oui / stop) »
-5. Marque Phase 1 complétée dans le state, note `ghost_url` (l'URL publique) et `ghost_scenario` (`A` ou `B`).
+5. Marque Phase 1 complétée dans le state, note `ghost_url` (l'URL publique), `ghost_scenario` (`A`, `B` ou `C`) et `techno` (`A` ou `B`).
+6. **Si `<SCENARIO>` = C (headless API)** : skip la Phase 2 (theme Ghost inutile, le rendu se fait par le framework de l'élève). Annonce : « Tu es en headless API : le theme Ghost ne sert à rien dans ton cas, on saute la Phase 2 et on passe directement au cocon (Phase 3). Tu intégreras le rendu blog dans ton framework plus tard avec `/blog:integrate-headless` (V1.5) ou en lisant le code de référence `ottho-reforged`. »
 
 ## Phase 2 — Theme à ta charte
 
-**Si phase non complétée :**
+**Si phase non complétée ET `<SCENARIO>` ≠ C :**
+
+*(Skip cette phase entièrement si `<SCENARIO>` = C — le theme Ghost ne sert à rien quand le rendu est fait par le framework de l'élève.)*
 
 1. Annonce : « Phase 2/6 — Theme. ~20 min. On va générer un theme Ghost custom à partir de ta `charte.md`, pour que ton blog ressemble à ton site existant. »
 2. Vérifie que `charte.md` est lisible. Si absent, propose-en la création rapide en lisant les couleurs/fonts depuis le site existant.

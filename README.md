@@ -9,7 +9,7 @@
 Met en place un blog Ghost en headless, l'habille à la charte du site existant, structure le contenu en cocon sémantique, génère et publie des articles avec garde-fous factuels :
 
 - **`/blog:start`** — **MASTER** : orchestre les 6 phases du cours de A à Z, avec checkpoint à chaque étape, reprenable
-- `/blog:setup-ghost` — Ghost sur PikaPods + sous-domaine + custom integration + MCP
+- `/blog:setup-ghost` — Ghost sur PikaPods + détection techno + 3 scénarios d'hébergement (URL PikaPods native / sous-domaine custom / headless API pour Next.js & co) + MCP
 - `/blog:theme` — theme Ghost custom à partir de `charte.md` (fork Source + override CSS + Handlebars)
 - `/blog:cocon` — propose un cocon sémantique depuis `brief.md`, dialogue de validation, écrit `cocon.json`
 - `/blog:article` — pipeline 1 article : brief (P1) → article (P2) → image fal.ai → publish draft Ghost

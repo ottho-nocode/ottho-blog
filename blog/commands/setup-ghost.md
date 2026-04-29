@@ -66,13 +66,27 @@ Si non : pause la commande et redirige :
 
 Stocke la réponse comme `<SITE_URL>`. Si l'utilisateur n'a pas encore de site déployé : pause et redirige vers le cours « Claude + Site web ».
 
-> Note : ton blog Ghost vivra à une URL **distincte** de ton site (URL PikaPods OU sous-domaine custom). Ton site sur Vercel est juste là comme repère contextuel — tu y ajouteras un lien « Blog » dans la nav à la fin du chapitre 2 (theme).
+#### Pré-requis 3 — Techno du site (CRITIQUE — ça change l'architecture)
+
+> « Troisième vérification : quelle techno fait tourner ton site sur Vercel ? Ça change radicalement l'architecture du blog.
+>
+> **A. HTML / CSS / JS pur** — site statique sans framework JS côté serveur. Pas de `next.config.js`, pas de `astro.config.mjs`, pas de Server Components. Ton repo contient principalement des `.html`, `.css`, `.js` (et éventuellement un `package.json` minimal pour des outils de build). C'est le cas par défaut du cours « Claude + Site web ».
+>
+> **B. Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** — site qui peut faire du SSR (server-side rendering) ou du SSG (static site generation), capable de consommer une API REST côté serveur pour fabriquer ses propres pages.
+>
+> Quelle techno utilises-tu ? »
+
+Stocke la réponse comme `<TECHNO>` = `A` ou `B`.
+
+> Note : ton blog Ghost vivra à une URL **distincte** de ton site (URL PikaPods OU sous-domaine custom OU subpath `/blog` selon ta techno). Le choix exact arrive à l'étape suivante.
 
 ---
 
-### Choix du scénario
+### Choix du scénario d'hébergement
 
-> « Maintenant, deux options pour héberger ton blog. Le choix dépend uniquement de si tu as un nom de domaine custom :
+#### Si `<TECHNO>` = A (HTML / CSS / JS pur)
+
+> « Tu as 2 options. Ton site statique ne peut pas consommer l'API Ghost côté serveur, donc le subpath `<site>/blog` via API headless est exclu — il faudrait migrer vers un framework JS avant. Le choix dépend uniquement de si tu as un nom de domaine custom :
 >
 > **A. URL PikaPods par défaut** — *recommandé si tu n'as pas de nom de domaine custom*
 >
@@ -96,6 +110,40 @@ Stocke la réponse comme `<SITE_URL>`. Si l'utilisateur n'a pas encore de site d
 
 Stocke la réponse comme `<SCENARIO>` = `A` ou `B`.
 
+#### Si `<TECHNO>` = B (Next.js / Astro / SvelteKit / Nuxt / Remix)
+
+> « Tu as 3 options. Ton framework peut consommer l'API Ghost côté serveur (SSR/SSG), donc tu peux héberger le blog directement à `<ton-site>/blog` (option C) — c'est l'architecture qu'on a utilisée pour le repo de référence `ottho-reforged`.
+>
+> **A. URL PikaPods par défaut** — *option simple sans config*
+>
+> Ton blog vivra à l'URL technique fournie par PikaPods (ex. `https://wonderful-caribou.pikapod.net`). Pas de DNS, pas de code à écrire.
+>
+> ✓ 5 min de setup, marche immédiatement
+> ✓ Ghost est servi tel quel par PikaPods
+> ✗ URL technique côté visiteurs
+>
+> **B. Sous-domaine custom `blog.<domaine-custom>`** — *recommandé si tu as un domaine custom et que tu ne veux pas toucher au code de ton framework*
+>
+> Ton blog vivra à `https://blog.monsite.com`. CNAME → PikaPods, HTTPS auto.
+>
+> ✓ Branding propre
+> ✓ Pas de code à écrire dans ton framework
+> ✗ Demande un nom de domaine custom
+> ✗ DNS à propager (~10 min)
+>
+> **C. Headless API — `<ton-site>/blog` rendu par ton framework** — *URL la plus propre, mais demande d'écrire du code*
+>
+> Ghost reste sur PikaPods (URL native), ton framework récupère les articles via la Content API et fabrique les pages `/blog` et `/blog/<slug>` lui-même. Tu ajoutes une lib (ex. `lib/ghost.ts`), des routes `app/blog/page.tsx` + `app/blog/[slug]/page.tsx` (Next.js) ou équivalent (Astro/SvelteKit), un sitemap, des canonical, du JSON-LD. Code de référence dans `ottho-reforged` (`lib/ghost.ts`, `app/blog/`).
+>
+> ✓ URL la plus propre (`<ton-site>/blog`), SEO unifié
+> ✓ Tu maîtrises 100% du rendu (theme = ton site)
+> ✗ Demande d'écrire ~150 lignes de code dans ton framework (le plugin te guide via `/blog:integrate-headless` — *à venir, V1.5*)
+> ✗ Le theme Ghost (chapitre 2) ne sert plus à rien — tu rends avec le HTML/CSS de ton site
+>
+> Lequel tu choisis ? »
+
+Stocke la réponse comme `<SCENARIO>` = `A`, `B` ou `C`.
+
 Si `<SCENARIO>` = `A` :
 - L'URL publique du blog sera `<PIKAPOD_URL>` (récupérée à l'étape 2)
 - `<BLOG_URL>` sera renseignée à l'étape 2 dès qu'on connait l'URL technique
@@ -103,6 +151,11 @@ Si `<SCENARIO>` = `A` :
 Si `<SCENARIO>` = `B` :
 - Demande : « Quel sous-domaine custom veux-tu ? Par défaut je propose `blog.<DOMAIN>` — c'est l'usage standard. Tu peux aussi prendre `journal.<DOMAIN>` ou `articles.<DOMAIN>` si tu préfères. »
 - Stocke `<SUBDOMAIN>` (ex. `blog.monsite.com`) et `<BLOG_URL>` = `https://<SUBDOMAIN>`
+
+Si `<SCENARIO>` = `C` (headless API, `<TECHNO>` = B uniquement) :
+- L'URL publique du blog sera `<SITE_URL>/blog` (Ghost reste à `<PIKAPOD_URL>` côté backend)
+- Stocke `<BLOG_URL>` = `https://<SITE_URL>/blog` et `<GHOST_BACKEND_URL>` = `https://<PIKAPOD_URL>`
+- ⚠️ **Important** : pour la V1 du plugin, `/blog:theme` (chapitre 2) est inutile dans ce scénario — tu rendras les articles avec le HTML/CSS de ton site existant. Tu peux skipper `/blog:theme` et passer directement à `/blog:cocon`. La commande `/blog:integrate-headless` (qui génère le code Next/Astro/SvelteKit prêt à l'emploi) arrive en V1.5 ; en attendant, lis `lib/ghost.ts` et `app/blog/*` du repo `ottho-reforged` comme exemple.
 
 ---
 
@@ -144,6 +197,11 @@ Si `<SCENARIO>` = `A` :
 
 Si `<SCENARIO>` = `B` :
 - Continue à l'étape 3 (DNS + Custom Domain)
+
+Si `<SCENARIO>` = `C` (headless API) :
+- Stocke `<GHOST_BACKEND_URL>` = `https://<PIKAPOD_URL>` (l'URL Ghost technique, jamais visible des visiteurs)
+- `<BLOG_URL>` reste `https://<SITE_URL>/blog` (à rendre par le framework de l'élève — pas par cette commande)
+- Passe directement à l'étape 4 (étape 3 inutile, on garde l'URL PikaPods côté backend)
 
 ---
 
@@ -302,12 +360,16 @@ Structure (adapte selon `<SCENARIO>`) :
 
 Date setup : <YYYY-MM-DD>
 
-## Scénario d'hébergement
+## Stack du site hôte
 
-- **Type** : <URL PikaPods par défaut | sous-domaine custom>
-- **Site web hôte (Vercel)** : <SITE_URL>
+- **Techno** : <HTML/CSS/JS pur | Next.js | Astro | SvelteKit | Nuxt | Remix>
+- **Site web (Vercel)** : <SITE_URL>
+
+## Scénario d'hébergement du blog
+
+- **Type** : <URL PikaPods par défaut | sous-domaine custom | headless API rendu par le framework>
 - **URL publique du blog** : <BLOG_URL>
-- **Admin** : <BLOG_URL>/ghost
+- **Admin Ghost** : <GHOST_BACKEND_URL ou BLOG_URL>/ghost
 - **Instance backend (PikaPods)** : <PIKAPOD_URL>
 
 ## Mode privé
@@ -331,6 +393,16 @@ Date setup : <YYYY-MM-DD>
 ```html
 <a href="<BLOG_URL>" target="_blank" rel="noopener">Blog</a>
 ```
+
+## Headless API *(scénario C uniquement)*
+
+- **Ghost backend (jamais visible)** : <GHOST_BACKEND_URL>
+- **URL publique rendue par le framework** : <SITE_URL>/blog
+- **Lib à écrire** : `lib/ghost.ts` (fetch Content API, voir `ottho-reforged` comme référence)
+- **Routes à créer** : `/blog` (liste) + `/blog/<slug>` (détail) — selon ton framework
+- **Sitemap** : merger les routes statiques + les slugs Ghost (`getAllPosts()`)
+- **Revalidation** : webhook Ghost → endpoint sur ton site qui appelle `revalidateTag('blog')` ou équivalent
+- **Theme Ghost (chapitre 2)** : skippable — non utilisé en scénario C
 
 ## Webhooks (avancé, optionnel)
 

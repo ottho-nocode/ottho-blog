@@ -53,7 +53,17 @@ Toutes les commandes sont namespacées sous `/blog:` pour éviter les conflits a
 
 ### `/blog:setup-ghost`
 
-Guide pas-à-pas pour mettre Ghost en place sur PikaPods (compte → instance → sous-domaine → custom integration → API keys → MCP). Génère `ghost-config.md` à la racine du projet (sans secrets). ~30 min.
+Guide pas-à-pas pour mettre Ghost en place sur PikaPods. Détecte d'abord la techno du site (HTML pur vs framework JS), puis propose les scénarios d'hébergement adaptés :
+
+| Scénario | URL du blog | Techno requise | Notes |
+|---|---|---|---|
+| **A. PikaPods URL** | `wonderful-caribou.pikapod.net` | toutes | par défaut, marche en 5 min, pas de DNS |
+| **B. Sous-domaine custom** | `blog.<domaine>` | toutes | demande un domaine custom + CNAME |
+| **C. Headless API** | `<site>/blog` rendu par le framework | Next.js / Astro / SvelteKit / Nuxt / Remix | architecture de référence d'`ottho-reforged` ; demande d'écrire ~150 lignes de code dans le framework de l'élève |
+
+⚠️ **Le subpath `<site>/blog` via rewrite Vercel proxy n'est PAS supporté** — le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes. Pour avoir une URL `<site>/blog` propre, il faut soit le scénario C (headless API, framework JS requis), soit migrer vers un framework JS d'abord.
+
+Génère `ghost-config.md` à la racine du projet (sans secrets). Compte ~15 min en scénario A, ~25-30 min en scénario B.
 
 ### `/blog:theme`
 
