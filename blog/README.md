@@ -32,7 +32,7 @@ Dans Claude Code :
 
 (Le nom du marketplace pourra changer selon la publication finale — voir le `marketplace.json` de référence.)
 
-Vérification : tape `/` dans Claude Code, tu dois voir les 10 commandes préfixées `/blog:`.
+Vérification : tape `/` dans Claude Code, tu dois voir les 11 commandes préfixées `/blog:`.
 
 ## Pré-requis MCP
 
@@ -47,7 +47,7 @@ Avant utilisation, les MCPs suivants doivent être connectés (procédures couve
 
 Tous s'installent par dialogue dans Claude Code (« Installe le MCP [nom] »). Zéro commande bash.
 
-## Les 10 commandes
+## Les 11 commandes
 
 Toutes les commandes sont namespacées sous `/blog:` pour éviter les conflits avec d'autres plugins.
 
@@ -87,6 +87,23 @@ Support :
 | **Nuxt / Remix** | non supporté | pattern identique, à reproduire à la main |
 
 Compte ~10 min (questions + génération + collage des 3 env vars dans Vercel + config webhook).
+
+### `/blog:integrate-admin`
+
+**Utile uniquement en scénario C** (headless API), **complémentaire de `/blog:integrate-headless`**. Scaffolde un back-office UI Next.js dans le projet de l'élève à `<site>/cocon/admin` pour piloter la production d'articles depuis une interface graphique : liste des piliers + petites-filles du cocon, bouton « Générer l'article » qui lance le pipeline P1 brief (Sonnet 4.6) → P2 article (Opus 4.7) → image fal.ai → push Ghost en draft, persistance locale des briefs/articles sous `data/cocon/`, auth simple par cookie + password partagé.
+
+Génère 9 fichiers : `lib/cocon.ts` (types + prompts P1/P2 + KB inline), `lib/cocon-storage.ts` (helpers JSON sur disque), `lib/ghost-admin.ts` (JWT Ghost Admin), `lib/fal.ai.ts` (client fal.ai), `lib/link-validator.ts` (whitelist URLs), 3 routes API (`/api/cocon/{brief,article,publish}`), et 3 fichiers admin (`page.tsx` + `AdminClient.tsx` + `styles.css`). Met à jour `.env.example` avec 4 nouvelles variables (`ANTHROPIC_API_KEY`, `FAL_KEY`, `GHOST_ADMIN_API_KEY`, `COCON_ADMIN_PASSWORD`).
+
+| | `/blog:article` (CLI) | `/blog:integrate-admin` (UI) |
+|---|---|---|
+| **Où** | Claude Code, terminal | Navigateur, `<site>/cocon/admin` |
+| **État** | éphémère par session | persisté côté serveur (`data/cocon/`) |
+| **Idéal pour** | rythme régulier solo, rapide | équipe, vue d'ensemble, articles en parallèle |
+| **Coût LLM** | ~0,15 € / article | ~0,15 € / article (identique) |
+
+Les deux pipelines coexistent : même `cocon.json`, mêmes prompts, même statut Ghost forcé `draft`. Tu peux mixer librement. Compte ~12 min de scaffolding + collage des 4 env vars dans Vercel.
+
+⚠️ **Sécurité prod** : l'admin expose des routes API qui consomment tes clés Anthropic/fal.ai/Ghost. La commande recommande d'activer la **Vercel Authentication** (Settings → Deployment Protection) ou un middleware maison en plus du password de session. ⚠️ **Filesystem read-only sur Vercel serverless** : le store local fonctionne en `pnpm dev` ou sur un hébergeur avec FS persistant — pour la prod sur Vercel, bascule `lib/cocon-storage.ts` sur Vercel Blob.
 
 ### `/blog:cocon`
 
@@ -213,7 +230,7 @@ Un cocon complet de 50 articles : **~10 € de LLM** + **~2,50 € d'images fal.
 
 - [x] Plugin scaffolded (`.claude-plugin/plugin.json`, structure)
 - [x] 7 skills rédigées
-- [x] 9/10 commandes (toutes sauf `/blog:opportunities` qui est V1.5)
+- [x] 10/11 commandes (toutes sauf `/blog:opportunities` qui est V1.5)
 - [ ] Test end-to-end sur un projet pilote (à faire avec un compte Ghost réel)
 - [ ] Publication marketplace
 

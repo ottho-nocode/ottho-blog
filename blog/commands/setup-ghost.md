@@ -444,4 +444,12 @@ Une fois le fichier écrit :
 > - 2 API keys générées et configurées dans le MCP Ghost
 > - `ghost-config.md` écrit à la racine du projet pour mémoire
 >
-> Prochaine étape : `/blog:theme` pour générer un theme Ghost qui matche la charte graphique de ton site existant. »
+> Prochaine étape, selon ton scénario :
+>
+> - **Scénario A ou B** : `/blog:theme` pour générer un theme Ghost qui matche la charte graphique de ton site existant.
+> - **Scénario C** (headless API) : skip `/blog:theme`. À la place :
+>   - `/blog:integrate-headless` (obligatoire) — scaffolde les pages publiques du blog (`/blog`, `/blog/<slug>`) dans ton Next.js + sitemap + webhook revalidation
+>   - puis, pour la production d'articles, **deux options** complémentaires :
+>     - `/blog:article` (CLI Claude Code) — pipeline assisté en terminal, idéal pour rythme régulier solo
+>     - `/blog:integrate-admin` (UI navigateur) — scaffolde un back-office à `<site>/cocon/admin` qui pilote le même pipeline depuis une interface graphique. Idéal si tu travailles à plusieurs ou veux une vue d'ensemble des articles en cours
+>     - Les deux pipelines coexistent (même `cocon.json`, mêmes prompts P1/P2, statut Ghost toujours forcé draft). Tu peux mixer librement. »

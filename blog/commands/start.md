@@ -152,11 +152,50 @@ Sinon, attends `oui` et passe à la Phase 1.
 **Si phase non complétée :**
 
 1. Annonce : « Phase 4/6 — Ton premier article. ~5 min. On va générer un article du cocon de A à Z : brief, rédaction, image hero, publication en draft sur Ghost. Tu valides à chaque étape pour comprendre la mécanique. »
-2. Lance la logique de **`/blog:article`** (charge `article-quality`, `link-validation`, `knowledge-base`).
-3. **Important** : ce premier article doit être fait **manuellement assisté** (pas en batch) pour que l'utilisateur comprenne le pipeline.
+
+2. **Branchement CLI vs admin UI (uniquement si scénario C)** :
+
+   Si `<SCENARIO>` ∈ {A, B}, il n'y a qu'une option viable : `/blog:article` en CLI (l'admin UI n'a de sens qu'en scénario C). Skip la question, lance directement `/blog:article`.
+
+   Si `<SCENARIO>` = C, demande à l'élève :
+
+   > « Pour générer cet article, tu as deux options. Les deux utilisent le même pipeline (P1 brief Sonnet 4.6 → P2 article Opus 4.7 → image fal.ai → push Ghost draft), même `cocon.json`, même statut Ghost forcé `draft`. Seule l'interface change.
+   >
+   > **A. CLI Claude Code** (`/blog:article`) — *recommandé pour ce premier article*
+   >
+   > Dialogue interactif dans Claude Code, ici. Pas de scaffold supplémentaire à générer. Idéal pour un premier article où tu veux comprendre le pipeline pas-à-pas, et pour un rythme régulier solo.
+   >
+   > ✓ Aucun fichier supplémentaire à scaffolder
+   > ✓ Tu vois chaque étape du pipeline en clair dans le terminal
+   > ✓ Pas de password à gérer
+   >
+   > **B. Admin UI** (`/blog:integrate-admin` puis `<site>/cocon/admin` dans le navigateur) — *recommandé si tu travailles à plusieurs ou veux une vue d'ensemble*
+   >
+   > Scaffolde un back-office Next.js (~12 min de setup) qui pilote le même pipeline depuis une interface graphique : tous les articles `planned` listés avec un bouton "Générer l'article", persistance locale dans `data/cocon/`, auth password.
+   >
+   > ✓ Vue d'ensemble visuelle (états, progression)
+   > ✓ Persiste les briefs/articles entre sessions
+   > ✓ Idéal en équipe ou pour piloter plusieurs articles en parallèle
+   > ✗ ~12 min de scaffolding initial + 4 env vars Vercel
+   > ✗ Filesystem read-only sur Vercel serverless (à basculer sur Vercel Blob pour la prod, OK en `pnpm dev`)
+   >
+   > Lequel tu choisis pour ce premier article ? »
+
+   Si l'élève choisit **A (CLI)** : lance directement `/blog:article` (étape 3 ci-dessous).
+
+   Si l'élève choisit **B (admin UI)** : lance d'abord `/blog:integrate-admin`, puis indique :
+
+   > « Le back-office est scaffoldé. Ouvre `<site>/cocon/admin` dans ton navigateur, connecte-toi avec ton `COCON_ADMIN_PASSWORD`, et clique "Générer l'article" sur la première petite-fille `planned` du pilier le plus avancé. Le pipeline tourne côté serveur (~30-60 s). Reviens me dire quand l'article est en draft Ghost. »
+
+   Stocke `<ARTICLE_INTERFACE>` = `cli` ou `admin-ui`.
+
+3. **Lancement du pipeline** :
+   - Si `<ARTICLE_INTERFACE>` = `cli` : lance la logique de **`/blog:article`** (charge `article-quality`, `link-validation`, `knowledge-base`). Ce premier article doit être fait **manuellement assisté** (pas en batch) pour que l'utilisateur comprenne le pipeline.
+   - Si `<ARTICLE_INTERFACE>` = `admin-ui` : l'élève pilote depuis le navigateur. Tu attends sa confirmation que l'article est en draft Ghost.
+
 4. À la fin, l'article est en draft sur Ghost. L'utilisateur va dans Ghost admin pour relire et publier.
-5. **Checkpoint :** « Ton premier article est en draft sur Ghost. Tu l'as relu et publié ? On passe au mode auto-pilote ? (oui / stop / refais un article manuellement avant) »
-6. Marque Phase 4 complétée, incrémente `articles_published_drafts`.
+5. **Checkpoint :** « Ton premier article est en draft sur Ghost. Tu l'as relu et publié ? On passe au mode auto-pilote ? (oui / stop / refais un article avant) »
+6. Marque Phase 4 complétée, note `<ARTICLE_INTERFACE>` dans le state, incrémente `articles_published_drafts`.
 
 ## Phase 5 — Batch 3 articles (mode auto-pilote)
 
