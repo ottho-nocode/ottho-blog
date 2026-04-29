@@ -74,7 +74,7 @@ Pré-requis vérifiés ?
 
 ⚠️ **La techno de ton site change l'architecture du blog.** `/blog:setup-ghost` te demandera dès le début quelle techno fait tourner ton site sur Vercel :
 - **HTML/CSS/JS pur** → 2 scénarios disponibles (URL PikaPods native, ou sous-domaine custom `blog.<domaine>` si tu as un domaine).
-- **Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** → 3 scénarios disponibles (les 2 ci-dessus + headless API qui rend le blog directement à `<ton-site>/blog` via ton framework — c'est l'architecture du repo de référence `ottho-reforged`).
+- **Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** → 3 scénarios disponibles (les 2 ci-dessus + headless API qui rend le blog directement à `<ton-site>/blog` via ton framework — scaffold automatique pour Next.js via `/blog:integrate-headless`).
 
 Tu n'as pas à pré-juger ici, la commande `/blog:setup-ghost` détectera la techno et te proposera les bons choix.
 
@@ -102,13 +102,13 @@ Sinon, attends `oui` et passe à la Phase 1.
 3. À la fin de cette phase, vérifie que `ghost-config.md` existe à la racine et que le MCP Ghost répond.
 4. **Checkpoint :** « Ghost est en ligne sur `<BLOG_URL>` (l'URL exacte dépend du scénario choisi dans setup-ghost). Le MCP répond bien. On passe au theme ? (oui / stop) »
 5. Marque Phase 1 complétée dans le state, note `ghost_url` (l'URL publique), `ghost_scenario` (`A`, `B` ou `C`) et `techno` (`A` ou `B`).
-6. **Si `<SCENARIO>` = C (headless API)** : skip la Phase 2 (theme Ghost inutile, le rendu se fait par le framework de l'élève). Annonce : « Tu es en headless API : le theme Ghost ne sert à rien dans ton cas, on saute la Phase 2 et on passe directement au cocon (Phase 3). Tu intégreras le rendu blog dans ton framework plus tard avec `/blog:integrate-headless` (V1.5) ou en lisant le code de référence `ottho-reforged`. »
+6. **Si `<SCENARIO>` = C (headless API)** : skip la Phase 2 « Theme » classique et lance la Phase 2-bis (intégration headless) à la place. Annonce : « Tu es en headless API : le theme Ghost ne sert à rien dans ton cas. On saute le `/blog:theme` classique et on bascule sur `/blog:integrate-headless` (Phase 2-bis) qui scaffolde le code blog dans ton framework — Next.js 16 supporté en V1, Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de référence. »
 
-## Phase 2 — Theme à ta charte
+## Phase 2 — Theme à ta charte (scénarios A et B)
 
-**Si phase non complétée ET `<SCENARIO>` ≠ C :**
+**Si phase non complétée ET `<SCENARIO>` ∈ {A, B} :**
 
-*(Skip cette phase entièrement si `<SCENARIO>` = C — le theme Ghost ne sert à rien quand le rendu est fait par le framework de l'élève.)*
+*(Skip cette phase entièrement si `<SCENARIO>` = C — voir Phase 2-bis ci-dessous.)*
 
 1. Annonce : « Phase 2/6 — Theme. ~20 min. On va générer un theme Ghost custom à partir de ta `charte.md`, pour que ton blog ressemble à ton site existant. »
 2. Vérifie que `charte.md` est lisible. Si absent, propose-en la création rapide en lisant les couleurs/fonts depuis le site existant.
@@ -117,6 +117,25 @@ Sinon, attends `oui` et passe à la Phase 1.
 5. **Checkpoint :** « Le rendu visuel est OK ? On passe au cocon ? (oui / itère sur le theme / stop) »
 6. Si l'utilisateur veut itérer : reste en Phase 2, applique les modifs CSS demandées, ré-uploade.
 7. Marque Phase 2 complétée dans le state.
+
+## Phase 2-bis — Intégration headless (scénario C uniquement)
+
+**Si phase non complétée ET `<SCENARIO>` = C :**
+
+*(Skip cette phase entièrement si `<SCENARIO>` ∈ {A, B} — la Phase 2 « Theme » s'en charge à la place.)*
+
+1. Annonce : « Phase 2-bis/6 — Intégration headless. ~10 min. On va scaffolder le code blog dans ton site Next.js / Astro / SvelteKit pour qu'il consomme la Ghost Content API et rende le blog directement à `<ton-site>/blog`. »
+2. Lance la logique de **`/blog:integrate-headless`**. La commande détecte le framework :
+   - **Next.js 16** : génération automatique des 7 fichiers (lib, routes, sitemap, webhook, CSS) + guide pour env vars Vercel + webhook Ghost.
+   - **Astro / SvelteKit** : V1.5 — redirige vers le code de référence `ottho-reforged` à adapter manuellement.
+   - **Autres frameworks** : non supporté en V1.
+3. À la fin de cette phase :
+   - 7 fichiers générés dans le projet
+   - 3 env vars Vercel (`GHOST_URL`, `GHOST_CONTENT_API_KEY`, `REVALIDATE_SECRET`) ajoutées via le dashboard
+   - 4 webhooks Ghost branchés sur `<SITE_URL>/api/revalidate-blog?token=...`
+   - `<SITE_URL>/blog` retourne du HTML
+4. **Checkpoint :** « Le blog répond à `<SITE_URL>/blog` ? On passe au cocon ? (oui / itère sur le scaffolding / stop) »
+5. Marque Phase 2-bis complétée dans le state.
 
 ## Phase 3 — Cocon sémantique
 

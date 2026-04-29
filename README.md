@@ -10,7 +10,8 @@ Met en place un blog Ghost en headless, l'habille à la charte du site existant,
 
 - **`/blog:start`** — **MASTER** : orchestre les 6 phases du cours de A à Z, avec checkpoint à chaque étape, reprenable
 - `/blog:setup-ghost` — Ghost sur PikaPods + détection techno + 3 scénarios d'hébergement (URL PikaPods native / sous-domaine custom / headless API pour Next.js & co) + MCP
-- `/blog:theme` — theme Ghost custom à partir de `charte.md` (fork Source + override CSS + Handlebars)
+- `/blog:theme` — theme Ghost custom à partir de `charte.md` (fork Source + override CSS + Handlebars) — *scénarios A et B uniquement*
+- `/blog:integrate-headless` — *(scénario C uniquement)* scaffolde le code blog dans ton framework JS (Next.js 16 en V1, Astro/SvelteKit en V1.5) : `lib/ghost.ts` + routes `/blog` + sitemap + webhook revalidation + env vars Vercel
 - `/blog:cocon` — propose un cocon sémantique depuis `brief.md`, dialogue de validation, écrit `cocon.json`
 - `/blog:article` — pipeline 1 article : brief (P1) → article (P2) → image fal.ai → publish draft Ghost
 - `/blog:batch <N>` — variante batch (1 ≤ N ≤ 5) avec review human-in-the-loop entre chaque
@@ -79,7 +80,7 @@ Le plugin est conçu pour être utilisé en tandem avec le cours « Claude + Blo
 
 ## Versioning
 
-**v1.0.0** — Première version publique. 7 skills, 9 commandes, marketplace prêt à publier.
+**v1.0.0** — Première version publique. 7 skills, 10 commandes, marketplace prêt à publier.
 
 ## Licence
 

@@ -32,7 +32,7 @@ Dans Claude Code :
 
 (Le nom du marketplace pourra changer selon la publication finale — voir le `marketplace.json` de référence.)
 
-Vérification : tape `/` dans Claude Code, tu dois voir les 9 commandes préfixées `/blog:`.
+Vérification : tape `/` dans Claude Code, tu dois voir les 10 commandes préfixées `/blog:`.
 
 ## Pré-requis MCP
 
@@ -47,7 +47,7 @@ Avant utilisation, les MCPs suivants doivent être connectés (procédures couve
 
 Tous s'installent par dialogue dans Claude Code (« Installe le MCP [nom] »). Zéro commande bash.
 
-## Les 9 commandes
+## Les 10 commandes
 
 Toutes les commandes sont namespacées sous `/blog:` pour éviter les conflits avec d'autres plugins.
 
@@ -59,7 +59,7 @@ Guide pas-à-pas pour mettre Ghost en place sur PikaPods. Détecte d'abord la te
 |---|---|---|---|
 | **A. PikaPods URL** | `wonderful-caribou.pikapod.net` | toutes | par défaut, marche en 5 min, pas de DNS |
 | **B. Sous-domaine custom** | `blog.<domaine>` | toutes | demande un domaine custom + CNAME |
-| **C. Headless API** | `<site>/blog` rendu par le framework | Next.js / Astro / SvelteKit / Nuxt / Remix | architecture de référence d'`ottho-reforged` ; demande d'écrire ~150 lignes de code dans le framework de l'élève |
+| **C. Headless API** | `<site>/blog` rendu par le framework | Next.js / Astro / SvelteKit / Nuxt / Remix | architecture de référence ; demande d'écrire ~150 lignes de code dans le framework de l'élève (scaffold automatisé via `/blog:integrate-headless`) |
 
 ⚠️ **Le subpath `<site>/blog` via rewrite Vercel proxy n'est PAS supporté** — le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes. Pour avoir une URL `<site>/blog` propre, il faut soit le scénario C (headless API, framework JS requis), soit migrer vers un framework JS d'abord.
 
@@ -68,6 +68,25 @@ Génère `ghost-config.md` à la racine du projet (sans secrets). Compte ~15 min
 ### `/blog:theme`
 
 Génère un theme Ghost custom à partir de `charte.md` : fork le theme Source officiel, override CSS variables, adapte `default.hbs` (header/footer) pour matcher la nav du site existant, zip + upload + activate via MCP Ghost. Output : dossier `theme/` + ZIP + theme actif sur le blog. ~20 min.
+
+⚠️ **Inutile en scénario C** (headless API) — c'est ton framework qui rend le blog, pas Ghost.
+
+### `/blog:integrate-headless`
+
+**Utile uniquement en scénario C** (headless API). Scaffolde le code dans le projet de l'élève pour que son framework JS consomme la Ghost Content API et rende lui-même `<site>/blog/*`.
+
+Génère 7 fichiers Next.js 16 (App Router) : `lib/ghost.ts`, `app/blog/page.tsx`, `app/blog/[slug]/page.tsx`, 2 stylesheets scopés, `app/sitemap.ts` (créé ou patché), `app/api/revalidate-blog/route.ts`. Met à jour `.env.example` avec les 3 variables Ghost (`GHOST_URL`, `GHOST_CONTENT_API_KEY`, `REVALIDATE_SECRET`) et guide la config Vercel + le webhook Ghost de revalidation.
+
+Support :
+
+| Framework | V1 | Notes |
+|---|---|---|
+| **Next.js 16** | scaffolding automatique | App Router uniquement (pas de Pages Router) |
+| **Astro** | V1.5 | redirige vers le repo de référence `ottho-reforged` à adapter manuellement |
+| **SvelteKit** | V1.5 | idem |
+| **Nuxt / Remix** | non supporté | pattern identique, à reproduire à la main |
+
+Compte ~10 min (questions + génération + collage des 3 env vars dans Vercel + config webhook).
 
 ### `/blog:cocon`
 
@@ -150,7 +169,7 @@ Chaque skill est un fichier `skills/<name>/SKILL.md` autonome. Tu peux les lire 
 L'ordre suit les chapitres du cours :
 
 1. **Chapitre 1** — `/blog:setup-ghost` → Ghost en ligne, connecté à Claude Code
-2. **Chapitre 2** — `/blog:theme` → blog ressemble à ton site
+2. **Chapitre 2** — `/blog:theme` *(scénarios A/B)* OU `/blog:integrate-headless` *(scénario C)* → blog ressemble à ton site
 3. **Chapitre 3** — *(théorie cocon, pas de commande)*
 4. **Chapitre 4** — `/blog:cocon` → stratégie SEO cartographiée
 5. **Chapitre 5** — `/blog:article` ×3 → premiers articles écrits manuellement
@@ -188,13 +207,13 @@ Un cocon complet de 50 articles : **~10 € de LLM** + **~2,50 € d'images fal.
 
 ## Version
 
-**v1.0.0** — Plugin complet (7 skills + 9 commandes). Production-ready après le test E2E manuel.
+**v1.0.0** — Plugin complet (7 skills + 10 commandes). Production-ready après le test E2E manuel.
 
 ## État de livraison
 
 - [x] Plugin scaffolded (`.claude-plugin/plugin.json`, structure)
 - [x] 7 skills rédigées
-- [x] 8/9 commandes (toutes sauf `/blog:opportunities` qui est V1.5)
+- [x] 9/10 commandes (toutes sauf `/blog:opportunities` qui est V1.5)
 - [ ] Test end-to-end sur un projet pilote (à faire avec un compte Ghost réel)
 - [ ] Publication marketplace
 

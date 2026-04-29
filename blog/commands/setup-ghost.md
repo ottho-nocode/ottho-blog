@@ -112,7 +112,7 @@ Stocke la réponse comme `<SCENARIO>` = `A` ou `B`.
 
 #### Si `<TECHNO>` = B (Next.js / Astro / SvelteKit / Nuxt / Remix)
 
-> « Tu as 3 options. Ton framework peut consommer l'API Ghost côté serveur (SSR/SSG), donc tu peux héberger le blog directement à `<ton-site>/blog` (option C) — c'est l'architecture qu'on a utilisée pour le repo de référence `ottho-reforged`.
+> « Tu as 3 options. Ton framework peut consommer l'API Ghost côté serveur (SSR/SSG), donc tu peux héberger le blog directement à `<ton-site>/blog` (option C) — c'est l'architecture la plus propre quand on a un framework JS.
 >
 > **A. URL PikaPods par défaut** — *option simple sans config*
 >
@@ -133,11 +133,12 @@ Stocke la réponse comme `<SCENARIO>` = `A` ou `B`.
 >
 > **C. Headless API — `<ton-site>/blog` rendu par ton framework** — *URL la plus propre, mais demande d'écrire du code*
 >
-> Ghost reste sur PikaPods (URL native), ton framework récupère les articles via la Content API et fabrique les pages `/blog` et `/blog/<slug>` lui-même. Tu ajoutes une lib (ex. `lib/ghost.ts`), des routes `app/blog/page.tsx` + `app/blog/[slug]/page.tsx` (Next.js) ou équivalent (Astro/SvelteKit), un sitemap, des canonical, du JSON-LD. Code de référence dans `ottho-reforged` (`lib/ghost.ts`, `app/blog/`).
+> Ghost reste sur PikaPods (URL native), ton framework récupère les articles via la Content API et fabrique les pages `/blog` et `/blog/<slug>` lui-même. Tu ajoutes une lib (ex. `lib/ghost.ts`), des routes `app/blog/page.tsx` + `app/blog/[slug]/page.tsx` (Next.js) ou équivalent (Astro/SvelteKit), un sitemap, des canonical, du JSON-LD. La commande `/blog:integrate-headless` te scaffolde tout ça automatiquement.
 >
 > ✓ URL la plus propre (`<ton-site>/blog`), SEO unifié
 > ✓ Tu maîtrises 100% du rendu (theme = ton site)
-> ✗ Demande d'écrire ~150 lignes de code dans ton framework (le plugin te guide via `/blog:integrate-headless` — *à venir, V1.5*)
+> ✓ Le plugin scaffolde tout via `/blog:integrate-headless` (Next.js 16 supporté en V1 ; Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de référence `ottho-reforged`)
+> ✗ Demande d'écrire ~150 lignes de code dans ton framework (la commande s'en charge si tu es sur Next.js)
 > ✗ Le theme Ghost (chapitre 2) ne sert plus à rien — tu rends avec le HTML/CSS de ton site
 >
 > Lequel tu choisis ? »
@@ -155,7 +156,7 @@ Si `<SCENARIO>` = `B` :
 Si `<SCENARIO>` = `C` (headless API, `<TECHNO>` = B uniquement) :
 - L'URL publique du blog sera `<SITE_URL>/blog` (Ghost reste à `<PIKAPOD_URL>` côté backend)
 - Stocke `<BLOG_URL>` = `https://<SITE_URL>/blog` et `<GHOST_BACKEND_URL>` = `https://<PIKAPOD_URL>`
-- ⚠️ **Important** : pour la V1 du plugin, `/blog:theme` (chapitre 2) est inutile dans ce scénario — tu rendras les articles avec le HTML/CSS de ton site existant. Tu peux skipper `/blog:theme` et passer directement à `/blog:cocon`. La commande `/blog:integrate-headless` (qui génère le code Next/Astro/SvelteKit prêt à l'emploi) arrive en V1.5 ; en attendant, lis `lib/ghost.ts` et `app/blog/*` du repo `ottho-reforged` comme exemple.
+- ⚠️ **Important** : `/blog:theme` (chapitre 2) est inutile dans ce scénario — tu rendras les articles avec le HTML/CSS de ton site existant. Tu peux skipper `/blog:theme` et passer directement à `/blog:cocon`. La commande `/blog:integrate-headless` génère le code Next.js (V1) ou guide vers une intégration manuelle pour Astro/SvelteKit (V1.5).
 
 ---
 
@@ -398,7 +399,7 @@ Date setup : <YYYY-MM-DD>
 
 - **Ghost backend (jamais visible)** : <GHOST_BACKEND_URL>
 - **URL publique rendue par le framework** : <SITE_URL>/blog
-- **Lib à écrire** : `lib/ghost.ts` (fetch Content API, voir `ottho-reforged` comme référence)
+- **Lib à écrire** : `lib/ghost.ts` (fetch Content API — généré automatiquement par `/blog:integrate-headless` en Next.js)
 - **Routes à créer** : `/blog` (liste) + `/blog/<slug>` (détail) — selon ton framework
 - **Sitemap** : merger les routes statiques + les slugs Ghost (`getAllPosts()`)
 - **Revalidation** : webhook Ghost → endpoint sur ton site qui appelle `revalidateTag('blog')` ou équivalent
