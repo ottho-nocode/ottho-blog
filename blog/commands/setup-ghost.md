@@ -1,15 +1,25 @@
 ---
 name: setup-ghost
-description: Guide pas-à-pas pour mettre Ghost en place sur PikaPods, brancher le blog au site existant (subpath /blog par défaut, ou sous-domaine custom), créer les API keys et installer le MCP Ghost. Génère ghost-config.md à la racine du projet.
+description: Guide pas-à-pas pour mettre Ghost en place sur PikaPods, choisir où vivra le blog (URL PikaPods par défaut OU sous-domaine custom), créer les API keys et installer le MCP Ghost. Génère ghost-config.md à la racine du projet.
 ---
 
 # /blog:setup-ghost — Installation de Ghost sur PikaPods
 
-Tu vas accompagner l'utilisateur dans la mise en place de son instance Ghost. À la fin de cette commande, l'utilisateur aura un blog accessible **soit à `<son-site>/blog`** (par défaut, marche avec n'importe quelle URL Vercel y compris `<projet>.vercel.app`), **soit à `blog.<son-domaine-custom>`** (alternative pour qui possède un nom de domaine).
+Tu vas accompagner l'utilisateur dans la mise en place de son instance Ghost. À la fin de cette commande, l'utilisateur aura un blog accessible **soit à son URL PikaPods par défaut** (ex. `wonderful-caribou.pikapod.net`, marche immédiatement, pas de DNS), **soit à `blog.<son-domaine-custom>`** (s'il possède un nom de domaine).
 
-**Charge la skill `ghost-config`** pour les détails techniques (URLs PikaPods, configuration DNS, formats des API keys, dépannage SSL, rewrites Vercel). Elle contient la procédure complète et toutes les valeurs à donner à l'utilisateur.
+**Charge la skill `ghost-config`** pour les détails techniques (création compte PikaPods, configuration Custom Domain PikaPods, formats des API keys, dépannage SSL). Elle contient la procédure complète et toutes les valeurs à donner à l'utilisateur.
 
-**Temps estimé** : ~20-30 min selon le scénario choisi (le subpath via Vercel rewrite est plus rapide ; le sous-domaine custom demande 5-10 min de propagation DNS).
+**Temps estimé** : ~15 min en URL PikaPods, ~25-30 min en sous-domaine custom (5-10 min de propagation DNS supplémentaires).
+
+## ⚠️ Pourquoi PAS le subpath `<site>/blog` via Vercel rewrite
+
+On a écarté l'option subpath (rewrites Vercel pointant `<site>/blog/*` vers PikaPods) parce que :
+
+- Ghost a besoin que sa variable d'environnement `url` se termine par `/blog` pour générer correctement les liens canoniques, le sitemap et les liens internes du theme
+- Le template Ghost de PikaPods **n'expose pas la variable `url` au niveau top-level** (seules `portal__url`, `sodoSearch__url`, `comments__url` sont éditables)
+- PikaPods gère l'URL Ghost en interne via son système Custom Domain — tu ne peux pas l'override
+
+Conséquence : un rewrite Vercel `/blog/*` → PikaPods produirait un Ghost qui croit toujours vivre à l'URL PikaPods, ce qui casse les `<link rel="canonical">`, les `<a href>` du theme, le sitemap et l'admin. **On ne propose donc pas cette option.**
 
 ## Préambule
 
@@ -17,15 +27,15 @@ Ouvre la commande par ce message :
 
 > « On va mettre ton blog Ghost en ligne. Le plan :
 >
-> 1. Vérifier que tu as bien les pré-requis
-> 2. Choisir où vivra ton blog (subpath `/blog` ou sous-domaine custom)
+> 1. Vérifier que tu as les pré-requis
+> 2. Choisir où vivra ton blog (URL PikaPods par défaut OU sous-domaine custom)
 > 3. Créer un compte PikaPods et lancer une instance Ghost
-> 4. Brancher le blog à ton site existant
+> 4. Brancher l'URL choisie (si scénario sous-domaine) ou rien (si scénario PikaPods URL)
 > 5. Créer ton compte admin Ghost
 > 6. Générer les 2 API keys et installer le MCP Ghost dans Claude Code
 > 7. (Optionnel) Activer le mode privé tant que le blog est vide
 >
-> Compte ~20-30 min en tout. Tu auras besoin d'ouvrir ton navigateur pour PikaPods. Si tu choisis le sous-domaine custom, prévois 5-10 min de plus pour la propagation DNS.
+> Compte ~15 min si tu pars sur l'URL PikaPods, ~25-30 min si tu mets un sous-domaine custom (à cause de la propagation DNS).
 >
 > Prêt ? On y va. »
 
@@ -47,35 +57,38 @@ Si non : pause la commande et redirige :
 
 #### Pré-requis 2 — Site déployé sur Vercel
 
-> « Deuxième vérification : as-tu un site déployé sur Vercel auquel tu as accès via le CLI Vercel et le code source ? L'URL peut être :
+> « Deuxième vérification : as-tu un site déployé sur Vercel ? L'URL peut être :
 >
-> - Une URL Vercel par défaut (ex. `mon-projet.vercel.app`) — c'est le cas par défaut, ça marche très bien
+> - Une URL Vercel par défaut (ex. `mon-projet.vercel.app`)
 > - Un nom de domaine custom (ex. `monsite.com`)
 >
 > Quelle est ton URL de site actuelle ? »
 
-Stocke la réponse comme `<SITE_URL>` (ex. `mon-projet.vercel.app` ou `monsite.com`). Si l'utilisateur n'a pas encore de site déployé : pause et redirige vers le cours « Claude + Site web ».
+Stocke la réponse comme `<SITE_URL>`. Si l'utilisateur n'a pas encore de site déployé : pause et redirige vers le cours « Claude + Site web ».
+
+> Note : ton blog Ghost vivra à une URL **distincte** de ton site (URL PikaPods OU sous-domaine custom). Ton site sur Vercel est juste là comme repère contextuel — tu y ajouteras un lien « Blog » dans la nav à la fin du chapitre 2 (theme).
 
 ---
 
 ### Choix du scénario
 
-> « Maintenant, deux options pour héberger ton blog. Le choix dépend uniquement de ton URL :
+> « Maintenant, deux options pour héberger ton blog. Le choix dépend uniquement de si tu as un nom de domaine custom :
 >
-> **A. Subpath `<son-site>/blog`** — *recommandé par défaut, marche pour tout le monde*
+> **A. URL PikaPods par défaut** — *recommandé si tu n'as pas de nom de domaine custom*
 >
-> Ton blog vivra à `https://<SITE_URL>/blog`. C'est-à-dire qu'on ajoute un *rewrite* dans `vercel.json` qui dit à Vercel : « si quelqu'un demande `/blog/*`, va chercher la réponse sur l'instance Ghost ». Le visiteur ne voit qu'une seule URL (la tienne), Ghost est invisible côté infrastructure.
+> Ton blog vivra à l'URL technique fournie par PikaPods (ex. `https://wonderful-caribou.pikapod.net`). Pas de DNS à configurer, ça marche immédiatement après le déploiement.
 >
-> ✓ Marche avec `mon-projet.vercel.app/blog` ou `monsite.com/blog`
-> ✓ Pas de DNS à configurer
-> ✓ SEO unifié (un seul domaine = autorité topique unique)
-> ✗ Demande d'éditer `vercel.json` (1 fichier dans le repo de ton site)
+> ✓ Aucune config DNS, fonctionne en 5 min
+> ✓ HTTPS auto (Let's Encrypt géré par PikaPods)
+> ✓ Zéro coût additionnel
+> ✗ URL un peu technique côté visiteurs (mais on peut la masquer en ajoutant un lien « Blog » dans la nav du site principal qui pointe vers cette URL)
 >
-> **B. Sous-domaine custom `blog.<domaine-custom>`** — *alternative pour qui a un nom de domaine*
+> **B. Sous-domaine custom `blog.<domaine-custom>`** — *recommandé si tu possèdes un nom de domaine*
 >
-> Ton blog vivra à `https://blog.monsite.com`. On ajoute un CNAME chez ton registrar (OVH, Gandi, etc.) qui pointe `blog` vers PikaPods, et PikaPods s'occupe du HTTPS.
+> Ton blog vivra à `https://blog.monsite.com`. On ajoute un CNAME chez ton registrar (OVH, Gandi, etc.) qui pointe `blog` vers PikaPods, et PikaPods s'occupe du HTTPS via son onglet **Custom Domain**.
 >
-> ✓ Branding propre (subdomain = legitimité perçue)
+> ✓ Branding propre (subdomain = légitimité perçue)
+> ✓ SEO cohérent avec ton site principal
 > ✗ Demande un nom de domaine custom (impossible avec `mon-projet.vercel.app`)
 > ✗ DNS à propager (~10 min)
 >
@@ -84,8 +97,8 @@ Stocke la réponse comme `<SITE_URL>` (ex. `mon-projet.vercel.app` ou `monsite.c
 Stocke la réponse comme `<SCENARIO>` = `A` ou `B`.
 
 Si `<SCENARIO>` = `A` :
-- L'URL publique du blog sera `https://<SITE_URL>/blog`
-- Stocke `<BLOG_URL>` = `https://<SITE_URL>/blog`
+- L'URL publique du blog sera `<PIKAPOD_URL>` (récupérée à l'étape 2)
+- `<BLOG_URL>` sera renseignée à l'étape 2 dès qu'on connait l'URL technique
 
 Si `<SCENARIO>` = `B` :
 - Demande : « Quel sous-domaine custom veux-tu ? Par défaut je propose `blog.<DOMAIN>` — c'est l'usage standard. Tu peux aussi prendre `journal.<DOMAIN>` ou `articles.<DOMAIN>` si tu préfères. »
@@ -125,101 +138,41 @@ Attends la confirmation avant de passer à l'étape 2.
 
 Stocke la réponse comme `<PIKAPOD_URL>` (ex. `wonderful-caribou.pikapod.net`).
 
----
+Si `<SCENARIO>` = `A` :
+- Stocke `<BLOG_URL>` = `https://<PIKAPOD_URL>`
+- Passe directement à l'étape 4 (étape 3 = config sous-domaine, inutile ici)
 
-### Étape 3 — Brancher le blog au site
-
-C'est ici que les 2 scénarios divergent.
-
-#### Si `<SCENARIO>` = A (subpath `/blog`)
-
-> « On va ajouter un *rewrite* dans le `vercel.json` de ton site pour que `/blog/*` aille chercher la réponse sur PikaPods.
->
-> Ouvre le fichier `vercel.json` à la racine de ton projet de site (s'il n'existe pas, on le crée). Ajoute (ou complète) la section `rewrites` :
->
-> ```json
-> {
->   "rewrites": [
->     {
->       "source": "/blog",
->       "destination": "https://<PIKAPOD_URL>/blog"
->     },
->     {
->       "source": "/blog/:path*",
->       "destination": "https://<PIKAPOD_URL>/blog/:path*"
->     }
->   ]
-> }
-> ```
->
-> Si ton `vercel.json` contient déjà d'autres clés (`headers`, `redirects`, etc.), garde-les et ajoute juste `rewrites` à côté.
->
-> Sauvegarde, commit le fichier, pousse sur la branche déployée :
->
-> ```bash
-> git add vercel.json
-> git commit -m "feat: rewrite /blog/* to ghost"
-> git push
-> ```
->
-> Vercel redéploie automatiquement en ~30 secondes. Confirme-moi quand c'est fait. »
-
-Attends la confirmation. Note : à ce stade, `https://<SITE_URL>/blog` ne répondra pas encore correctement parce que Ghost n'est pas encore configuré pour servir à un subpath. On règle ça à l'étape 4.
-
-#### Si `<SCENARIO>` = B (sous-domaine custom)
-
-> « Ouvre l'interface de ton registrar (OVH, Gandi, Namecheap, Cloudflare DNS, Infomaniak) et va dans la zone DNS de `<DOMAIN>`. Crée un enregistrement **CNAME** :
->
-> - **Nom** : le préfixe que tu as choisi (ex. `blog`)
-> - **Cible** : `<PIKAPOD_URL>`
-> - **TTL** : 3600 (1 h) ou la valeur par défaut
->
-> Sauvegarde. La propagation prend 10 min à 1 h.
->
-> Pour vérifier la propagation :
->
-> 1. En ligne de commande :
->    ```bash
->    dig +short <SUBDOMAIN>
->    ```
->    Tu dois voir `<PIKAPOD_URL>` apparaître.
->
-> 2. Sans terminal : va sur https://dnschecker.org, entre `<SUBDOMAIN>` et choisis « CNAME » dans le menu déroulant. Tu dois voir l'enregistrement résolu sur les serveurs du monde entier.
->
-> Confirme-moi quand le CNAME est créé et propagé. »
-
-Attends la confirmation avant de passer à l'étape 4.
+Si `<SCENARIO>` = `B` :
+- Continue à l'étape 3 (DNS + Custom Domain)
 
 ---
 
-### Étape 4 — Configurer Ghost à la bonne URL
+### Étape 3 — Brancher le sous-domaine custom (Scénario B uniquement)
 
-#### Si `<SCENARIO>` = A (subpath)
+**À sauter intégralement si `<SCENARIO>` = A.**
 
-> « On dit maintenant à Ghost qu'il vit à `<BLOG_URL>` (et plus à son URL technique PikaPods).
+> « On va dire à PikaPods et à ton registrar que `<SUBDOMAIN>` doit pointer sur ton instance Ghost.
 >
-> 1. PikaPods dashboard → ton pod Ghost → onglet **Environment** (ou **Settings** selon la version de l'interface)
-> 2. Cherche la variable d'environnement **`url`** (ou **`SITE_URL`** selon les images PikaPods)
-> 3. Mets la valeur : `<BLOG_URL>` (avec slash final OK : `https://<SITE_URL>/blog/`)
-> 4. Sauvegarde et redémarre le pod (PikaPods → Restart)
+> **Côté registrar (OVH, Gandi, Namecheap, Cloudflare DNS, Infomaniak)** :
 >
-> Le redémarrage prend 30 sec. Tu peux maintenant tester :
+> 1. Ouvre la zone DNS de `<DOMAIN>`
+> 2. Crée un enregistrement **CNAME** :
+>    - **Nom** : le préfixe que tu as choisi (ex. `blog`)
+>    - **Cible** : `<PIKAPOD_URL>`
+>    - **TTL** : 3600 (1 h) ou la valeur par défaut
+> 3. Sauvegarde
+>
+> La propagation prend 10 min à 1 h. Pour vérifier :
 >
 > ```bash
-> curl -I https://<SITE_URL>/blog
+> dig +short <SUBDOMAIN>
 > ```
 >
-> Tu dois recevoir un `200 OK` avec du HTML Ghost. Si tu vois une erreur `502` ou un timeout, c'est probablement que :
-> - Le rewrite Vercel n'est pas encore propagé (attends 1-2 min)
-> - L'instance Ghost n'a pas redémarré avec la nouvelle URL (vérifie côté PikaPods)
+> Tu dois voir `<PIKAPOD_URL>` apparaître. Tu peux aussi utiliser https://dnschecker.org en y entrant `<SUBDOMAIN>` (type CNAME).
 >
-> Confirme-moi quand `https://<SITE_URL>/blog` répond avec l'écran Ghost. »
-
-#### Si `<SCENARIO>` = B (sous-domaine)
-
-> « On dit maintenant à PikaPods que `<SUBDOMAIN>` est bien le tien :
+> **Côté PikaPods** (une fois la propagation faite) :
 >
-> 1. PikaPods dashboard → ton pod Ghost → onglet **Domains** (ou **Settings**)
+> 1. PikaPods dashboard → ton pod Ghost → onglet **Custom Domain** (ou **Domains**)
 > 2. **Add domain** → entre `<SUBDOMAIN>` → valide
 > 3. PikaPods provisionne automatiquement un certificat HTTPS via Let's Encrypt (~2 min)
 >
@@ -229,15 +182,15 @@ Attends la confirmation avant de passer à l'étape 4.
 >
 > Confirme-moi quand `https://<SUBDOMAIN>` répond avec l'écran Ghost. »
 
-Attends la confirmation.
+Attends la confirmation avant de passer à l'étape 4.
 
 ---
 
-### Étape 5 — Premier login Ghost admin
+### Étape 4 — Premier login Ghost admin
 
 > « On crée ton compte admin :
 >
-> 1. URL admin : `<BLOG_URL>/ghost`  (ex. `https://<SITE_URL>/blog/ghost` ou `https://<SUBDOMAIN>/ghost`)
+> 1. URL admin : `<BLOG_URL>/ghost`
 > 2. Crée le compte **owner** :
 >    - Email : ton email pro
 >    - Nom : prénom + nom
@@ -257,7 +210,7 @@ Attends la confirmation.
 
 ---
 
-### Étape 6 — Custom Integration (les 2 API keys)
+### Étape 5 — Custom Integration (les 2 API keys)
 
 C'est l'étape qui débloque l'usage de Ghost depuis Claude Code.
 
@@ -272,7 +225,7 @@ C'est l'étape qui débloque l'usage de Ghost depuis Claude Code.
 >
 > - **Content API Key** — 24 caractères hexadécimaux (ex. `2b1c4d5e6f7a8b9c0d1e2f3a`). C'est la clé **publique en lecture seule** — utilisée pour afficher les articles côté front.
 > - **Admin API Key** — format `id:secret` (ex. `5a1b...:6c2d...`, où `id` = 24 hex et `secret` = 64 hex). C'est la clé **privée en lecture/écriture** — utilisée pour publier des articles depuis Claude Code.
-> - **API URL** — c'est `<BLOG_URL>` (le subpath ou le sous-domaine selon ton scénario)
+> - **API URL** — c'est `<BLOG_URL>`
 >
 > ⚠️ **Sécurité critique** : ces 2 clés sont des secrets. Tu ne les commites JAMAIS dans git. L'Admin API Key permet de tout faire sur ton blog, y compris supprimer des articles.
 >
@@ -282,7 +235,7 @@ Attends la confirmation que l'intégration est créée et que l'utilisateur a le
 
 ---
 
-### Étape 7 — Installer le MCP Ghost dans Claude Code
+### Étape 6 — Installer le MCP Ghost dans Claude Code
 
 > « On branche maintenant Claude Code à ton instance Ghost via le MCP Ghost. Une fois installé, tu pourras me demander « liste mes 5 derniers articles » ou « publie cet article » et je pourrai le faire directement.
 >
@@ -294,7 +247,7 @@ Attends la confirmation que l'intégration est créée et que l'utilisateur a le
 >
 > *(Note : ton formateur te fournira le repo MCP Ghost officiel ou un fork compatible avec l'Admin API + la Content API si la commande ne marche pas du premier coup.)*
 >
-> Le serveur MCP va te demander 3 valeurs — c'est ici que tu colles les clés de l'étape 6 :
+> Le serveur MCP va te demander 3 valeurs — c'est ici que tu colles les clés de l'étape 5 :
 >
 > 1. **URL Ghost** : `<BLOG_URL>`
 > 2. **Admin API Key** : la clé `id:secret`
@@ -316,7 +269,7 @@ Attends la confirmation.
 
 ---
 
-### Étape 8 — Mode privé (optionnel)
+### Étape 7 — Mode privé (optionnel)
 
 > « Dernière étape, optionnelle mais recommandée : tant que ton blog est vide ou en chantier, tu ne veux pas que Google indexe les 3 articles de démo Ghost. Veux-tu activer le mode privé pour l'instant ? »
 
@@ -332,7 +285,7 @@ Attends la confirmation, et stocke `<PRIVATE_MODE>` = `oui`.
 
 **Si non** :
 
-> « OK, on laisse le blog public. Note que les 3 articles de démo Ghost sont toujours là — on les supprimera dans la commande `/blog:write` quand tu publieras ton premier vrai article. »
+> « OK, on laisse le blog public. Note que les 3 articles de démo Ghost sont toujours là — on les supprimera dans la commande `/blog:article` quand tu publieras ton premier vrai article. »
 
 Stocke `<PRIVATE_MODE>` = `non`.
 
@@ -340,7 +293,7 @@ Stocke `<PRIVATE_MODE>` = `non`.
 
 ## Génération de `ghost-config.md`
 
-Une fois les 8 étapes validées, **génère** un fichier `ghost-config.md` à la racine du projet de l'étudiant (le dossier courant). **Aucun secret ne doit y figurer** — uniquement les URLs et l'état de la config.
+Une fois les 7 étapes validées, **génère** un fichier `ghost-config.md` à la racine du projet de l'étudiant (le dossier courant). **Aucun secret ne doit y figurer** — uniquement les URLs et l'état de la config.
 
 Structure (adapte selon `<SCENARIO>`) :
 
@@ -351,8 +304,8 @@ Date setup : <YYYY-MM-DD>
 
 ## Scénario d'hébergement
 
-- **Type** : <subpath /blog via Vercel rewrite | sous-domaine custom>
-- **Site web hôte** : <SITE_URL>
+- **Type** : <URL PikaPods par défaut | sous-domaine custom>
+- **Site web hôte (Vercel)** : <SITE_URL>
 - **URL publique du blog** : <BLOG_URL>
 - **Admin** : <BLOG_URL>/ghost
 - **Instance backend (PikaPods)** : <PIKAPOD_URL>
@@ -371,25 +324,24 @@ Date setup : <YYYY-MM-DD>
 - Installé dans Claude Code : oui
 - Test ping : OK
 
-## Vercel rewrites *(scénario A uniquement)*
+## Lien depuis le site Vercel
 
-Ajoutés dans `vercel.json` :
+À ajouter dans la nav de ton site Vercel (à la fin du chapitre 2 — theme) :
 
-- `/blog` → `<PIKAPOD_URL>/blog`
-- `/blog/:path*` → `<PIKAPOD_URL>/blog/:path*`
-
-Si tu modifies ces rewrites, redéploie le site sur Vercel pour qu'ils prennent effet.
+```html
+<a href="<BLOG_URL>" target="_blank" rel="noopener">Blog</a>
+```
 
 ## Webhooks (avancé, optionnel)
 
-- Aucun pour l'instant — à configurer au chapitre Production si tu utilises un cache ISR.
+- Aucun pour l'instant — à configurer au chapitre Production si tu utilises un cache ISR Next/Astro qui consomme l'API Ghost.
 
 ---
 
 Setup généré par `/blog:setup-ghost`.
 ```
 
-Remplace `<YYYY-MM-DD>` par la date du jour. Pour la section « Vercel rewrites », **ne l'inclus que si `<SCENARIO>` = A** ; sinon supprime cette section du fichier.
+Remplace `<YYYY-MM-DD>` par la date du jour.
 
 ## Vérifications finales
 
@@ -401,7 +353,7 @@ Avant d'écrire le fichier `ghost-config.md` et de clôturer, valide la checklis
 - [ ] Les clés sont stockées **uniquement dans la config MCP** — jamais dans le code, jamais dans git
 - [ ] MCP Ghost installé et `mcp ping ghost` répond OK
 - [ ] Test fonctionnel passé : Claude Code peut lister les articles Ghost
-- [ ] Si `<SCENARIO>` = A : `vercel.json` mis à jour, commité, redéployé
+- [ ] Si `<SCENARIO>` = B : `dig +short <SUBDOMAIN>` retourne `<PIKAPOD_URL>` et le Custom Domain est validé côté PikaPods
 - [ ] `ghost-config.md` écrit à la racine du projet (sans secrets)
 
 Si un critère n'est pas rempli, **retourne sur l'étape correspondante** avant d'écrire le fichier.
@@ -414,7 +366,7 @@ Une fois le fichier écrit :
 >
 > Récap de ce qu'on a fait :
 > - Instance Ghost lancée sur PikaPods (région Europe, RGPD-compliant)
-> - Blog accessible via <subpath /blog | sous-domaine custom>, HTTPS auto
+> - Blog accessible via <URL PikaPods | sous-domaine custom>, HTTPS auto
 > - Compte admin créé, config initiale faite
 > - 2 API keys générées et configurées dans le MCP Ghost
 > - `ghost-config.md` écrit à la racine du projet pour mémoire

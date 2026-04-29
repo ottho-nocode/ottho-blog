@@ -52,7 +52,7 @@ Affiche :
 Tu vas enchaîner 6 phases, avec une validation à chaque étape.
 Tu peux dire STOP à tout moment, je garde ta progression.
 
-Phase 1 — Setup Ghost (20-30 min)     [PikaPods + branchement subpath /blog OU sous-domaine + MCP Ghost]
+Phase 1 — Setup Ghost (15-30 min)     [PikaPods + URL PikaPods OU sous-domaine custom + MCP Ghost]
 Phase 2 — Theme à ta charte (20 min)  [fork Source + override CSS + upload]
 Phase 3 — Cocon sémantique (15 min)   [propose + valide → cocon.json]
 Phase 4 — Premier article (5 min)     [pipeline complet : brief → article → image → draft Ghost]
@@ -70,7 +70,7 @@ Pré-requis vérifiés ?
 - [ ] Compte PikaPods (gratuit ou ~5 €/mois)
 - [ ] Compte fal.ai (déjà dans Claude Code, du cours précédent)
 
-⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel — y compris la `vercel.app` par défaut. Le blog vivra à `<ton-site>/blog` via un rewrite Vercel transparent.
+⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel — y compris la `vercel.app` par défaut. Si tu n'as pas de domaine custom, ton blog vivra à son URL PikaPods native (ex. `https://wonderful-caribou.pikapod.net`) et tu mettras un lien « Blog » dans la nav de ton site. Si tu as un domaine custom, ton blog vivra à `blog.<ton-domaine>` via Custom Domain PikaPods.
 
 On y va ? (oui / non / précise un blocage)
 ```
@@ -81,7 +81,9 @@ Si l'utilisateur n'a pas un des pré-requis, redirige :
 - Pas de `charte.md` → cours « Claude + Site web » chapitre Design
 - Pas de compte PikaPods → continue, on en crée un en Phase 1
 
-**Ne pose JAMAIS de question sur un nom de domaine custom à ce stade.** Le scénario d'hébergement (subpath `/blog` vs sous-domaine) est choisi à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel — peu importe son URL.
+**Ne pose JAMAIS de question sur un nom de domaine custom à ce stade.** Le scénario d'hébergement (URL PikaPods par défaut vs sous-domaine custom) est choisi à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel — peu importe son URL.
+
+**Ne propose JAMAIS le subpath `<site>/blog` via rewrite Vercel.** Cette option a été retirée du plugin parce que le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes du theme. Le sous-domaine custom (Scénario B de `/blog:setup-ghost`) est la seule manière propre d'avoir une URL avec ton domaine.
 
 Sinon, attends `oui` et passe à la Phase 1.
 
@@ -89,8 +91,8 @@ Sinon, attends `oui` et passe à la Phase 1.
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 1/6 — Setup Ghost. ~20-30 min. On va créer ton instance Ghost sur PikaPods, brancher le blog à ton site (subpath `/blog` par défaut, ou sous-domaine custom si tu en as un), et installer le MCP Ghost dans Claude Code. »
-2. Lance la logique de **`/blog:setup-ghost`** (charge la skill `ghost-config`). C'est cette commande qui demandera à l'utilisateur quel scénario d'hébergement choisir (A = subpath / B = sous-domaine). Tu n'as PAS à pré-juger ici.
+1. Annonce : « Phase 1/6 — Setup Ghost. ~15-30 min. On va créer ton instance Ghost sur PikaPods, choisir où vit ton blog (URL PikaPods native, ou sous-domaine custom si tu as un domaine), et installer le MCP Ghost dans Claude Code. »
+2. Lance la logique de **`/blog:setup-ghost`** (charge la skill `ghost-config`). C'est cette commande qui demandera à l'utilisateur quel scénario d'hébergement choisir (A = URL PikaPods par défaut / B = sous-domaine custom). Tu n'as PAS à pré-juger ici.
 3. À la fin de cette phase, vérifie que `ghost-config.md` existe à la racine et que le MCP Ghost répond.
 4. **Checkpoint :** « Ghost est en ligne sur `<BLOG_URL>` (l'URL exacte dépend du scénario choisi dans setup-ghost). Le MCP répond bien. On passe au theme ? (oui / stop) »
 5. Marque Phase 1 complétée dans le state, note `ghost_url` (l'URL publique) et `ghost_scenario` (`A` ou `B`).
