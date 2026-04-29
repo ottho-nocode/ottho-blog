@@ -11,8 +11,8 @@
   },
   "plugins": [
     {
-      "name": "ottho-blog",
-      "source": "./ottho-blog",
+      "name": "blog",
+      "source": "./blog",
       "description": "Plugin compagnon du cours « Claude + Blog » : Ghost en headless sur PikaPods, theme custom à la charte du site existant, cocon sémantique généré depuis brief.md, génération d'articles assistée (P1+P2) ou en batch avec garde-fous (KB factuelle, validation des liens, sanitizer), audit SEO continu. Sans jamais taper de clé API.",
       "version": "1.0.0"
     }

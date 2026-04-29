@@ -4,10 +4,11 @@
 
 ## Plugins disponibles
 
-### `ottho-blog` — Compagnon du cours « Claude + Blog »
+### `blog` — Compagnon du cours « Claude + Blog »
 
 Met en place un blog Ghost en headless, l'habille à la charte du site existant, structure le contenu en cocon sémantique, génère et publie des articles avec garde-fous factuels :
 
+- **`/blog:start`** — **MASTER** : orchestre les 6 phases du cours de A à Z, avec checkpoint à chaque étape, reprenable
 - `/blog:setup-ghost` — Ghost sur PikaPods + sous-domaine + custom integration + MCP
 - `/blog:theme` — theme Ghost custom à partir de `charte.md` (fork Source + override CSS + Handlebars)
 - `/blog:cocon` — propose un cocon sémantique depuis `brief.md`, dialogue de validation, écrit `cocon.json`
@@ -18,7 +19,7 @@ Met en place un blog Ghost en headless, l'habille à la charte du site existant,
 - `/blog:status` — état du cocon (publiés / drafts / planifiés, par pilier)
 - `/blog:corrige` — diagnostic + fixes communs (theme cassé, MCP down, article qui rate, etc.)
 
-Détail complet : [ottho-blog/README.md](./ottho-blog/README.md)
+Détail complet : [blog/README.md](./blog/README.md)
 
 ## Installation
 
@@ -26,8 +27,16 @@ Dans Claude Code :
 
 ```
 /plugin marketplace add ottho-nocode/ottho-blog
-/plugin install ottho-blog@ottho-blog
+/plugin install blog@ottho-blog
 ```
+
+Pour démarrer le parcours complet en une seule commande :
+
+```
+/blog:start
+```
+
+Cette commande orchestre les 6 phases du cours (setup Ghost → theme → cocon → premier article → batch → audit SEO) avec un checkpoint à chaque étape. Reprenable via `.ottho-blog/state.json`.
 
 ## Pré-requis
 
