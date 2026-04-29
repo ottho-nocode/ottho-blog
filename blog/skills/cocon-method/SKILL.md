@@ -133,11 +133,56 @@ C'est ce que `/blog:cocon` doit exécuter, dans cet ordre :
 
 3. **Proposition des filles.** L'IA propose **3 à 7 filles**, présentées sous forme de liste avec `pilier_slug`, `keyword`, `description`, `persona`, `cta_principal`. Pour chaque fille, l'utilisateur peut : `valider`, `modifier` (changer le keyword ou la description), `supprimer`, ou demander à l'IA d'en `ajouter` une nouvelle. Tant que toutes les filles ne sont pas validées (ou explicitement rejetées), on ne passe pas à l'étape suivante.
 
-4. **Proposition des petites-filles, fille par fille.** Pour chaque fille validée, l'IA propose **3 à 5 petites-filles** : `slug`, `title`, `keyword`, `intent`. Même boucle valider/modifier/supprimer/ajouter. L'IA peut s'aider d'une vérification SERP rapide si l'utilisateur le demande (« est-ce que ce keyword est encore disputable ? »).
+4. **Proposition des petites-filles, fille par fille.** Pour chaque fille validée, l'IA propose **3 à 5 petites-filles** : `slug`, `title`, `keyword`, `intent`. Même boucle valider/modifier/supprimer/ajouter.
 
-5. **Écriture du fichier.** Une fois tout validé, l'IA écrit `cocon.json` à la racine du projet utilisateur (même dossier que `brief.md`), avec `status: "planned"` partout par défaut. L'IA confirme la création en récapitulant : `1 mère + N filles + M petites-filles = X articles à écrire`.
+5. **Validation de pertinence par recherche web** *(nouvelle étape, V1.1+)*. Avant la consolidation finale, l'IA passe en revue chaque petite-fille proposée et appelle des outils de recherche web pour vérifier la pertinence SEO de chaque keyword. Voir la section « Validation de pertinence — protocole web search » plus bas.
 
-6. **Sortie.** L'IA suggère l'étape suivante : passer à `/blog:articles` pour générer chaque petite-fille, ou éditer manuellement `cocon.json` si l'utilisateur veut ajuster plus tard.
+6. **Consolidation finale.** L'IA reproposa l'arbre complet en intégrant les ajustements issus de la validation web (drops, repositionnements long-tail, ajouts depuis les suggestions). L'utilisateur valide le tout en bloc.
+
+7. **Écriture du fichier.** Une fois tout validé, l'IA écrit `cocon.json` à la racine du projet utilisateur (même dossier que `brief.md`), avec `status: "planned"` partout par défaut. L'IA confirme la création en récapitulant : `1 mère + N filles + M petites-filles = X articles à écrire`.
+
+8. **Sortie.** L'IA suggère l'étape suivante : passer à `/blog:article` pour générer chaque petite-fille, ou éditer manuellement `cocon.json` si l'utilisateur veut ajuster plus tard.
+
+## Validation de pertinence — protocole web search
+
+Avant de finaliser le cocon, l'IA doit valider chaque petite-fille proposée par recherche web. Cette étape évite le piège du « cocon LLM-only » : un arbre qui paraît bon mais qui cible des requêtes 0 search ou ultra-saturées (Wikipedia + .gov + grands médias dans le top 10).
+
+### Outils mobilisés (par ordre de préférence)
+
+1. **`WebSearch` (built-in Anthropic, dispo dans Claude Code)** — pour chaque petite-fille, fais une recherche Google sur le `keyword` cible. Note les domaines du top 10 et évalue :
+   - **Saturation** : top 10 dominé par `wikipedia.org`, `.gov`, `lemonde.fr`, `lefigaro.fr`, `youtube.com`, `reddit.com` = saturation extrême → drop ou repositionne sur une variante long-tail
+   - **Pertinence** : moins de 3 résultats vraiment liés au sujet = niche faible ou intention floue → drop ou requalifie
+   - **Format dominant** : présence d'un featured snippet (paragraphe court / liste / table) ou de PAA = opportunité de cibler ce format dans l'article
+2. **`WebFetch` sur Google Suggest** : `https://suggestqueries.google.com/complete/search?client=firefox&q=<keyword>&hl=fr`
+   - Retourne 10 suggestions en JSON public (autocomplete Google)
+   - Permet d'enrichir les petites-filles avec des variantes long-tail réelles, ou de remplacer une petite-fille saturée par sa variante long-tail dérivée
+3. **`WebFetch` sur Wikipedia FR** : `https://fr.wikipedia.org/w/api.php?action=opensearch&search=<keyword>&limit=5&namespace=0&format=json`
+   - Confirme l'existence d'une entité encyclopédique du sujet
+   - Si Wikipedia n'a aucun article proche, c'est probablement un keyword inventé ou trop niche pour porter un pilier
+
+### Bascule manuelle (si WebSearch et WebFetch indisponibles)
+
+Si l'agent n'a accès à aucun outil web, **bascule en mode validation assistée par l'utilisateur** :
+
+> « Je n'ai pas d'accès web search direct. Pour valider la pertinence de chaque pilier, ouvre **Google Trends** (trends.google.com) + **AlsoAsked** (alsoasked.com) avec ton mot-clé pilier, copie-colle ici les graphes d'intérêt 12 mois et la liste des PAA. Je réajuste avec ces données réelles, pilier par pilier. »
+
+C'est l'option de repli — moins fluide mais aussi sérieuse, car les données sont les vraies.
+
+### Output attendu (format minirapport)
+
+Pour chaque petite-fille de l'étape 4, l'IA produit avant la consolidation :
+
+```
+- "<keyword petite-fille>"
+  - SERP top 10 : [3 mots résumant qui rank]
+  - Saturation : [faible / moyenne / extrême]
+  - Variantes long-tail récupérées : [liste si Suggest API a marché]
+  - Verdict : [garder / repositionner sur "<variante>" / drop]
+```
+
+### Coût additionnel
+
+5 à 10 web searches au total pour un cocon de 4 piliers × 4 petites-filles. ~2-3 min ajoutées au temps total. Tokens additionnels : ~0,02 € par cocon. Ratio valeur/coût excellent : la validation évite des heures de rédaction sur des piliers morts.
 
 ## Pièges à éviter
 

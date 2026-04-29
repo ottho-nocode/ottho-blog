@@ -201,6 +201,88 @@ Puis demande :
 
 Boucle sur tous les piliers validés à l'étape 3.
 
+### Étape 4-bis — Validation de pertinence par recherche web (V1.1+)
+
+⚠️ **Étape critique** : avant la consolidation finale, tu valides chaque petite-fille proposée à l'étape 4 contre des données SEO réelles. C'est ce qui distingue un cocon « LLM-only » (qui paraît bon mais cible des requêtes 0 search ou ultra-saturées) d'un cocon validé.
+
+**Détection des outils disponibles**
+
+Vérifie quels outils web sont à ta disposition dans cette session :
+
+- `WebSearch` (built-in Anthropic) → mode automatique
+- `WebFetch` (built-in Anthropic) → mode automatique pour APIs publiques
+- Aucun des deux → bascule en mode validation manuelle assistée
+
+**Mode automatique (`WebSearch` + `WebFetch` disponibles)**
+
+Pour CHAQUE petite-fille proposée à l'étape 4, exécute le protocole suivant :
+
+1. **WebSearch** sur le `keyword` cible (ex. `WebSearch("comment publier un article sur ghost")`). Note les 10 premiers domaines et catégorise-les :
+   - **Saturé** : top 10 dominé par `wikipedia.org`, `.gov`, `lemonde.fr`, `lefigaro.fr`, `youtube.com`, `reddit.com`, gros sites tech (`stackoverflow.com`, `github.com` pour les sujets techniques)
+   - **Disputable** : 3-7 domaines spécialisés / blogs personnels / sites de niche dans le top 10
+   - **Intention floue** : moins de 3 résultats vraiment liés au sujet
+2. **WebFetch** sur Google Suggest pour récupérer 5-10 variantes long-tail :
+   ```
+   WebFetch("https://suggestqueries.google.com/complete/search?client=firefox&q=<KEYWORD>&hl=fr")
+   ```
+3. Si `WebSearch` indique « saturé », essaie une variante long-tail issue de Suggest et refais un `WebSearch` dessus.
+4. Compile un **mini-rapport par petite-fille** :
+
+```
+- "<keyword petite-fille>"
+  - SERP top 10 : [résumé en 3 mots, ex. "Wikipedia + 2 blogs SEO + YouTube"]
+  - Saturation : [faible / moyenne / extrême]
+  - Variantes long-tail Suggest : [3 plus pertinentes]
+  - Verdict : [garder / repositionner sur "<variante>" / drop]
+```
+
+5. Quand tous les rapports sont compilés, affiche-les à l'utilisateur sous forme de tableau récapitulatif :
+
+```
+═══════════════════════════════════════════════════
+VALIDATION WEB — Récapitulatif par petite-fille
+═══════════════════════════════════════════════════
+
+Pilier "F1" (<keyword fille>)
+├─ "F1.1" — <keyword>      [garder]
+├─ "F1.2" — <keyword>      [repositionner → "<variante long-tail>"]
+└─ "F1.3" — <keyword>      [drop — top 10 = Wikipedia + 5 grands médias]
+
+Pilier "F2" (<keyword fille>)
+├─ "F2.1" — <keyword>      [garder]
+└─ "F2.2" — <keyword>      [garder + ajouter "F2.3 = <variante Suggest>"]
+
+═══════════════════════════════════════════════════
+ACTIONS PROPOSÉES :
+- 1 drop
+- 1 repositionnement long-tail
+- 1 ajout depuis Suggest
+═══════════════════════════════════════════════════
+```
+
+Demande à l'utilisateur : « OK pour appliquer ces ajustements, ou tu veux modifier ? »
+
+**Mode manuel assisté (aucun outil web disponible)**
+
+Annonce-le honnêtement :
+
+> « Je n'ai pas d'accès web search direct dans cette session. Pour valider sérieusement le cocon, j'ai besoin de tes données réelles.
+>
+> Pour CHAQUE pilier, ouvre dans ton navigateur :
+> - **Google Trends** (https://trends.google.com/trends/explore?geo=FR&hl=fr) — saisis le keyword pilier, sélectionne 12 derniers mois, France. Copie-colle ici la tendance (en hausse / stable / en baisse).
+> - **AlsoAsked** (https://alsoasked.com) — saisis le keyword pilier, langue FR, région FR. Copie-colle ici les questions PAA niveau 1 et 2.
+>
+> Ramène-moi les données pilier par pilier. Je réajuste avec ces données réelles avant de consolider. »
+
+L'utilisateur copie-colle les données pour chaque pilier (peut prendre 5 min/pilier). Tu intègres au fur et à mesure et tu produis le mini-rapport équivalent du mode automatique.
+
+**Coût et durée**
+
+- Mode auto : ~2-3 min ajoutées au cocon, ~0,02 € de tokens additionnels
+- Mode manuel : ~5 min/pilier (15-20 min pour un cocon de 4 piliers), 0 € additionnel
+
+Quel que soit le mode utilisé, **ne saute jamais cette étape**. Un cocon non validé = un cocon qui peut faire perdre des semaines de rédaction sur des piliers morts.
+
 ### Étape 5 — Re-proposition après modifs (consolidation finale)
 
 Une fois toutes les petites-filles validées, affiche le **cocon final consolidé** sous forme d'arborescence complète :
