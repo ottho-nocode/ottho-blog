@@ -3,18 +3,18 @@ name: batch
 description: Génère N articles du cocon en série (max 5 par batch) avec review human-in-the-loop entre chaque, rate-limit 30s, garde-fous renforcés (KB, link-validation, sanitizer). Statut Ghost forcé draft. Variante batch de /blog:article.
 ---
 
-# /blog:batch — Génération en série de N articles du cocon (auto-pilote avec HITL)
+# /blog:batch, Génération en série de N articles du cocon (auto-pilote avec HITL)
 
 Tu vas accompagner l'étudiant dans la génération en série de **N articles** (max 5) du cocon, avec une **review human-in-the-loop entre chaque article** : à chaque fois, il valide le brief, puis l'article généré, avant publication en draft Ghost. Entre deux articles, **rate-limit obligatoire de 30 s** (anti-spam API + Ghost). Si la pipeline casse 2 fois de suite, le batch s'arrête tout seul.
 
 C'est la variante « auto-pilote encadré » de `/blog:article`. Tu reprends exactement le même pipeline (P1 brief, P2 article, sanitizer, link-validation, image fal.ai, draft Ghost, update cocon.json), mais répété N fois.
 
-**Charge ces 4 skills** avant tout — identiques à `/blog:article` :
+**Charge ces 4 skills** avant tout, identiques à `/blog:article` :
 
-- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`) — system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **À reproduire intégralement.**
-- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`) — algorithme de validation des `<a href>` internes, fallback vers la pilier-parent.
-- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`) — pattern de la KB factuelle injectée dans P2.
-- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`) — structure de `cocon.json`, règles de maillage, contexte de linking.
+- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **À reproduire intégralement.**
+- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes, fallback vers la pilier-parent.
+- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`), pattern de la KB factuelle injectée dans P2.
+- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`), structure de `cocon.json`, règles de maillage, contexte de linking.
 
 **Temps estimé** : ~5 min par article × N (interactif), soit ~15 min pour 3 articles, ~25 min pour 5.
 
@@ -26,11 +26,11 @@ C'est la variante « auto-pilote encadré » de `/blog:article`. Tu reprends exa
 
 ⚠️ **Statut Ghost FORCÉ à `draft`.** Chaque article du batch est créé en `status: "draft"` sans exception. Le plugin n'a **jamais** le droit de publier. C'est l'étudiant qui ouvre Ghost après le batch et clique « Publish » sur chacun, à la main, après relecture.
 
-⚠️ **Review HITL entre chaque article (non-négociable).** Pour chaque article du batch, l'étudiant valide explicitement le brief P1, puis l'article P2, avant push Ghost. Pas de mode « no-prompt » ou « auto-validate ». La review humaine est ce qui rend ce pipeline pédagogiquement défendable — sans elle, on déléguerait à l'IA toute la responsabilité éditoriale, ce qui est interdit par la marque Ottho.
+⚠️ **Review HITL entre chaque article (non-négociable).** Pour chaque article du batch, l'étudiant valide explicitement le brief P1, puis l'article P2, avant push Ghost. Pas de mode « no-prompt » ou « auto-validate ». La review humaine est ce qui rend ce pipeline pédagogiquement défendable, sans elle, on déléguerait à l'IA toute la responsabilité éditoriale, ce qui est interdit par la marque Ottho.
 
 ⚠️ **Rate-limit 30 s entre articles (non-négociable).** `sleep 30` entre chaque article du batch (sauf après le dernier). Raison : éviter le rate-limit Anthropic (5xx en chaîne sur les longs runs), éviter les erreurs Ghost sur upload images successifs, et laisser à l'étudiant le temps de respirer entre deux relectures. Pas de fast-mode.
 
-⚠️ **Abort sur 2 erreurs consécutives (non-négociable).** Si la pipeline (P1, P2, sanitizer, link-validation, image, Ghost, update cocon) casse 2 fois de suite sur 2 articles successifs, le batch s'arrête. On affiche un rapport partiel à l'étudiant et on lui demande quoi faire. Raison : éviter de cramer ton budget Anthropic sur une pipeline cassée (ex. KB malformée, slug Ghost en doublon, MCP down). Une erreur isolée ne stoppe pas le batch — deux d'affilée oui.
+⚠️ **Abort sur 2 erreurs consécutives (non-négociable).** Si la pipeline (P1, P2, sanitizer, link-validation, image, Ghost, update cocon) casse 2 fois de suite sur 2 articles successifs, le batch s'arrête. On affiche un rapport partiel à l'étudiant et on lui demande quoi faire. Raison : éviter de cramer ton budget Anthropic sur une pipeline cassée (ex. KB malformée, slug Ghost en doublon, MCP down). Une erreur isolée ne stoppe pas le batch, deux d'affilée oui.
 
 ⚠️ **Max 5 articles par batch (non-négociable).** L'argument N est clampé entre 1 et 5. Au-delà, on refuse. Raison : protéger ton budget Anthropic (5 × 0,15 € = ~0,75 € max par batch), protéger ta capacité de relecture (5 articles = déjà 1h30 de relecture humaine ensuite), éviter de saturer Google avec un dump SEO en bloc (mauvais signal).
 
@@ -43,8 +43,8 @@ Ouvre la commande par ce message :
 > « On va générer N articles de ton cocon en série (max 5). Le pipeline pour chaque article :
 >
 > 1. Sélection auto de la petite-fille suivante (ordre : pilier le plus avancé d'abord)
-> 2. P1 brief (~10 s) — **tu valides ou tu ajustes**
-> 3. P2 article (~30 s) — **tu valides ou tu ajustes**
+> 2. P1 brief (~10 s), **tu valides ou tu ajustes**
+> 3. P2 article (~30 s), **tu valides ou tu ajustes**
 > 4. Sanitizer + link-validation + image fal.ai + draft Ghost
 > 5. Update `cocon.json`
 > 6. Sleep 30 s
@@ -66,7 +66,7 @@ Si l'étudiant n'a jamais lancé `/blog:article`, **propose-lui de le faire d'ab
 
 Vérifie les 4 pré-requis ci-dessous (identiques à `/blog:article`). Si l'un manque, **mets en pause** et redirige.
 
-### Pré-requis 1 — `cocon.json` existe
+### Pré-requis 1, `cocon.json` existe
 
 > « Je vérifie que `cocon.json` existe à la racine du projet. »
 
@@ -74,7 +74,7 @@ Si absent : pause et redirige :
 
 > « Pas de cocon. Lance d'abord `/blog:cocon`. Reviens ici quand c'est fait. »
 
-### Pré-requis 2 — Ghost en place + MCP Ghost dispo
+### Pré-requis 2, Ghost en place + MCP Ghost dispo
 
 > « Je vérifie que ton instance Ghost et le MCP Ghost sont opérationnels. »
 
@@ -82,7 +82,7 @@ Si absent : pause et redirige :
 
 > « Pas de Ghost. Lance `/blog:setup-ghost`. Reviens ici quand l'admin Ghost s'ouvre dans ton navigateur. »
 
-### Pré-requis 3 — Theme Ghost actif
+### Pré-requis 3, Theme Ghost actif
 
 > « Je vérifie que ton theme Ghost est actif. »
 
@@ -90,7 +90,7 @@ Si absent : pause et redirige :
 
 > « Lance `/blog:theme` avant de lancer un batch (sinon tes drafts seront illisibles dans le rendu Ghost). »
 
-### Pré-requis 4 — MCP fal.ai dispo
+### Pré-requis 4, MCP fal.ai dispo
 
 > « Je vérifie que le MCP fal.ai est configuré. »
 
@@ -98,29 +98,29 @@ Si absent : warning **mais on continue** :
 
 > « Pas de MCP fal.ai détecté. Le batch va tourner en mode dégradé : tous les articles seront publiés sans `feature_image`. Tu pourras les ajouter à la main dans Ghost après. Continuer ? »
 
-### Pré-requis 5 (spécifique batch) — `knowledge.json` existe
+### Pré-requis 5 (spécifique batch), `knowledge.json` existe
 
 > « Je vérifie que `knowledge.json` existe (KB factuelle obligatoire pour P2). »
 
 Si absent : ⚠️ **stop net**, le batch ne démarre pas :
 
-> « Pas de KB. Sans elle, P2 hallucine prix, versions, stats — la marque Ottho ne tolère pas ça sur 5 articles d'un coup. Lance `/blog:article` une fois (qui te propose de générer la KB), valide-la, et reviens lancer le batch. »
+> « Pas de KB. Sans elle, P2 hallucine prix, versions, stats, la marque Ottho ne tolère pas ça sur 5 articles d'un coup. Lance `/blog:article` une fois (qui te propose de générer la KB), valide-la, et reviens lancer le batch. »
 
 ---
 
-## Étape 1 — Capturer l'argument N
+## Étape 1, Capturer l'argument N
 
 L'argument N est passé en argument de la commande (`/blog:batch 3`, `/blog:batch 5`, ou `/blog:batch` tout court).
 
-### 1.1 — Si N est passé en argument
+### 1.1, Si N est passé en argument
 
 Parse l'argument. Vérifie que c'est un entier entre 1 et 5 inclus.
 
 - Si `N < 1` ou `N > 5` ou `N` n'est pas un entier : refuse.
 
-  > « N invalide. Donne-moi un entier entre 1 et 5. ⚠️ **Max 5 par batch — non-négociable** (protection budget + relecture). Pour plus, lance plusieurs batchs. »
+  > « N invalide. Donne-moi un entier entre 1 et 5. ⚠️ **Max 5 par batch, non-négociable** (protection budget + relecture). Pour plus, lance plusieurs batchs. »
 
-### 1.2 — Si N est absent
+### 1.2, Si N est absent
 
 Pose la question :
 
@@ -132,11 +132,11 @@ Stocke `<N>`.
 
 ---
 
-## Étape 2 — Lister et confirmer les N articles à écrire
+## Étape 2, Lister et confirmer les N articles à écrire
 
-### 2.1 — Sélection automatique
+### 2.1, Sélection automatique
 
-Lis `cocon.json`. Filtre toutes les petites-filles avec `status: "planned"` (uniquement — pas les `draft`, qui ont déjà été générés).
+Lis `cocon.json`. Filtre toutes les petites-filles avec `status: "planned"` (uniquement, pas les `draft`, qui ont déjà été générés).
 
 Ordonne par **pilier le plus avancé d'abord**. Heuristique simple :
 
@@ -156,7 +156,7 @@ Prends les **N premières** de cette liste ordonnée.
 >
 > Que préfères-tu ? »
 
-### 2.2 — Affichage de la liste + confirmation
+### 2.2, Affichage de la liste + confirmation
 
 Affiche la liste compacte des N articles sélectionnés :
 
@@ -180,7 +180,7 @@ Affiche la liste compacte des N articles sélectionnés :
 [3/N] Pilier : creer-site-web-claude
        ...
 
-━━━ Coût estimé : ~0,{15 × N} € — Temps estimé : ~5 min × N en interactif ━━━
+━━━ Coût estimé : ~0,{15 × N} €, Temps estimé : ~5 min × N en interactif ━━━
 ```
 
 Pose la question :
@@ -201,15 +201,15 @@ Stocke la liste sélectionnée comme `<BATCH_LIST>` (array de `{ pilier_slug, sl
 
 ---
 
-## Étape 3 — Initialiser les compteurs du batch
+## Étape 3, Initialiser les compteurs du batch
 
 Avant la boucle, initialise les compteurs qui serviront au rapport final :
 
 ```typescript
 const batchStats = {
   succeeded: [],          // [{ slug, ghostId, ghostAdminUrl, ghostPublicUrl, linkReport, tokensP1, tokensP2 }]
-  skipped: [],            // [{ slug, reason }] — étudiant a tapé "skip" sur brief ou article
-  errors: [],             // [{ slug, phase, message }] — erreur pipeline (sanitizer, validator, fal.ai, ghost, ...)
+  skipped: [],            // [{ slug, reason }], étudiant a tapé "skip" sur brief ou article
+  errors: [],             // [{ slug, phase, message }], erreur pipeline (sanitizer, validator, fal.ai, ghost, ...)
   totalTokens: { p1In: 0, p1Out: 0, p2In: 0, p2Out: 0 },
   totalRewrittenLinks: 0,
   consecutiveErrors: 0,   // ⚠️ compteur d'abort
@@ -221,11 +221,11 @@ Stocke `<BATCH_STATS>`. Ce dict est mis à jour à chaque itération.
 
 ---
 
-## Étape 4 — Boucle de génération (i = 1 à N)
+## Étape 4, Boucle de génération (i = 1 à N)
 
 Pour chaque article `i` de 1 à N, exécute le sous-pipeline complet ci-dessous. Capture le `<CURRENT>` = `BATCH_LIST[i-1]`.
 
-### 4.0 — En-tête article
+### 4.0, En-tête article
 
 Affiche un séparateur clair :
 
@@ -236,7 +236,7 @@ Affiche un séparateur clair :
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 4.1 — Construire le `linking_context` (idem `/blog:article` étape 3)
+### 4.1, Construire le `linking_context` (idem `/blog:article` étape 3)
 
 Identifie depuis `cocon.json` :
 
@@ -250,13 +250,13 @@ Récupère les slugs Ghost déjà publiés via `mcp__ghost__posts_browse` (filte
 
 Construis la whitelist `<ALLOWED_URLS>` selon la skill `link-validation` (mère, 10 piliers, articles publiés, outils, formations CTA, pages structurelles).
 
-### 4.2 — Phase A : Générer le brief (P1)
+### 4.2, Phase A : Générer le brief (P1)
 
-#### 4.2.1 — Charger le system prompt P1
+#### 4.2.1, Charger le system prompt P1
 
-Charge **intégralement** le system prompt P1 depuis la skill `article-quality` (section « P1 — System prompt (brief) »). ⚠️ Ne le réécris pas, copie-le tel quel.
+Charge **intégralement** le system prompt P1 depuis la skill `article-quality` (section « P1, System prompt (brief) »). ⚠️ Ne le réécris pas, copie-le tel quel.
 
-#### 4.2.2 — Construire le user message P1
+#### 4.2.2, Construire le user message P1
 
 ```
 KEYWORD CIBLE : <CURRENT.keyword>
@@ -264,8 +264,8 @@ TITRE PROPOSÉ : <CURRENT.title>
 WORD COUNT TARGET : 1500
 
 CONTEXTE COCON :
-- Mère : <MERE_SLUG> (URL : /<MERE_SLUG>) — keyword "<MERE_KEYWORD>"
-- Pilier-parent : <PILIER_SLUG> (URL : /blog/pilier/<PILIER_SLUG>) — titre "<PILIER_TITLE>"
+- Mère : <MERE_SLUG> (URL : /<MERE_SLUG>), keyword "<MERE_KEYWORD>"
+- Pilier-parent : <PILIER_SLUG> (URL : /blog/pilier/<PILIER_SLUG>), titre "<PILIER_TITLE>"
 - Piliers-sœurs : <SISTERS_LIST_avec_URLs>
 - Outils linkés : <LINKED_OUTILS_avec_URLs>
 - CTA principal : <CTA_PRINCIPAL>
@@ -274,7 +274,7 @@ PERSONA CIBLE : <CURRENT.persona>
 INTENT : <CURRENT.intent>
 ```
 
-#### 4.2.3 — Appel API Anthropic (avec prompt caching pour le batch)
+#### 4.2.3, Appel API Anthropic (avec prompt caching pour le batch)
 
 ```typescript
 try {
@@ -299,7 +299,7 @@ try {
   batchStats.totalTokens.p1In += briefResponse.usage.input_tokens;
   batchStats.totalTokens.p1Out += briefResponse.usage.output_tokens;
 } catch (err) {
-  // Voir 4.5 — gestion erreur consécutive
+  // Voir 4.5, gestion erreur consécutive
   handlePipelineError(i, "P1_brief", err.message);
   continue;   // skip à l'article suivant si pas d'abort
 }
@@ -307,7 +307,7 @@ try {
 
 **Note prompt caching** : le system prompt P1 (~2K tokens) est invariant entre articles du batch. Avec `cache_control: { type: "ephemeral" }`, économie ~80 % sur les tokens d'entrée à partir du 2e article. Sur un batch de 5, économie estimée ~0,30 € total.
 
-#### 4.2.4 — Affichage du brief + validation HITL
+#### 4.2.4, Affichage du brief + validation HITL
 
 Affiche le brief de manière compacte :
 
@@ -320,8 +320,8 @@ Affiche le brief de manière compacte :
 │ WORD COUNT : <word_count_target>
 │
 │ PLAN H2 :
-│   1. <h2_1> — <what_1>
-│   2. <h2_2> — <what_2>
+│   1. <h2_1>, <what_1>
+│   2. <h2_2>, <what_2>
 │   ...
 │
 │ KEY TAKEAWAYS :
@@ -338,7 +338,7 @@ Affiche le brief de manière compacte :
 
 Pose la question :
 
-> « Article {i}/{N} — Le brief est OK ? Tape :
+> « Article {i}/{N}, Le brief est OK ? Tape :
 >
 > - `accepter` pour passer à la rédaction P2
 > - `modifier` pour ajuster manuellement (titre, plan, ton)
@@ -356,18 +356,18 @@ Capture le choix :
 
 Stocke le brief final comme `<BRIEF>`.
 
-### 4.3 — Phase B : Générer l'article (P2)
+### 4.3, Phase B : Générer l'article (P2)
 
-#### 4.3.1 — Charger le system prompt P2
+#### 4.3.1, Charger le system prompt P2
 
-Charge **intégralement** le system prompt P2 depuis la skill `article-quality` (section « P2 — System prompt (rédaction) »). ⚠️ Reproduis-le tel quel.
+Charge **intégralement** le system prompt P2 depuis la skill `article-quality` (section « P2, System prompt (rédaction) »). ⚠️ Reproduis-le tel quel.
 
-#### 4.3.2 — Construire le user message P2
+#### 4.3.2, Construire le user message P2
 
 L'ordre des sections compte (KB **avant** brief) :
 
 ```
-KNOWLEDGE BASE 2026 (validée le <validated_at>) — utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').
+KNOWLEDGE BASE 2026 (validée le <validated_at>), utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').
 
 <JSON.stringify(knowledge_base, null, 2)>
 
@@ -378,7 +378,7 @@ BRIEF DE L'ARTICLE :
 
 ---
 
-LIENS_AUTORISES (whitelist stricte — ne perds pas de tokens à inventer des URLs, le système les supprime hors whitelist) :
+LIENS_AUTORISES (whitelist stricte, ne perds pas de tokens à inventer des URLs, le système les supprime hors whitelist) :
 <liste des URLs depuis ALLOWED_URLS, une par ligne>
 
 ---
@@ -396,7 +396,7 @@ CONTRAINTES :
 - Terminer par un H2 actionnable type "Passer à la pratique" ou "Et maintenant"
 ```
 
-#### 4.3.3 — Appel API Anthropic
+#### 4.3.3, Appel API Anthropic
 
 ```typescript
 try {
@@ -443,7 +443,7 @@ try {
 
 Stocke comme `<ARTICLE>` (pré-sanitizer).
 
-#### 4.3.4 — Affichage de l'article + validation HITL
+#### 4.3.4, Affichage de l'article + validation HITL
 
 Affiche un résumé compact (pas tout le HTML, pour ne pas saturer la console) :
 
@@ -463,19 +463,19 @@ Affiche un résumé compact (pas tout le HTML, pour ne pas saturer la console) :
 │ PREMIER PARAGRAPHE :
 │   <html_strip → premier <p>, max 300 chars + "...">
 │
-│ STATS HTML : ~<word_count> mots — <a_count> liens <a> — <table_count> tables — <code_count> blocs <pre>
+│ STATS HTML : ~<word_count> mots, <a_count> liens <a>, <table_count> tables, <code_count> blocs <pre>
 └────────────────────────────────────────────────────────
 ```
 
 Pose la question :
 
-> « Article {i}/{N} — Le rendu te convient ? Tape :
+> « Article {i}/{N}, Le rendu te convient ? Tape :
 >
 > - `accepter` pour passer au push Ghost (sanitizer + link-validation + image + draft)
-> - `voir` pour afficher le HTML complet (uniquement si tu en as besoin — c'est long)
+> - `voir` pour afficher le HTML complet (uniquement si tu en as besoin, c'est long)
 > - `modifier` pour éditer manuellement un champ (meta_title, meta_description, etc.)
 > - `regenerer` pour relancer P2 avec une instruction supplémentaire
-> - `skip` pour abandonner cet article (perdu — il restera `planned` dans cocon.json) »
+> - `skip` pour abandonner cet article (perdu, il restera `planned` dans cocon.json) »
 
 ⚠️ **Attendre la réponse.** Pas d'auto-validate.
 
@@ -489,11 +489,11 @@ Capture le choix :
 
 Stocke comme `<ARTICLE>` final.
 
-### 4.4 — Phase C : Pipeline post-process et push Ghost (sans HITL)
+### 4.4, Phase C : Pipeline post-process et push Ghost (sans HITL)
 
-À partir d'ici, plus de question à l'étudiant — c'est de la mécanique automatique. Si une étape échoue, voir 4.5.
+À partir d'ici, plus de question à l'étudiant, c'est de la mécanique automatique. Si une étape échoue, voir 4.5.
 
-#### 4.4.1 — Sanitizer (idem `/blog:article` étape 7)
+#### 4.4.1, Sanitizer (idem `/blog:article` étape 7)
 
 Applique `sanitizeArticle(<ARTICLE>)` depuis la skill `article-quality` :
 
@@ -502,7 +502,7 @@ Applique `sanitizeArticle(<ARTICLE>)` depuis la skill `article-quality` :
 
 Stocke comme `<ARTICLE_SANITIZED>`.
 
-#### 4.4.2 — Link-validation ⚠️
+#### 4.4.2, Link-validation ⚠️
 
 ```typescript
 const result = validateLinks(
@@ -522,7 +522,7 @@ const linkReport = {
 batchStats.totalRewrittenLinks += linkReport.rewritten.length;
 ```
 
-#### 4.4.3 — Image hero (fal.ai) — mode dégradé acceptable
+#### 4.4.3, Image hero (fal.ai), mode dégradé acceptable
 
 ```typescript
 let ghostImageUrl = null;
@@ -543,12 +543,12 @@ if (FAL_MCP_AVAILABLE) {
     ghostImageUrl = ghostImage.url;
   } catch (err) {
     console.warn(`⚠️ Image fal.ai/upload Ghost failed pour ${CURRENT.slug} : ${err.message}`);
-    // PAS d'incrément consecutiveErrors — image en échec est dégradation acceptable, pas erreur pipeline
+    // PAS d'incrément consecutiveErrors, image en échec est dégradation acceptable, pas erreur pipeline
   }
 }
 ```
 
-#### 4.4.4 — Push Ghost en draft ⚠️
+#### 4.4.4, Push Ghost en draft ⚠️
 
 ```typescript
 try {
@@ -558,7 +558,7 @@ try {
       title: ARTICLE_SANITIZED.meta_title,
       slug: CURRENT.slug,
       html: ARTICLE_SANITIZED.html,
-      status: "draft",                        // ⚠️ FORCÉ — JAMAIS published
+      status: "draft",                        // ⚠️ FORCÉ, JAMAIS published
       feature_image: ghostImageUrl,           // null si fal.ai a échoué
       tags: [
         { name: ARTICLE_SANITIZED.primary_tag },
@@ -581,7 +581,7 @@ try {
 }
 ```
 
-#### 4.4.5 — Update `cocon.json`
+#### 4.4.5, Update `cocon.json`
 
 ```typescript
 const petiteFille = cocon.filles
@@ -596,7 +596,7 @@ petiteFille.drafted_at = new Date().toISOString();
 fs.writeFileSync("cocon.json", JSON.stringify(cocon, null, 2), "utf-8");
 ```
 
-#### 4.4.6 — Succès article : update batchStats et reset compteur
+#### 4.4.6, Succès article : update batchStats et reset compteur
 
 ```typescript
 batchStats.succeeded.push({
@@ -613,12 +613,12 @@ batchStats.consecutiveErrors = 0;   // ⚠️ reset compteur d'abort
 Affiche une confirmation courte :
 
 ```
-✅ Article {i}/{N} OK — draft Ghost : {ghostAdminEditUrl}
+✅ Article {i}/{N} OK, draft Ghost : {ghostAdminEditUrl}
    Liens : {linkReport.total} ({linkReport.internal} internes, {linkReport.rewritten.length} réécrits)
    Image : {imageOk ? "OK" : "KO (sans feature_image)"}
 ```
 
-### 4.5 — Gestion des erreurs pipeline et abort
+### 4.5, Gestion des erreurs pipeline et abort
 
 Fonction `handlePipelineError(i, phase, message)` appelée à chaque catch :
 
@@ -631,10 +631,10 @@ function handlePipelineError(i, phase, message) {
   });
   batchStats.consecutiveErrors += 1;
 
-  console.error(`❌ Article ${i}/${N} — Erreur ${phase} : ${message}`);
+  console.error(`❌ Article ${i}/${N}, Erreur ${phase} : ${message}`);
 
   if (batchStats.consecutiveErrors >= 2) {
-    // ⚠️ ABORT — non-négociable
+    // ⚠️ ABORT, non-négociable
     batchStats.abortedAt = i;
     console.error(`
 ⚠️  ABORT du batch après 2 erreurs consécutives.
@@ -661,7 +661,7 @@ Corrige le problème puis relance \`/blog:batch\` sur les ${N - i} restants.
 }
 ```
 
-### 4.6 — Rate-limit 30 s entre articles ⚠️
+### 4.6, Rate-limit 30 s entre articles ⚠️
 
 À la fin de l'itération `i` (succès, skip, ou erreur isolée), **sauf si c'est le dernier (`i === N`) ou abort** :
 
@@ -674,15 +674,15 @@ await new Promise(r => setTimeout(r, 30_000));
 
 ---
 
-## Étape 5 — Rapport final du batch
+## Étape 5, Rapport final du batch
 
-### 5.1 — Affichage console
+### 5.1, Affichage console
 
 À la fin de la boucle (succès complet ou abort), affiche un rapport structuré :
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  RAPPORT BATCH — N = <N>
+  RAPPORT BATCH, N = <N>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Statut : <BATCH_STATS.abortedAt ? `ABORTED à l'article ${BATCH_STATS.abortedAt}` : `COMPLET`>
@@ -699,7 +699,7 @@ Statut : <BATCH_STATS.abortedAt ? `ABORTED à l'article ${BATCH_STATS.abortedAt}
 
 ❌ Articles en erreur pipeline : <BATCH_STATS.errors.length>
    <pour chaque error :>
-   - <slug> — phase <phase> — <message>
+   - <slug>, phase <phase>, <message>
 
 ━━━ Tokens consommés ━━━
 
@@ -715,12 +715,12 @@ TOTAL         : ~<somme> €
 ━━━ Liens internes ━━━
 
 Total réécrits par link-validator : <BATCH_STATS.totalRewrittenLinks>
-   (idéalement 0 — si > 5 sur le batch, ajuste la whitelist du prompt P2)
+   (idéalement 0, si > 5 sur le batch, ajuste la whitelist du prompt P2)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 5.2 — Écriture du fichier de rapport
+### 5.2, Écriture du fichier de rapport
 
 Écris un fichier markdown à la racine du projet utilisateur :
 
@@ -729,7 +729,7 @@ Total réécrits par link-validator : <BATCH_STATS.totalRewrittenLinks>
 **Contenu** :
 
 ```markdown
-# Rapport batch /blog:batch — {ISO_DATETIME}
+# Rapport batch /blog:batch, {ISO_DATETIME}
 
 **Statut** : {COMPLET | ABORTED}
 **N demandé** : {N}
@@ -741,11 +741,11 @@ Total réécrits par link-validator : <BATCH_STATS.totalRewrittenLinks>
 
 ## Articles skippés
 
-{liste : slug — reason}
+{liste : slug, reason}
 
 ## Erreurs pipeline
 
-{liste : slug — phase — message}
+{liste : slug, phase, message}
 
 ## Stats tokens
 
@@ -807,11 +807,11 @@ Termine par ce message :
 > ⚠️ **Recommandation forte** : 15-20 min de relecture par article. Le batch te fait gagner les ~30 min de génération par article, pas la relecture. Si tu publies sans relire, tu prends le risque d'une erreur factuelle ou d'un lien étrange en ligne.
 >
 > Checklist relecture par article :
-> 1. Lis l'intro — la promesse est claire ?
+> 1. Lis l'intro, la promesse est claire ?
 > 2. Vérifie chaque chiffre/prix/version (la KB peut avoir des trous)
-> 3. Clique chaque lien interne — pas de 404 (le link-validator a fait le gros, mais re-vérifier)
-> 4. Vérifie l'image hero — elle colle au sujet ?
-> 5. Lis le H2 final — il pousse bien vers le CTA ?
+> 3. Clique chaque lien interne, pas de 404 (le link-validator a fait le gros, mais re-vérifier)
+> 4. Vérifie l'image hero, elle colle au sujet ?
+> 5. Lis le H2 final, il pousse bien vers le CTA ?
 > 6. Click "Publish" dans Ghost une fois que tu es OK.
 >
 > Prochain step :
@@ -825,7 +825,7 @@ Termine par ce message :
 
 ## Notes d'implémentation
 
-### Prompt caching — pourquoi c'est crucial pour le batch
+### Prompt caching, pourquoi c'est crucial pour le batch
 
 Sur `/blog:article` seul, le caching est marginal. Sur `/blog:batch` avec N=5, c'est **massif** :
 
@@ -842,9 +842,9 @@ Total ~6,5K tokens cachés × 4 articles cache-hits (à partir du 2e) × prix d'
 
 ### Persistance entre sleeps
 
-Le `await sleep(30000)` ne doit **pas** réinitialiser l'état du batch. Si la commande tourne dans une session unique (cas standard pour un slash command Claude Code), c'est automatique. Si pour une raison ou une autre la session redémarre pendant le sleep : le batch reprend depuis le début (pas de checkpointing implémenté en MVP — accepter cette limite).
+Le `await sleep(30000)` ne doit **pas** réinitialiser l'état du batch. Si la commande tourne dans une session unique (cas standard pour un slash command Claude Code), c'est automatique. Si pour une raison ou une autre la session redémarre pendant le sleep : le batch reprend depuis le début (pas de checkpointing implémenté en MVP, accepter cette limite).
 
-### Idempotence — relancer un batch après abort
+### Idempotence, relancer un batch après abort
 
 Si l'étudiant relance `/blog:batch <N>` après un abort, l'étape 2.1 (sélection auto) filtre uniquement les `status: "planned"`. Les articles qui ont réussi pendant l'abort sont déjà passés à `draft` dans `cocon.json`, donc ils sont automatiquement exclus de la sélection. Pas de doublon.
 
@@ -867,11 +867,11 @@ Lus depuis l'env. Si `ANTHROPIC_API_KEY` manquante : **stop net** avant la boucl
 - **P1** : Sonnet 4.6 (économie, qualité brief suffisante)
 - **P2** : Opus 4.7 (qualité long-form indispensable sur du SEO 1500-2000 mots)
 
-L'étudiant peut basculer P2 sur Sonnet 4.6 pour économiser ~0,10 € par article, mais qualité éditoriale dégradée — déconseillé sur le batch (l'effet se cumule).
+L'étudiant peut basculer P2 sur Sonnet 4.6 pour économiser ~0,10 € par article, mais qualité éditoriale dégradée, déconseillé sur le batch (l'effet se cumule).
 
 ### Pourquoi pas plus de 5 par batch ?
 
-- **Budget** : 5 × 0,15 € = 0,75 € — perte acceptable si pipeline cassée. Au-delà (10+ articles), le coût d'un abort devient lourd.
+- **Budget** : 5 × 0,15 € = 0,75 €, perte acceptable si pipeline cassée. Au-delà (10+ articles), le coût d'un abort devient lourd.
 - **Relecture humaine** : 5 × 20 min = 1h40 de relecture avant publication. Au-delà, l'étudiant publie en mode automatique = perte de qualité.
 - **SEO** : Google Search Console détecte les dumps de contenu (10+ articles publiés en 1h). Mauvais signal de fraîcheur. Mieux vaut espacer.
 - **Charge cognitive** : 5 dialogues HITL d'affilée = limite haute avant fatigue de validation. Au-delà, l'étudiant valide en mode robot.

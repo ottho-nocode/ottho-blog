@@ -11,14 +11,14 @@ Checklist SEO **spécifique au blog** (Ghost CMS + cocon sémantique). Différen
 
 Un blog n'est **pas** un site classique au sens SEO. Quatre différences fondamentales :
 
-- **Volume** — un blog produit 30, 50, 100+ articles. Le challenge est la **cohérence** entre les articles, pas l'optimisation parfaite d'une page unique.
-- **Structure** — chaque article = un **mini-cluster sémantique**. Un seul `<h1>`, des H2 logiques qui font avancer la promesse, pas de juxtaposition de sections décoratives.
-- **Fraîcheur** — Google préfère le contenu récent. `published_at` et surtout `updated_at` comptent : un article republié en `updated_at: 2026-04` peut surclasser un article publié en 2024 mais jamais touché.
-- **Maillage** — c'est le **cœur du cocon**. Chaque article reçoit des liens d'articles sœurs et de la mère, et envoie des liens vers la mère + sœurs + CTA formation. Voir skills `cocon-method` et `link-validation`.
+- **Volume**, un blog produit 30, 50, 100+ articles. Le challenge est la **cohérence** entre les articles, pas l'optimisation parfaite d'une page unique.
+- **Structure**, chaque article = un **mini-cluster sémantique**. Un seul `<h1>`, des H2 logiques qui font avancer la promesse, pas de juxtaposition de sections décoratives.
+- **Fraîcheur**, Google préfère le contenu récent. `published_at` et surtout `updated_at` comptent : un article republié en `updated_at: 2026-04` peut surclasser un article publié en 2024 mais jamais touché.
+- **Maillage**, c'est le **cœur du cocon**. Chaque article reçoit des liens d'articles sœurs et de la mère, et envoie des liens vers la mère + sœurs + CTA formation. Voir skills `cocon-method` et `link-validation`.
 
 ## 2. Checklist SEO d'un article (8 points)
 
-### Point 1 — `meta_title`
+### Point 1, `meta_title`
 
 - ≤ **60 caractères** (au-delà, Google tronque)
 - Contient le **keyword principal une seule fois** (pas de bourrage)
@@ -28,7 +28,7 @@ Un blog n'est **pas** un site classique au sens SEO. Quatre différences fondame
 ✅ « Apprendre Claude Code en 5 semaines | Ottho » (47 car.)
 ❌ « Apprendre Claude Code, formation Claude Code pour devenir builder Claude Code » (bourrage)
 
-### Point 2 — `meta_description`
+### Point 2, `meta_description`
 
 - ≤ **155 caractères**
 - Format : **action + bénéfice + chiffre** quand c'est possible
@@ -37,19 +37,19 @@ Un blog n'est **pas** un site classique au sens SEO. Quatre différences fondame
 
 ✅ « Apprends Claude Code en 5 semaines avec la méthode Ottho. 8 ateliers, 1 projet réel, 1 500 €. Démarrage immédiat. » (138 car.)
 
-### Point 3 — `<h1>` unique
+### Point 3, `<h1>` unique
 
-- **Un seul** `<h1>` par page. Ghost l'ajoute automatiquement depuis `title` (ou `meta_title` si défini) — l'éditeur ne doit donc **pas** générer de H1 dans le corps de l'article.
+- **Un seul** `<h1>` par page. Ghost l'ajoute automatiquement depuis `title` (ou `meta_title` si défini), l'éditeur ne doit donc **pas** générer de H1 dans le corps de l'article.
 - Si un `<h1>` est trouvé dans le HTML body : c'est une erreur de rédaction → à corriger.
 
-### Point 4 — Structure H2/H3
+### Point 4, Structure H2/H3
 
 - **5 à 8 H2** par article (un article < 5 H2 est probablement trop court ou mal structuré)
 - Hiérarchie logique : chaque H2 fait avancer la promesse, pas de « Partie 1 / Partie 2 »
 - H3 utilisés uniquement pour des sous-points sous un H2 (pas en remplacement de H2)
 - Chaque H2 décrit **factuellement** ce que contient la section (Google lit les H2 comme un sommaire)
 
-### Point 5 — 4 à 6 liens internes
+### Point 5, 4 à 6 liens internes
 
 Pattern recommandé pour un article fille :
 - **1 lien vers la mère** (page pilier `/blog/pilier/<slug>`)
@@ -59,22 +59,22 @@ Pattern recommandé pour un article fille :
 
 Voir skill `link-validation` pour la validation automatisée.
 
-### Point 6 — Image hero avec `alt` non vide
+### Point 6, Image hero avec `alt` non vide
 
 - Toute image hero doit avoir un `alt` descriptif (8-15 mots)
 - ❌ `alt="image"`, `alt="hero"`, `alt=""` (sauf décoration pure)
 - ✅ `alt="Capture d'écran d'un terminal montrant Claude Code en train de générer un composant React"`
 
-### Point 7 — Au moins 1 bloc technique
+### Point 7, Au moins 1 bloc technique
 
 Un signal de profondeur que Google et les lecteurs apprécient :
 - Au moins **1 bloc `<pre><code>`** si l'article est technique (commande, config, snippet)
 - OU **1 `<table>`** si l'article compare des options
 - Sinon : **1 `<blockquote>`** pour citer une source
 
-Un article 100 % paragraphes est plat — il manque un signal de profondeur.
+Un article 100 % paragraphes est plat, il manque un signal de profondeur.
 
-### Point 8 — JSON-LD `BlogPosting` + `BreadcrumbList`
+### Point 8, JSON-LD `BlogPosting` + `BreadcrumbList`
 
 Ghost génère automatiquement le JSON-LD `BlogPosting` si la skill `ghost-theme` est correctement appliquée. Vérifier les champs minimaux :
 
@@ -118,7 +118,7 @@ L'étudiant **n'a rien à coder**. Vérifications côté audit :
 
 ## 4. Soumission à Search Console
 
-**Pré-requis** : la propriété `blog.exemple.com` est ajoutée à Google Search Console (cf. bonus du cours — vérification soit via meta tag dans `ghost_head`, soit via fichier HTML uploadé dans `assets/`).
+**Pré-requis** : la propriété `blog.exemple.com` est ajoutée à Google Search Console (cf. bonus du cours, vérification soit via meta tag dans `ghost_head`, soit via fichier HTML uploadé dans `assets/`).
 
 Étapes :
 1. Search Console → **Sitemaps** → ajouter `sitemap.xml`
@@ -168,10 +168,10 @@ Output type pour `/blog:opportunities` : tableau markdown trié par impressions 
 
 Au-delà du SEO pur, instrumenter ces events via le `ghost_head` ou `ghost_foot` du theme custom (skill `ghost-theme`) :
 
-- `page_view` automatique avec **custom dimension `pilier`** (issue du tag Ghost) — voir cours précédent
+- `page_view` automatique avec **custom dimension `pilier`** (issue du tag Ghost), voir cours précédent
 - `click_cta_blog_to_formation` (custom event, déclenché au clic sur le CTA final de l'article)
 - `lecture_article_complete` (scroll 90 %)
-- `click_lien_interne_cocon` (clic sur un lien interne — utile pour mesurer la circulation dans le cocon)
+- `click_lien_interne_cocon` (clic sur un lien interne, utile pour mesurer la circulation dans le cocon)
 
 Ces events ne remplacent pas Search Console mais permettent de croiser **trafic SEO entrant → conversion vers formation**.
 
@@ -187,22 +187,22 @@ Ces events ne remplacent pas Search Console mais permettent de croiser **trafic 
 Format de rapport type :
 
 ```markdown
-## /blog:seo-audit — 2026-04-29
+## /blog:seo-audit, 2026-04-29
 
 **12 articles audités · 8 conformes · 4 à corriger**
 
-### article-1-slug — 2 corrections
+### article-1-slug, 2 corrections
 - Point 1 (`meta_title` 73 car.) → raccourcir à : "..."
 - Point 5 (3 liens internes seulement) → ajouter 1 lien vers /pilier-x
 
-### article-2-slug — 1 correction
+### article-2-slug, 1 correction
 - Point 7 (aucun bloc technique) → ajouter snippet ou table comparative
 ```
 
 ## 8. Usage dans les commandes du plugin
 
 Cette skill est invoquée par :
-- `/blog:seo-audit` — audit d'un article ou du cocon entier
-- `/blog:opportunities` — mining GSC pour identifier les opportunités
+- `/blog:seo-audit`, audit d'un article ou du cocon entier
+- `/blog:opportunities`, mining GSC pour identifier les opportunités
 
-Elle complète `seo-checklist` (skill du plugin précédent, focalisée landing/site) sans la dupliquer : `seo-checklist` couvre `<title>`, OG, canonical, robots.txt, etc. — éléments déjà gérés au niveau du theme Ghost (skill `ghost-theme`) et qui ne sont pas spécifiques à un article.
+Elle complète `seo-checklist` (skill du plugin précédent, focalisée landing/site) sans la dupliquer : `seo-checklist` couvre `<title>`, OG, canonical, robots.txt, etc., éléments déjà gérés au niveau du theme Ghost (skill `ghost-theme`) et qui ne sont pas spécifiques à un article.

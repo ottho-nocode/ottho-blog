@@ -3,7 +3,7 @@ name: theme
 description: Génère un theme Ghost custom à partir de charte.md (fork Source + override CSS + adaptation default.hbs/post.hbs). Uploade et active dans Ghost via MCP. Output : dossier theme/ + ZIP + theme actif sur le blog.
 ---
 
-# /blog:theme — Theme Ghost custom à partir de la charte
+# /blog:theme, Theme Ghost custom à partir de la charte
 
 Tu vas accompagner l'étudiant dans la génération d'un theme Ghost sur mesure qui fait ressembler `blog.exemple.com` à `exemple.com` : même typographie, même palette, même nav, même ton.
 
@@ -15,15 +15,15 @@ La stratégie est claire et **non négociable** : on **fork le theme officiel So
 
 Avant de démarrer, vérifie **dans cet ordre** :
 
-1. **`/blog:setup-ghost` a été exécuté** — il existe un fichier `ghost-config.md` à la racine du projet courant.
+1. **`/blog:setup-ghost` a été exécuté**, il existe un fichier `ghost-config.md` à la racine du projet courant.
    - Si non : stoppe et demande à l'étudiant de lancer `/blog:setup-ghost` d'abord. Cette commande dépend de l'instance Ghost configurée.
-2. **MCP Ghost répond** — fais un appel léger (ex. `mcp__ghost__tags_browse` avec `{ "limit": 1 }`) pour vérifier que le serveur MCP Ghost est bien connecté et authentifié.
+2. **MCP Ghost répond**, fais un appel léger (ex. `mcp__ghost__tags_browse` avec `{ "limit": 1 }`) pour vérifier que le serveur MCP Ghost est bien connecté et authentifié.
    - Si erreur : indique à l'étudiant de relancer Claude Code après avoir vérifié `~/.mcp.json` et la variable d'environnement `GHOST_ADMIN_API_KEY`.
-3. **Tu te trouves bien à la racine du projet** — `pwd` doit pointer sur le dossier de l'étudiant (où vivent `brief.md`, `charte.md`, `ghost-config.md`).
+3. **Tu te trouves bien à la racine du projet**, `pwd` doit pointer sur le dossier de l'étudiant (où vivent `brief.md`, `charte.md`, `ghost-config.md`).
 
 Si une vérif échoue, n'avance pas. Corrige avant.
 
-## Étape 0 — Vérification de `charte.md`
+## Étape 0, Vérification de `charte.md`
 
 Pose **une seule question** à l'étudiant :
 
@@ -32,7 +32,7 @@ Pose **une seule question** à l'étudiant :
 Selon la réponse :
 
 - **Oui** : lis `charte.md` à la racine. Si le fichier existe mais qu'il manque la palette **OU** les fonts, demande à l'étudiant de compléter avant de continuer (impossible de générer un theme cohérent sans ces deux blocs).
-- **Non** : guide-le brièvement (3-4 lignes max — pas d'atelier complet, c'est le rôle du chapitre Design). Donne-lui ce squelette à remplir, puis attends qu'il revienne :
+- **Non** : guide-le brièvement (3-4 lignes max, pas d'atelier complet, c'est le rôle du chapitre Design). Donne-lui ce squelette à remplir, puis attends qu'il revienne :
 
   ```markdown
   # Charte graphique
@@ -57,11 +57,11 @@ Selon la réponse :
   - Max-width prose : 720px
   ```
 
-  Précise que les valeurs doivent **matcher exactement** celles du site existant (`exemple.com`) — c'est tout l'enjeu du theme.
+  Précise que les valeurs doivent **matcher exactement** celles du site existant (`exemple.com`), c'est tout l'enjeu du theme.
 
 Une fois `charte.md` validé, extrais-en mentalement les valeurs : tu vas les coller dans le bloc `:root` du CSS à l'étape 3.
 
-## Étape 1 — Récupérer le theme Source
+## Étape 1, Récupérer le theme Source
 
 Source est le theme par défaut de Ghost, MIT, maintenu par TryGhost. On part d'un build propre depuis les releases (pas un clone du repo, qui contiendrait des fichiers de dev inutiles).
 
@@ -105,20 +105,20 @@ ls theme/
 Si la structure est anormale (par exemple un sous-dossier `Source-x.y.z/` qui contient les fichiers), aplatie :
 
 ```bash
-# Si présent — adapte le nom du sous-dossier
+# Si présent, adapte le nom du sous-dossier
 mv theme/Source-*/* theme/
 rmdir theme/Source-*
 ```
 
-> **Marqueur : action hors Claude Code** — fallback manuel si le réseau bloque GitHub : demande à l'étudiant de télécharger manuellement le ZIP depuis https://github.com/TryGhost/Source/releases (latest) et de l'extraire dans `theme/` à la racine du projet, puis annonce « ok » pour continuer.
+> **Marqueur : action hors Claude Code**, fallback manuel si le réseau bloque GitHub : demande à l'étudiant de télécharger manuellement le ZIP depuis https://github.com/TryGhost/Source/releases (latest) et de l'extraire dans `theme/` à la racine du projet, puis annonce « ok » pour continuer.
 
-## Étape 2 — Adapter `theme/package.json`
+## Étape 2, Adapter `theme/package.json`
 
 Lis `theme/package.json`. Tu vas modifier 3 champs et garder le reste tel quel.
 
 1. **`name`** : remplace par un slug du projet, ex. `ottho-blog-theme-<slug>` (en kebab-case, sans espace ni caractère spécial). Demande le slug à l'étudiant en une question :
 
-   > « Quel slug court pour ton theme ? (kebab-case, ex. `monsite-blog`) — sera le `name` du theme dans Ghost et le nom du dossier visible dans l'admin. »
+   > « Quel slug court pour ton theme ? (kebab-case, ex. `monsite-blog`), sera le `name` du theme dans Ghost et le nom du dossier visible dans l'admin. »
 
 2. **`description`** : adapte selon le projet, ex. `"Theme custom pour blog.<domaine>, dérivé de Source"`.
 
@@ -127,15 +127,15 @@ Lis `theme/package.json`. Tu vas modifier 3 champs et garder le reste tel quel.
    > « Combien d'articles par page sur la liste du blog ? (5 par défaut, dis "ok" pour garder, ou donne un autre chiffre comme 8 ou 12) »
 
 **Garde tel quel** :
-- `engines.ghost` (typiquement `>=5.0.0`) — c'est lu par Ghost pour la compat.
-- `config.image_sizes` — utilisé par `{{img_url ... size="m"}}`.
+- `engines.ghost` (typiquement `>=5.0.0`), c'est lu par Ghost pour la compat.
+- `config.image_sizes`, utilisé par `{{img_url ... size="m"}}`.
 - Toute autre clé que Source ajoute (ex. `config.custom`).
 
 Édite le fichier avec l'outil `Edit` en remplaçant uniquement les lignes ciblées.
 
-## Étape 3 — Adapter `theme/assets/css/screen.css`
+## Étape 3, Adapter `theme/assets/css/screen.css`
 
-C'est l'étape qui fait 80 % du visuel. **Ne réécris pas le CSS** — tu fais un override minimal au top.
+C'est l'étape qui fait 80 % du visuel. **Ne réécris pas le CSS**, tu fais un override minimal au top.
 
 Lis `theme/assets/css/screen.css` (juste le début, 100 premières lignes suffisent) pour identifier où Source définit ses CSS variables (cherche un bloc `:root { ... }`).
 
@@ -146,7 +146,7 @@ Insère en haut du fichier (après les éventuels `@charset` / `@font-face` mais
 ```css
 /* === Override Charte (généré par /blog:theme) === */
 :root {
-  /* Palette — extraite de charte.md */
+  /* Palette, extraite de charte.md */
   --color-primary: <valeur charte>;
   --color-text: <valeur charte>;
   --color-text-soft: <valeur charte>;
@@ -154,7 +154,7 @@ Insère en haut du fichier (après les éventuels `@charset` / `@font-face` mais
   --color-bg-soft: <valeur charte>;
   --color-accent: <valeur charte>;
 
-  /* Typographies — extraites de charte.md */
+  /* Typographies, extraites de charte.md */
   --font-display: <valeur charte>;
   --font-body: <valeur charte>;
   --font-mono: <valeur charte>;
@@ -191,15 +191,15 @@ a {
 - Si la charte impose une font Google non chargée par Source, note-le pour l'étape 4 (tu ajouteras un `<link>` dans `default.hbs`).
 - **Ne supprime aucune règle existante de Source.** Tu surcharges, tu ne remplaces pas.
 
-## Étape 4 — Adapter `theme/default.hbs` et les partials
+## Étape 4, Adapter `theme/default.hbs` et les partials
 
 `default.hbs` est le layout principal. Lis-le entièrement avant d'éditer.
 
-**Vérifications obligatoires** (si une est absente, ajoute-la — c'est non négociable) :
+**Vérifications obligatoires** (si une est absente, ajoute-la, c'est non négociable) :
 
-- `<head>` contient `{{ghost_head}}` — généralement juste avant `</head>`. Ce helper injecte les balises meta, OG, JSON-LD, code injection, analytics.
-- `<body>` a `class="{{body_class}}"` — Ghost s'en sert pour appliquer des classes contextuelles (`post-template`, `tag-template`, `home-template`).
-- `</body>` est précédé de `{{ghost_foot}}` — injecte le code injection footer + barre membres.
+- `<head>` contient `{{ghost_head}}`, généralement juste avant `</head>`. Ce helper injecte les balises meta, OG, JSON-LD, code injection, analytics.
+- `<body>` a `class="{{body_class}}"`, Ghost s'en sert pour appliquer des classes contextuelles (`post-template`, `tag-template`, `home-template`).
+- `</body>` est précédé de `{{ghost_foot}}`, injecte le code injection footer + barre membres.
 
 **Si une font Google custom est requise par la charte** (étape 3), ajoute le `<link>` **avant** `{{ghost_head}}` dans `<head>` :
 
@@ -212,7 +212,7 @@ a {
 
 Adapte la query string `family=...` à la font de la charte.
 
-**Header** : repère le markup du header dans `default.hbs` ou dans `partials/site-header.hbs` (Source décompose souvent en partials). Adapte pour matcher la nav du site existant — mêmes liens, même branding.
+**Header** : repère le markup du header dans `default.hbs` ou dans `partials/site-header.hbs` (Source décompose souvent en partials). Adapte pour matcher la nav du site existant, mêmes liens, même branding.
 
 Pose la question :
 
@@ -231,30 +231,30 @@ Adapte `partials/site-footer.hbs` (ou inline dans `default.hbs` selon la structu
 - `{{{body}}}` (triple accolades) où le contenu de chaque page s'injecte.
 - Tout `{{> partial-name}}` que tu ne touches pas explicitement.
 
-## Étape 5 — Adapter `theme/post.hbs` et `theme/index.hbs`
+## Étape 5, Adapter `theme/post.hbs` et `theme/index.hbs`
 
 `post.hbs` rend une page d'article. `index.hbs` rend la liste (page d'accueil du blog).
 
 **Pour `post.hbs`** :
-- Vérifie que la prose est bien englobée dans un container avec `max-width: var(--max-width-prose)` — si Source utilise une autre variable, ajoute la règle dans `screen.css` :
+- Vérifie que la prose est bien englobée dans un container avec `max-width: var(--max-width-prose)`, si Source utilise une autre variable, ajoute la règle dans `screen.css` :
   ```css
   .post-content { max-width: var(--max-width-prose); }
   ```
-- Garde `{{content}}` intact — c'est lui qui injecte le HTML rendu par Ghost.
+- Garde `{{content}}` intact, c'est lui qui injecte le HTML rendu par Ghost.
 - Garde les helpers de méta : `{{date published_at format="DD MMMM YYYY"}}`, `{{reading_time}}`, `{{primary_tag}}`, `{{authors}}`.
 - Si la charte impose un layout très différent (ex. titre énorme bordé d'une image), ajuste le markup mais **conserve les helpers**.
 
 **Pour `index.hbs`** :
 - Le `{{#foreach posts}} ... {{/foreach}}` est le cœur. Garde-le.
 - À l'intérieur, garde les helpers : `{{title}}`, `{{excerpt}}`, `{{url}}`, `{{date published_at format="..."}}`, `{{img_url feature_image size="m"}}`.
-- Si tu changes le markup d'une carte article, fais-le dans `partials/article-card.hbs` ou équivalent — Source utilise généralement un partial.
+- Si tu changes le markup d'une carte article, fais-le dans `partials/article-card.hbs` ou équivalent, Source utilise généralement un partial.
 - Garde la pagination en bas : `{{pagination}}` ou le bloc `{{#if pagination.pages}}...{{/if}}`.
 
 **Tag.hbs et page.hbs** : ne les touche pas en première itération. Ils héritent du CSS via le bloc `:root` et fonctionnent out of the box. L'étudiant pourra les ajuster plus tard.
 
-## Étape 6 — Construire le ZIP
+## Étape 6, Construire le ZIP
 
-Le ZIP doit avoir `package.json` à la **racine** — pas dans un sous-dossier. C'est une contrainte stricte de Ghost.
+Le ZIP doit avoir `package.json` à la **racine**, pas dans un sous-dossier. C'est une contrainte stricte de Ghost.
 
 ```bash
 # Depuis la racine du projet
@@ -272,13 +272,13 @@ unzip -l theme.zip | head -20
 
 Si tu vois un wrapper de dossier dans le listing, recommence en zippant **depuis l'intérieur** de `theme/` (le `cd theme &&` est essentiel).
 
-## Étape 7 — Upload du theme via MCP Ghost
+## Étape 7, Upload du theme via MCP Ghost
 
 Le MCP Ghost ne semble pas exposer d'outil dédié à l'upload de theme dans la liste standard (`mcp__ghost__themes_*` n'existe pas dans la version courante). Deux pistes selon ce que ton instance MCP propose :
 
 1. **Si un outil `mcp__ghost__themes_upload` (ou équivalent) est disponible** : appelle-le avec le chemin absolu vers `theme.zip`. Lis sa signature avec `ToolSearch query="select:mcp__ghost__themes_upload" max_results=1` au besoin.
 
-2. **Sinon, fallback Admin API direct** — utilise `curl` avec un JWT généré depuis `GHOST_ADMIN_API_KEY` :
+2. **Sinon, fallback Admin API direct**, utilise `curl` avec un JWT généré depuis `GHOST_ADMIN_API_KEY` :
 
    ```bash
    # Lis l'URL et la clé depuis ghost-config.md, exporte-les
@@ -302,11 +302,11 @@ Le MCP Ghost ne semble pas exposer d'outil dédié à l'upload de theme dans la 
      -F "file=@theme.zip"
    ```
 
-   Vérifie la réponse : un objet `{ "themes": [{ "name": "...", "active": false, ... }] }` signifie succès. Une erreur `400` mentionnant `package.json` signifie que le ZIP a un wrapper de dossier — refais l'étape 6.
+   Vérifie la réponse : un objet `{ "themes": [{ "name": "...", "active": false, ... }] }` signifie succès. Une erreur `400` mentionnant `package.json` signifie que le ZIP a un wrapper de dossier, refais l'étape 6.
 
-> **Marqueur : action hors Claude Code** — si ni le MCP ni le curl ne marchent (clé API mal configurée, instance qui rejette JWT) : demande à l'étudiant d'aller manuellement dans Ghost admin → **Settings** → **Design & branding** → **Change theme** → **Upload theme** → sélectionner `theme.zip` → activer. Annonce-lui le chemin absolu du ZIP pour qu'il sache quoi uploader.
+> **Marqueur : action hors Claude Code**, si ni le MCP ni le curl ne marchent (clé API mal configurée, instance qui rejette JWT) : demande à l'étudiant d'aller manuellement dans Ghost admin → **Settings** → **Design & branding** → **Change theme** → **Upload theme** → sélectionner `theme.zip` → activer. Annonce-lui le chemin absolu du ZIP pour qu'il sache quoi uploader.
 
-## Étape 8 — Activer le theme
+## Étape 8, Activer le theme
 
 Après upload, le theme existe dans l'admin mais n'est pas activé.
 
@@ -321,16 +321,16 @@ Après upload, le theme existe dans l'admin mais n'est pas activé.
 
    Réponse attendue : `{ "themes": [{ "name": "<slug>", "active": true, ... }] }`.
 
-> **Marqueur : action hors Claude Code** — fallback : Ghost admin → Settings → Design & branding → liste des themes → bouton **Activate** sur le theme uploadé.
+> **Marqueur : action hors Claude Code**, fallback : Ghost admin → Settings → Design & branding → liste des themes → bouton **Activate** sur le theme uploadé.
 
-**Test live** : ouvre `<URL du blog>` (l'URL est dans `ghost-config.md`) dans le navigateur. Tu dois voir le rendu custom — typo charte, couleurs charte, nav adaptée. Compare côte à côte avec le site principal.
+**Test live** : ouvre `<URL du blog>` (l'URL est dans `ghost-config.md`) dans le navigateur. Tu dois voir le rendu custom, typo charte, couleurs charte, nav adaptée. Compare côte à côte avec le site principal.
 
-## Étape 9 — Génération du récap (`theme/README.md`)
+## Étape 9, Génération du récap (`theme/README.md`)
 
 Crée `theme/README.md` à la racine du dossier theme avec ce contenu (adapté aux valeurs réelles) :
 
 ```markdown
-# Theme — <nom du projet>
+# Theme, <nom du projet>
 
 Theme Ghost custom dérivé de [Source](https://github.com/TryGhost/Source) (MIT).
 
@@ -344,16 +344,16 @@ Theme Ghost custom dérivé de [Source](https://github.com/TryGhost/Source) (MIT
 
 - **Palette** : extraite de `../charte.md` (primary <hex>, accent <hex>, etc.)
 - **Typographies** : <font-display> (titres), <font-body> (texte)
-- **Navigation** : <description courte — clone du site / nav Ghost dynamique>
+- **Navigation** : <description courte, clone du site / nav Ghost dynamique>
 - **Footer** : <description courte>
 
 ## Structure
 
-- `package.json` — manifeste (name: <slug>, posts_per_page: <n>)
-- `default.hbs` — layout (header/footer adaptés)
-- `assets/css/screen.css` — bloc `:root` override Charte au top
-- `post.hbs` / `index.hbs` — typo + spacing alignés charte
-- `partials/` — partials de Source, conservés
+- `package.json`, manifeste (name: <slug>, posts_per_page: <n>)
+- `default.hbs`, layout (header/footer adaptés)
+- `assets/css/screen.css`, bloc `:root` override Charte au top
+- `post.hbs` / `index.hbs`, typo + spacing alignés charte
+- `partials/`, partials de Source, conservés
 
 ## Itérer
 
@@ -365,7 +365,7 @@ Pour modifier le theme :
    - via MCP Ghost (relance `/blog:theme` → étapes 7-8)
    - ou Ghost admin → Settings → Design & branding → Upload theme.
 
-Ghost recharge le theme à la volée — pas de restart de pod. L'étudiant voit ses changements en moins d'une minute.
+Ghost recharge le theme à la volée, pas de restart de pod. L'étudiant voit ses changements en moins d'une minute.
 ```
 
 ## Vérifications finales
@@ -389,11 +389,11 @@ Si une case ne passe pas, corrige avant de clôturer.
 
 Une fois toutes les vérifications validées :
 
-> « Ton theme Ghost custom est en ligne. Le blog respecte ta charte — typo, palette, nav, spacing. Pour itérer : édite les fichiers dans `theme/`, re-zippe, ré-uploade. Ghost recharge à la volée, pas de redémarrage.
+> « Ton theme Ghost custom est en ligne. Le blog respecte ta charte, typo, palette, nav, spacing. Pour itérer : édite les fichiers dans `theme/`, re-zippe, ré-uploade. Ghost recharge à la volée, pas de redémarrage.
 >
 > Pièges classiques pour les prochaines itérations :
 > - Toujours zipper **depuis l'intérieur** de `theme/` (sinon Ghost rejette : `package.json` doit être à la racine du ZIP).
-> - Ne jamais supprimer `{{ghost_head}}`, `{{ghost_foot}}`, `{{body_class}}` — ça casse tracking, membres, code injection.
-> - Si tu changes la palette, modifie uniquement le bloc `:root` au top de `screen.css` — le reste hérite.
+> - Ne jamais supprimer `{{ghost_head}}`, `{{ghost_foot}}`, `{{body_class}}`, ça casse tracking, membres, code injection.
+> - Si tu changes la palette, modifie uniquement le bloc `:root` au top de `screen.css`, le reste hérite.
 >
 > Prochaine étape : `/blog:cocon` pour cartographier la stratégie SEO de ton blog (piliers thématiques + maillage interne). »

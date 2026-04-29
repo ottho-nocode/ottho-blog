@@ -35,7 +35,7 @@ Les commandes `/blog:article` (un article) et `/blog:batch` (plusieurs en série
 
 ---
 
-## P1 — System prompt (brief)
+## P1, System prompt (brief)
 
 ⚠️ Reproduire **intégralement**. Ce prompt est testé et raffiné, ne pas le réécrire « créativement ».
 
@@ -108,11 +108,11 @@ Tu retournes UNIQUEMENT du JSON valide respectant le schéma demandé.
 
 ### User prompt template P1
 
-Le user prompt fournit `keyword`, `linking_context` (mère, pilier parent, sœurs, CTA, outils techniques) et la `persona` cible. Pas de KB en P1 — la KB est injectée seulement en P2 où elle protège les chiffres.
+Le user prompt fournit `keyword`, `linking_context` (mère, pilier parent, sœurs, CTA, outils techniques) et la `persona` cible. Pas de KB en P1, la KB est injectée seulement en P2 où elle protège les chiffres.
 
 ---
 
-## P2 — System prompt (rédaction)
+## P2, System prompt (rédaction)
 
 ⚠️ Reproduire **intégralement**.
 
@@ -132,7 +132,7 @@ Règles non négociables :
 6. Tu cites des chiffres concrets, des exemples exécutables, des outils nommés, des prix datés (2026).
 7. Tu inclus 1 bloc <pre><code> de code, prompt Claude, ou commande CLI si c'est pertinent au sujet.
 8. Tu termines TOUJOURS par un paragraphe qui contient un <a> contextuel vers le CTA principal de la branche.
-9. Pas de "Conclusion" comme dernier H2 — termine par un H2 plus actionnable type "Passer à la pratique" ou "Et maintenant".
+9. Pas de "Conclusion" comme dernier H2, termine par un H2 plus actionnable type "Passer à la pratique" ou "Et maintenant".
 
 UTILISE DES TABLES quand c'est pertinent (c'est un format puissant pour le SEO et la lisibilité) :
 - Comparaisons (X vs Y, options A/B/C, fonctionnalité par plan tarifaire) → <table> obligatoire
@@ -140,7 +140,7 @@ UTILISE DES TABLES quand c'est pertinent (c'est un format puissant pour le SEO e
 - Listes longues avec colonnes (outil, cas d'usage, prix, lien) → <table>
 - Bénéfices vs limitations → <table> à 2 colonnes
 
-CONTRAINTES FACTUELLES (très strictes — la marque Ottho ne tolère aucune erreur factuelle) :
+CONTRAINTES FACTUELLES (très strictes, la marque Ottho ne tolère aucune erreur factuelle) :
 - Tu reçois plus bas une KNOWLEDGE BASE 2026 vérifiée. Tu n'utilises AUCUN chiffre, prix, statistique, version, date, ou nom propre qui ne soit pas dedans.
 - Si une info te manque : OMETS-LA ou utilise un conditionnel ("environ", "à partir de", "selon les données 2026", "la majorité de").
 - Pour les prix Claude/ChatGPT/Ottho : reprends les valeurs EXACTES de la KB et préfixe par "à partir de" ou "environ".
@@ -160,10 +160,10 @@ Format strict des tables : structure <table><thead><tr><th>...</th></tr></thead>
 
 Pour les ancres de lien : varie systématiquement, jamais le keyword cible exact (sur-optimisation = pénalité).
 
-Pour les meta SEO (CONTRAINTES STRICTES — Ghost rejette si dépassé) :
+Pour les meta SEO (CONTRAINTES STRICTES, Ghost rejette si dépassé) :
 - meta_title : max 60 caractères (SEO Google), contient le keyword une seule fois
 - meta_description : max 155 caractères (SEO Google), action + bénéfice + chiffre si possible
-- custom_excerpt : max 280 caractères (limite Ghost = 300 — laisse 20 char de marge), accroche éditoriale qui donne envie de lire
+- custom_excerpt : max 280 caractères (limite Ghost = 300, laisse 20 char de marge), accroche éditoriale qui donne envie de lire
 - og_title : max 60 caractères (LinkedIn / Slack tronquent au-delà)
 - og_description : max 200 caractères
 - feature_image_prompt : prompt EN ANGLAIS pour fal.ai nano-banana-2, format "editorial magazine photograph, Kodak Portra 400 film grain, [sujet spécifique], muted palette, photorealistic"
@@ -212,10 +212,10 @@ Tu retournes UNIQUEMENT du JSON valide respectant le schéma demandé.
 ### User prompt template P2
 
 Le user prompt P2 contient :
-1. **KNOWLEDGE BASE 2026** sérialisée — voir skill `knowledge-base`. C'est la garantie factuelle.
-2. **BRIEF** sérialisé — sortie de P1.
-3. **LIENS_AUTORISES** — whitelist stricte. Toute URL hors whitelist sera silencieusement réécrite par le link validator post-process. Annonce-le dans le prompt : « ne perds pas de tokens à inventer des URLs ».
-4. **CONTRAINTES** — word_count_target, tone (du brief), rappel HTML-pas-markdown, rappel pas-de-h1.
+1. **KNOWLEDGE BASE 2026** sérialisée, voir skill `knowledge-base`. C'est la garantie factuelle.
+2. **BRIEF** sérialisé, sortie de P1.
+3. **LIENS_AUTORISES**, whitelist stricte. Toute URL hors whitelist sera silencieusement réécrite par le link validator post-process. Annonce-le dans le prompt : « ne perds pas de tokens à inventer des URLs ».
+4. **CONTRAINTES**, word_count_target, tone (du brief), rappel HTML-pas-markdown, rappel pas-de-h1.
 
 ---
 
@@ -229,7 +229,7 @@ Heuristiques contextuelles, à appliquer **dans cet ordre** (ordre = priorité) 
 
 | Pattern entrée | Sortie | Cas typique |
 |---|---|---|
-| `" — "` (espace-cadratin-espace) | `", "` | Incise courte (le plus fréquent) |
+| `", "` (espace-cadratin-espace) | `", "` | Incise courte (le plus fréquent) |
 | `"— "` (cadratin-espace, début) | `": "` | Introduction de définition |
 | `" —"` (espace-cadratin, fin) | `","` | Fin d'incise |
 | `"—"` standalone | `":"` | Cas par défaut |
@@ -240,7 +240,7 @@ Implémentation TypeScript de référence (depuis `app/api/cocon/article/route.t
 ```ts
 function stripEmDashes(text: string): string {
   return text
-    .replace(/ — /g, ", ")
+    .replace(/, /g, ", ")
     .replace(/— /g, ": ")
     .replace(/ —/g, ",")
     .replace(/—/g, ":")
@@ -315,7 +315,7 @@ Voir skill `link-validation` pour le détail. En résumé :
 
 - Toute balise `<a href="/...">` interne du HTML généré est extraite et confrontée à une whitelist (`getStaticAllowedUrls()` du cocon + slugs Ghost déjà publiés).
 - Toute URL **non-whitelistée** est **réécrite vers la pilier-parent** (l'URL la plus contextuelle pour ne jamais 404).
-- Les URLs externes (`http://`, `https://`) ne sont pas réécrites — elles sont seulement comptées et loggées.
+- Les URLs externes (`http://`, `https://`) ne sont pas réécrites, elles sont seulement comptées et loggées.
 - Le HTML nettoyé remplace `article.html` avant push Ghost.
 
 C'est ce qui permet d'écrire dans le prompt P2 : « ne perds pas de tokens à inventer des URLs, le système les supprime ». Le modèle se concentre sur la prose.
@@ -382,8 +382,8 @@ Le plugin doit lire `ANTHROPIC_API_KEY` depuis l'env (jamais en dur). Si manquan
 
 ## Lien avec les autres skills du plugin
 
-- **`cocon-method`** : fournit `getLinkingContext(filleSlug, pfSlug)` — la mère, les sœurs, le CTA, les outils techniques. Sans le contexte cocon, P1 ne sait pas où placer l'article.
-- **`knowledge-base`** : fournit `KNOWLEDGE_BASE` — la source factuelle de P2. Sans la KB, P2 hallucine.
+- **`cocon-method`** : fournit `getLinkingContext(filleSlug, pfSlug)`, la mère, les sœurs, le CTA, les outils techniques. Sans le contexte cocon, P1 ne sait pas où placer l'article.
+- **`knowledge-base`** : fournit `KNOWLEDGE_BASE`, la source factuelle de P2. Sans la KB, P2 hallucine.
 - **`link-validation`** : post-process le `<a href>` interne. Sans le validator, le modèle peut inventer des URLs 404.
 - **`ghost-config`** : push le résultat de P2 dans Ghost en `status: "draft"`.
 - **`/blog:article`** (commande) : orchestrateur d'un seul article.

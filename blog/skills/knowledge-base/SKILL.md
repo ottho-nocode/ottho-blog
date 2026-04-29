@@ -9,7 +9,7 @@ Cette skill définit le **pattern de knowledge base factuelle** : un fichier de 
 
 ## 1. Pourquoi une KB factuelle
 
-Les LLM hallucinent **plausiblement** quand ils manquent d'info à jour. Exemple typique : Claude qui te cite « Claude Pro à 18 €/mois » alors que le prix réel est 20 €. Le chiffre semble crédible, l'article semble propre — et tu publies une erreur.
+Les LLM hallucinent **plausiblement** quand ils manquent d'info à jour. Exemple typique : Claude qui te cite « Claude Pro à 18 €/mois » alors que le prix réel est 20 €. Le chiffre semble crédible, l'article semble propre, et tu publies une erreur.
 
 Pour un blog professionnel, une erreur factuelle = perte de crédibilité = mauvais pour la marque. Et tu ne peux pas relire chaque chiffre à chaque article quand tu en publies 30 dans un cocon.
 
@@ -21,13 +21,13 @@ Format suggéré : un fichier `knowledge.json` à la racine de ton projet (lisib
 
 Sections recommandées :
 
-- `validated_at` — date ISO de dernière validation manuelle (ex. `"2026-04-29"`)
-- `version` — entier incrémenté à chaque mise à jour
-- `pricing` — tarifs des outils que tu cites souvent (Claude, ChatGPT, Notion, etc.)
-- `models` — versions des modèles IA (Opus 4.7, GPT-5…) avec context window et release date
-- `ecosystem` — descriptions courtes des produits/services cités (Claude Code, MCP, Projects)
-- `business` — infos sur ton entreprise/offre (formations, prix, certifications, années d'activité, nombres d'apprenants)
-- `rules` — règles méta de rédaction (« ne jamais citer un prix sans le qualifier 'à partir de' »)
+- `validated_at`, date ISO de dernière validation manuelle (ex. `"2026-04-29"`)
+- `version`, entier incrémenté à chaque mise à jour
+- `pricing`, tarifs des outils que tu cites souvent (Claude, ChatGPT, Notion, etc.)
+- `models`, versions des modèles IA (Opus 4.7, GPT-5…) avec context window et release date
+- `ecosystem`, descriptions courtes des produits/services cités (Claude Code, MCP, Projects)
+- `business`, infos sur ton entreprise/offre (formations, prix, certifications, années d'activité, nombres d'apprenants)
+- `rules`, règles méta de rédaction (« ne jamais citer un prix sans le qualifier 'à partir de' »)
 
 ## 3. Exemple concret
 
@@ -50,7 +50,7 @@ Sections recommandées :
   },
   "ecosystem": {
     "claude_code": "Agent CLI officiel Anthropic, lit/écrit/exécute du code en local.",
-    "mcp": "Model Context Protocol — standard ouvert créé par Anthropic en 2024 pour connecter des LLM à des outils tiers."
+    "mcp": "Model Context Protocol, standard ouvert créé par Anthropic en 2024 pour connecter des LLM à des outils tiers."
   },
   "business": {
     "founded": 2022,
@@ -70,15 +70,15 @@ Sections recommandées :
 
 Le prompt de rédaction P2 reçoit la KB en contexte (sérialisée en JSON dans le user message). L'instruction d'ouverture est stricte :
 
-> **KNOWLEDGE BASE 2026 (validée le {validated_at}) — utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').**
+> **KNOWLEDGE BASE 2026 (validée le {validated_at}), utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').**
 
 Le prompt enchaîne ensuite avec le brief de l'article, les instructions de rédaction (ton, format, longueur), puis le `linking_context` (voir skill `cocon-method`).
 
 L'ordre compte : la KB doit arriver **avant** les instructions créatives, pour ancrer le cadre factuel comme contrainte primaire.
 
-## 5. Maintenance — qui, quand, comment
+## 5. Maintenance, qui, quand, comment
 
-**Qui** : c'est toi (ou ton équipe) qui maintiens ta KB. Le plugin ne la met pas à jour automatiquement — les sources changent trop souvent et de manière imprévisible (annonces Anthropic, refontes tarifaires concurrents, etc.).
+**Qui** : c'est toi (ou ton équipe) qui maintiens ta KB. Le plugin ne la met pas à jour automatiquement, les sources changent trop souvent et de manière imprévisible (annonces Anthropic, refontes tarifaires concurrents, etc.).
 
 **Quand** :
 - Trimestriellement minimum
@@ -105,9 +105,9 @@ Pour les 5 % restants : **relecture humaine attentive** sur les passages comport
 
 Cette skill est invoquée par :
 
-- `/blog:article` — injection KB dans le prompt P2 de rédaction
-- `/blog:batch` — même injection, répétée pour chaque article du cocon
+- `/blog:article`, injection KB dans le prompt P2 de rédaction
+- `/blog:batch`, même injection, répétée pour chaque article du cocon
 
 ## Source canonique
 
-Le pattern est implémenté dans le code de démonstration fourni par le formateur (fichier `lib/knowledge.ts`) — version TypeScript de la même structure, utilisée en production.
+Le pattern est implémenté dans le code de démonstration fourni par le formateur (fichier `lib/knowledge.ts`), version TypeScript de la même structure, utilisée en production.

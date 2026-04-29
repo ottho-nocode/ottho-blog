@@ -3,11 +3,11 @@ name: integrate-admin
 description: Scaffolde un back-office Next.js dans le projet de l'élève pour piloter la production d'articles depuis une UI graphique (P1 brief, P2 article, image fal.ai, push Ghost draft). Complémentaire de /blog:article (CLI). Scénario C uniquement.
 ---
 
-# /blog:integrate-admin — Scaffold du back-office UI dans ton site Next.js
+# /blog:integrate-admin, Scaffold du back-office UI dans ton site Next.js
 
-Tu vas générer dans le projet de l'élève **un back-office d'administration éditoriale** (Next.js 16, App Router) qui permet de piloter toute la production d'articles depuis une interface graphique : lister les articles planifiés du cocon, générer le brief P1, lancer la rédaction P2, prévisualiser le HTML rendu, copier les meta SEO, générer l'image hero fal.ai, et pousser l'article en draft Ghost — **sans quitter le navigateur**.
+Tu vas générer dans le projet de l'élève **un back-office d'administration éditoriale** (Next.js 16, App Router) qui permet de piloter toute la production d'articles depuis une interface graphique : lister les articles planifiés du cocon, générer le brief P1, lancer la rédaction P2, prévisualiser le HTML rendu, copier les meta SEO, générer l'image hero fal.ai, et pousser l'article en draft Ghost, **sans quitter le navigateur**.
 
-C'est le pendant **graphique** de `/blog:article` (la version CLI Claude Code). Les deux coexistent — l'élève choisit selon son contexte :
+C'est le pendant **graphique** de `/blog:article` (la version CLI Claude Code). Les deux coexistent, l'élève choisit selon son contexte :
 
 | | `/blog:article` (CLI) | `/blog:integrate-admin` (UI) |
 |---|---|---|
@@ -16,7 +16,7 @@ C'est le pendant **graphique** de `/blog:article` (la version CLI Claude Code). 
 | **Idéal pour** | rythme régulier solo, rapide | équipe, vue d'ensemble, plusieurs articles en parallèle |
 | **Coût LLM** | identique (~0,15 € / article) | identique |
 
-**Cette commande n'a de sens qu'en scénario C** (Next.js avec headless API). Si l'élève a choisi A (PikaPods URL) ou B (sous-domaine), Ghost rend lui-même l'admin éditoriale (Ghost admin natif), et cette commande n'apporte rien — redirige-le vers `/blog:article` pour le pipeline assisté.
+**Cette commande n'a de sens qu'en scénario C** (Next.js avec headless API). Si l'élève a choisi A (PikaPods URL) ou B (sous-domaine), Ghost rend lui-même l'admin éditoriale (Ghost admin natif), et cette commande n'apporte rien, redirige-le vers `/blog:article` pour le pipeline assisté.
 
 **Temps estimé** : ~12 min (lecture des questions + génération + collage des 3 env vars Anthropic/fal/Ghost dans Vercel + premier test local).
 
@@ -24,7 +24,7 @@ C'est le pendant **graphique** de `/blog:article` (la version CLI Claude Code). 
 
 ## Pré-requis
 
-### Pré-requis 1 — `ghost-config.md` existe et scénario = C
+### Pré-requis 1, `ghost-config.md` existe et scénario = C
 
 Lis `ghost-config.md` à la racine du projet. Vérifie qu'il contient bien `**Type** : headless API rendu par le framework` (ou variante claire indiquant scénario C).
 
@@ -34,9 +34,9 @@ Si absent :
 
 Si le scénario n'est **pas** C :
 
-> « Ton `ghost-config.md` indique que tu es en scénario <A | B>. Ce back-office UI n'a de sens qu'en scénario C (Next.js qui consomme la Ghost Content API). Dans ton cas, l'admin éditoriale est déjà fournie par Ghost natif (`<BLOG_URL>/ghost`) — tu n'as pas besoin d'en scaffolder une nouvelle. Pour le pipeline assisté de génération d'articles, utilise `/blog:article` (CLI) à la place. »
+> « Ton `ghost-config.md` indique que tu es en scénario <A | B>. Ce back-office UI n'a de sens qu'en scénario C (Next.js qui consomme la Ghost Content API). Dans ton cas, l'admin éditoriale est déjà fournie par Ghost natif (`<BLOG_URL>/ghost`), tu n'as pas besoin d'en scaffolder une nouvelle. Pour le pipeline assisté de génération d'articles, utilise `/blog:article` (CLI) à la place. »
 
-### Pré-requis 2 — `cocon.json` existe à la racine
+### Pré-requis 2, `cocon.json` existe à la racine
 
 Lis `cocon.json`. Vérifie qu'il contient bien la structure `mere` + `filles[].petites_filles[]`.
 
@@ -44,7 +44,7 @@ Si absent :
 
 > « Je ne trouve pas `cocon.json` à la racine. Lance `/blog:cocon` d'abord pour cartographier ta stratégie SEO. L'admin UI a besoin du cocon pour lister les articles à produire. »
 
-### Pré-requis 3 — Projet Next.js 16 (App Router)
+### Pré-requis 3, Projet Next.js 16 (App Router)
 
 Vérifie en parallèle :
 - `package.json` existe et liste `next` (≥ 16) + `react` (≥ 19) dans `dependencies`
@@ -53,11 +53,11 @@ Vérifie en parallèle :
 
 Si l'un manque :
 
-> « Cette commande nécessite Next.js 16 avec l'App Router. Pour les autres stacks (HTML pur, Astro, SvelteKit, Nuxt), utilise `/blog:article` en CLI — il marche partout. Le scaffold UI Next.js arrivera dans une V1.5 pour les autres frameworks. »
+> « Cette commande nécessite Next.js 16 avec l'App Router. Pour les autres stacks (HTML pur, Astro, SvelteKit, Nuxt), utilise `/blog:article` en CLI, il marche partout. Le scaffold UI Next.js arrivera dans une V1.5 pour les autres frameworks. »
 
-### Pré-requis 4 — `lib/ghost.ts` existe (= `/blog:integrate-headless` déjà passé)
+### Pré-requis 4, `lib/ghost.ts` existe (= `/blog:integrate-headless` déjà passé)
 
-Vérifie que `lib/ghost.ts` est présent — c'est le client Content API généré par `/blog:integrate-headless`. L'admin UI s'appuie dessus pour récupérer la liste des slugs d'articles déjà publiés (whitelist de liens internes).
+Vérifie que `lib/ghost.ts` est présent, c'est le client Content API généré par `/blog:integrate-headless`. L'admin UI s'appuie dessus pour récupérer la liste des slugs d'articles déjà publiés (whitelist de liens internes).
 
 Si absent :
 
@@ -84,13 +84,13 @@ Ouvre la commande par ce message :
 
 Pose les questions **UNE PAR UNE**. Attends la réponse avant de passer à la suivante.
 
-### Question 1 — Path racine du back-office
+### Question 1, Path racine du back-office
 
-> « Quel path veux-tu pour le back-office ? Par défaut `app/cocon/admin/` (l'admin sera donc à `<site>/cocon/admin`). Tu peux aussi mettre `app/admin/`, `app/(admin)/cocon/`, etc. — pas d'enjeu fonctionnel. Recommandation : garde le défaut, c'est cohérent avec le naming "cocon" du plugin. »
+> « Quel path veux-tu pour le back-office ? Par défaut `app/cocon/admin/` (l'admin sera donc à `<site>/cocon/admin`). Tu peux aussi mettre `app/admin/`, `app/(admin)/cocon/`, etc., pas d'enjeu fonctionnel. Recommandation : garde le défaut, c'est cohérent avec le naming "cocon" du plugin. »
 
 Stocke `<ADMIN_PATH>` (par défaut `app/cocon/admin`). Stocke aussi `<ADMIN_URL_PATH>` (par défaut `/cocon/admin`).
 
-### Question 2 — Password de protection
+### Question 2, Password de protection
 
 > « Le back-office expose des routes API qui consomment tes clés Anthropic et fal.ai. **Il doit être protégé en production.** Le scaffold inclut une auth par cookie + password partagé (simple mais robuste si le password est fort).
 >
@@ -98,19 +98,19 @@ Stocke `<ADMIN_PATH>` (par défaut `app/cocon/admin`). Stocke aussi `<ADMIN_URL_
 
 Stocke `<COCON_PASSWORD>`. Si vide, génère via `openssl rand -hex 16` (ou note à l'élève de le faire et de le coller dans son `.env.local` lui-même).
 
-### Question 3 — Couleur d'accent UI
+### Question 3, Couleur d'accent UI
 
-> « Quelle couleur d'accent pour les boutons primaires de l'admin ? Donne un hex (ex. `#5C3BFF`) ou laisse vide pour le défaut violet `#5C3BFF`. C'est juste une couleur d'UI interne — elle peut être différente de celle du blog public. »
+> « Quelle couleur d'accent pour les boutons primaires de l'admin ? Donne un hex (ex. `#5C3BFF`) ou laisse vide pour le défaut violet `#5C3BFF`. C'est juste une couleur d'UI interne, elle peut être différente de celle du blog public. »
 
 Stocke `<ACCENT_COLOR>` (par défaut `#5C3BFF`).
 
-### Question 4 — Variables d'environnement Anthropic / fal.ai / Ghost Admin
+### Question 4, Variables d'environnement Anthropic / fal.ai / Ghost Admin
 
 > « Pour fonctionner, l'admin a besoin de 3 clés en plus de celles de `/blog:integrate-headless` (qui sont déjà censées être posées). Confirme-moi pour chacune si elle est déjà configurée :
 >
-> 1. `ANTHROPIC_API_KEY` — clé API Anthropic (génère sur console.anthropic.com → API Keys). Format `sk-ant-...`
-> 2. `FAL_KEY` — clé API fal.ai (génère sur fal.ai → API Keys). Coût ~0,05 € par image.
-> 3. `GHOST_ADMIN_API_KEY` — clé Admin Ghost au format `<id>:<secret>` (déjà dispo dans Ghost admin → Settings → Integrations → Claude Code, sous "Admin API Key"). **PAS la Content API Key.**
+> 1. `ANTHROPIC_API_KEY`, clé API Anthropic (génère sur console.anthropic.com → API Keys). Format `sk-ant-...`
+> 2. `FAL_KEY`, clé API fal.ai (génère sur fal.ai → API Keys). Coût ~0,05 € par image.
+> 3. `GHOST_ADMIN_API_KEY`, clé Admin Ghost au format `<id>:<secret>` (déjà dispo dans Ghost admin → Settings → Integrations → Claude Code, sous "Admin API Key"). **PAS la Content API Key.**
 >
 > Tu les as déjà toutes ou il en manque ? Pour celles qui manquent, je te donne les liens de génération. »
 
@@ -124,13 +124,13 @@ Avant chaque écriture, **annonce le fichier**. Après chaque écriture, confirm
 
 Note : les chemins ci-dessous supposent `<ADMIN_PATH>` = `app/cocon/admin`. Si l'élève a choisi un autre path, adapte les imports `@/lib/...` (qui restent identiques) mais déplace `page.tsx`, `AdminClient.tsx`, `styles.css` sous le path choisi.
 
-### Fichier 1/9 — `lib/cocon.ts`
+### Fichier 1/9, `lib/cocon.ts`
 
-Types + helpers + prompts P1/P2 + knowledge base (inline). Le cocon **réel** vit dans `cocon.json` à la racine — ce fichier le charge au runtime.
+Types + helpers + prompts P1/P2 + knowledge base (inline). Le cocon **réel** vit dans `cocon.json` à la racine, ce fichier le charge au runtime.
 
 ```typescript
 /**
- * Cocon sémantique — types, helpers, prompts P1/P2 et knowledge base.
+ * Cocon sémantique, types, helpers, prompts P1/P2 et knowledge base.
  *
  * Le cocon **réel** est dans `cocon.json` à la racine du projet (généré par
  * /blog:cocon). Ce fichier le charge au runtime, expose les types, et
@@ -337,7 +337,7 @@ export function getCoconStats() {
 // ─── PROMPTS P1 et P2 ──────────────────────────────────────────
 //
 // Ces prompts sont la matière pédagogique du pipeline. Tu peux les ajuster
-// à ton style éditorial — mais garde la structure (system + schema JSON).
+// à ton style éditorial, mais garde la structure (system + schema JSON).
 
 export const P1_SYSTEM = `Tu es un stratège SEO francophone expert du cocon sémantique (méthode Laurent Bourrelly). Tu rédiges des briefs d'articles pour un blog de marque.
 
@@ -413,7 +413,7 @@ Règles non négociables :
 6. Tu cites des chiffres concrets, des exemples exécutables, des outils nommés.
 7. Tu inclus 1 bloc <pre><code> de code, prompt ou commande CLI si c'est pertinent au sujet.
 8. Tu termines TOUJOURS par un paragraphe qui contient un <a> contextuel vers le CTA principal.
-9. Pas de "Conclusion" comme dernier H2 — termine par un H2 plus actionnable type "Passer à la pratique" ou "Et maintenant".
+9. Pas de "Conclusion" comme dernier H2, termine par un H2 plus actionnable type "Passer à la pratique" ou "Et maintenant".
 
 UTILISE DES TABLES quand c'est pertinent (format puissant pour le SEO et la lisibilité) :
 - Comparaisons (X vs Y, options A/B/C, fonctionnalités par plan tarifaire) → <table>
@@ -421,7 +421,7 @@ UTILISE DES TABLES quand c'est pertinent (format puissant pour le SEO et la lisi
 - Listes longues avec colonnes (outil, cas d'usage, prix, lien) → <table>
 - Bénéfices vs limitations → <table> à 2 colonnes
 
-CONTRAINTES FACTUELLES (très strictes — la marque ne tolère aucune erreur factuelle) :
+CONTRAINTES FACTUELLES (très strictes, la marque ne tolère aucune erreur factuelle) :
 - Tu reçois plus bas une KNOWLEDGE BASE vérifiée. Tu n'utilises AUCUN chiffre, prix, statistique, version, date, ou nom propre qui ne soit pas dedans.
 - Si une info te manque : OMETS-LA ou utilise un conditionnel ("environ", "à partir de", "selon les données disponibles", "la majorité de").
 - N'invente JAMAIS de citation attribuée à une personne. Pas de "comme le dit X" si X n'est pas dans le contexte.
@@ -434,10 +434,10 @@ Format strict des tables : <table><thead><tr><th>...</th></tr></thead><tbody><tr
 
 Pour les ancres de lien : varie systématiquement, jamais le keyword cible exact (sur-optimisation = pénalité).
 
-Pour les meta SEO (CONTRAINTES STRICTES — Ghost rejette si dépassé) :
+Pour les meta SEO (CONTRAINTES STRICTES, Ghost rejette si dépassé) :
 - meta_title : max 60 caractères (SEO Google), contient le keyword une seule fois
 - meta_description : max 155 caractères (SEO Google), action + bénéfice + chiffre si possible
-- custom_excerpt : max 280 caractères (limite Ghost = 300 — laisse 20 char de marge)
+- custom_excerpt : max 280 caractères (limite Ghost = 300, laisse 20 char de marge)
 - og_title : max 60 caractères (LinkedIn / Slack tronquent au-delà)
 - og_description : max 200 caractères
 - feature_image_prompt : prompt EN ANGLAIS pour fal.ai nano-banana-2, format "editorial magazine photograph, Kodak Portra 400 film grain, [sujet spécifique], muted palette, photorealistic"
@@ -477,7 +477,7 @@ export const ARTICLE_SCHEMA = {
 
 export function stripEmDashes(text: string): string {
   return text
-    .replace(/ — /g, ", ")
+    .replace(/, /g, ", ")
     .replace(/— /g, ": ")
     .replace(/ —/g, ",")
     .replace(/—/g, ":")
@@ -501,7 +501,7 @@ export function sanitizeArticle<T extends Record<string, unknown>>(
 }
 ```
 
-### Fichier 2/9 — `lib/cocon-storage.ts`
+### Fichier 2/9, `lib/cocon-storage.ts`
 
 ```typescript
 /**
@@ -621,7 +621,7 @@ export async function remove(
 }
 ```
 
-### Fichier 3/9 — `lib/ghost-admin.ts`
+### Fichier 3/9, `lib/ghost-admin.ts`
 
 ```typescript
 /**
@@ -637,7 +637,7 @@ export async function remove(
  * header `Authorization: Ghost <token>` à chaque requête.
  *
  * Utilisé par /api/cocon/publish pour pousser les articles générés
- * en mode `draft` (jamais published direct — review humaine obligatoire).
+ * en mode `draft` (jamais published direct, review humaine obligatoire).
  */
 
 import { createHmac } from "node:crypto";
@@ -691,7 +691,7 @@ function signJwt(adminKey: string): string {
   const [id, secret] = adminKey.split(":");
   if (!id || !secret) {
     throw new Error(
-      "GHOST_ADMIN_API_KEY format invalide — attendu '<id>:<secret>'",
+      "GHOST_ADMIN_API_KEY format invalide, attendu '<id>:<secret>'",
     );
   }
   const now = Math.floor(Date.now() / 1000);
@@ -871,7 +871,7 @@ export async function uploadImage(
 }
 ```
 
-### Fichier 4/9 — `lib/fal.ts`
+### Fichier 4/9, `lib/fal.ts`
 
 ```typescript
 /**
@@ -945,7 +945,7 @@ export async function generateImage(
 }
 ```
 
-### Fichier 5/9 — `lib/link-validator.ts`
+### Fichier 5/9, `lib/link-validator.ts`
 
 ```typescript
 /**
@@ -954,7 +954,7 @@ export async function generateImage(
  *
  * Pourquoi : même avec un prompt strict, le LLM peut inventer des URLs
  * type `/blog/article-inexistant`. Sans validation, on publierait des
- * 404 dans Ghost — mauvais pour le SEO et l'UX.
+ * 404 dans Ghost, mauvais pour le SEO et l'UX.
  *
  * Politique :
  *   - href absolu (http://, https://, mailto:, tel:) → laissé tel quel
@@ -1028,7 +1028,7 @@ export function validateLinks(
 }
 ```
 
-### Fichier 6/9 — `app/api/cocon/brief/route.ts`
+### Fichier 6/9, `app/api/cocon/brief/route.ts`
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
@@ -1087,11 +1087,11 @@ ${pf.keywords_secondaires?.length ? `MOTS-CLÉS SECONDAIRES : ${pf.keywords_seco
 
 CONTEXTE COCON :
 - Cet article est une PETITE-FILLE dans le cocon "${cocon.mere.title}"
-- Sa MÈRE : ${ctx.mere.title} (${ctx.mere.url}) — keyword : ${ctx.mere.keyword}
+- Sa MÈRE : ${ctx.mere.title} (${ctx.mere.url}), keyword : ${ctx.mere.keyword}
 - Sa PAGE PILIER PARENT : ${ctx.pilier_parent.title} (${ctx.pilier_parent.url})
 - Ses 3 PILIERS SŒURS proches :
-${ctx.pilier_soeurs.map((s) => `  • ${s.title} (${s.url}) — keyword : ${s.keyword}`).join("\n")}
-- CTA principal de la branche : ${ctx.cta.url} — label : "${ctx.cta.label}"
+${ctx.pilier_soeurs.map((s) => `  • ${s.title} (${s.url}), keyword : ${s.keyword}`).join("\n")}
+- CTA principal de la branche : ${ctx.cta.url}, label : "${ctx.cta.label}"
 ${ctx.outils_techniques.length ? `- OUTILS TECHNIQUES à mailler : ${ctx.outils_techniques.join(", ")}` : ""}
 
 PERSONA CIBLE : ${fille.persona}
@@ -1123,7 +1123,7 @@ Retourne strictement le JSON respectant le schéma demandé.`;
       );
     }
 
-    // Le modèle peut entourer le JSON de markdown ```json ... ``` — strip si présent
+    // Le modèle peut entourer le JSON de markdown ```json ... ```, strip si présent
     const cleanText = textBlock.text
       .replace(/^```json\s*/i, "")
       .replace(/^```\s*/i, "")
@@ -1171,7 +1171,7 @@ Retourne strictement le JSON respectant le schéma demandé.`;
 
 > Note : on n'utilise pas `output_config.format.json_schema` ici (option avancée du SDK Anthropic) pour rester compatible avec toutes les versions du SDK. À la place, le system prompt impose JSON strict et on parse à la main avec strip des fences markdown éventuelles.
 
-### Fichier 7/9 — `app/api/cocon/article/route.ts`
+### Fichier 7/9, `app/api/cocon/article/route.ts`
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
@@ -1259,11 +1259,11 @@ TITRE PROPOSÉ : ${pf.title}
 ${pf.keywords_secondaires?.length ? `MOTS-CLÉS SECONDAIRES : ${pf.keywords_secondaires.join(", ")}` : ""}
 
 CONTEXTE COCON :
-- Mère : ${ctx.mere.title} (${ctx.mere.url}) — keyword : ${ctx.mere.keyword}
+- Mère : ${ctx.mere.title} (${ctx.mere.url}), keyword : ${ctx.mere.keyword}
 - Pilier parent : ${ctx.pilier_parent.title} (${ctx.pilier_parent.url})
 - Piliers sœurs proches :
 ${ctx.pilier_soeurs.map((s) => `  • ${s.title} (${s.url})`).join("\n")}
-- CTA principal : ${ctx.cta.url} — label : "${ctx.cta.label}"
+- CTA principal : ${ctx.cta.url}, label : "${ctx.cta.label}"
 ${ctx.outils_techniques.length ? `- Outils à mailler : ${ctx.outils_techniques.join(", ")}` : ""}
 
 PERSONA : ${fille.persona}
@@ -1320,19 +1320,19 @@ WORD COUNT CIBLE : 1500 mots`;
 
   const articleUserPrompt = `Voici le brief à exécuter, produis l'article HTML + tous les méta SEO.
 
-KNOWLEDGE BASE (validée le ${KNOWLEDGE_BASE.validated_at}) — utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version, ou caractéristique produit :
+KNOWLEDGE BASE (validée le ${KNOWLEDGE_BASE.validated_at}), utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version, ou caractéristique produit :
 ${JSON.stringify(KNOWLEDGE_BASE, null, 2)}
 
 BRIEF :
 ${JSON.stringify(brief, null, 2)}
 
-LIENS_AUTORISES (RÈGLE STRICTE : tu ne peux insérer QUE ces URLs internes, aucune autre. Les URLs hors de cette liste sont automatiquement supprimées par le système et remplacées par la page pilier — donc ne perds pas de tokens à en inventer.) :
+LIENS_AUTORISES (RÈGLE STRICTE : tu ne peux insérer QUE ces URLs internes, aucune autre. Les URLs hors de cette liste sont automatiquement supprimées par le système et remplacées par la page pilier, donc ne perds pas de tokens à en inventer.) :
 
 - MÈRE (obligatoire, dans les 200 premiers mots) : ${ctx.mere.url}
 - PAGE PILIER PARENT : ${ctx.pilier_parent.url}
 - AUTRES PILIERS du cocon (utilise-en 2 ou 3 dans le corps) :
-${ctx.pilier_soeurs.map((s) => `  • ${s.url} — sujet : ${s.keyword}`).join("\n")}
-- CTA FINAL OBLIGATOIRE (dans le dernier paragraphe) : ${ctx.cta.url} — label naturel : "${ctx.cta.label}"
+${ctx.pilier_soeurs.map((s) => `  • ${s.url}, sujet : ${s.keyword}`).join("\n")}
+- CTA FINAL OBLIGATOIRE (dans le dernier paragraphe) : ${ctx.cta.url}, label naturel : "${ctx.cta.label}"
 ${ctx.outils_techniques.length ? `- PAGES OUTILS techniques (utilise si pertinent) :\n${ctx.outils_techniques.map((u) => `  • ${u}`).join("\n")}` : ""}
 ${
   publishedArticleUrls.length
@@ -1343,10 +1343,10 @@ ${
 CONTRAINTES :
 - ${brief.word_count_target ?? 1500} mots cible
 - Ton : ${brief.tone}
-- Structure imposée par les H2 du brief — respecte-les
+- Structure imposée par les H2 du brief, respecte-les
 - HTML pur, pas de markdown
 - Pas de h1
-- Toute URL hors de LIENS_AUTORISES sera silencieusement remplacée — n'invente AUCUNE URL`;
+- Toute URL hors de LIENS_AUTORISES sera silencieusement remplacée, n'invente AUCUNE URL`;
 
   try {
     const articleResponse = await client.messages.create({
@@ -1434,7 +1434,7 @@ CONTRAINTES :
 }
 ```
 
-### Fichier 8/9 — `app/api/cocon/publish/route.ts`
+### Fichier 8/9, `app/api/cocon/publish/route.ts`
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
@@ -1520,7 +1520,7 @@ export async function POST(req: NextRequest) {
       imageStatus = "failed";
       imageError = err instanceof Error ? err.message : String(err);
       console.error(`[cocon/publish] ${pf.slug} image échec: ${imageError}`);
-      // On continue sans image — la publication ne doit pas échouer pour ça
+      // On continue sans image, la publication ne doit pas échouer pour ça
     }
   }
 
@@ -1566,7 +1566,7 @@ export async function POST(req: NextRequest) {
 }
 ```
 
-### Fichier 9/9 — `app/cocon/admin/page.tsx`, `AdminClient.tsx`, `styles.css`
+### Fichier 9/9, `app/cocon/admin/page.tsx`, `AdminClient.tsx`, `styles.css`
 
 #### `app/cocon/admin/page.tsx`
 
@@ -1630,7 +1630,7 @@ export default async function CoconAdminPage({
         <form action={loginAction} className="cocon-login-form">
           <h1>Cocon Admin</h1>
           <p className="cocon-login-lede">
-            Générateur d'articles — accès protégé.
+            Générateur d'articles, accès protégé.
           </p>
           {error === "wrong" && (
             <div className="cocon-login-error">Mot de passe incorrect.</div>
@@ -2019,7 +2019,7 @@ function BriefView({
       {result.brief != null && (
         <>
           <div className="cocon-admin-usage">
-            Tokens — entrée : {result.usage?.input_tokens ?? "?"} · sortie :{" "}
+            Tokens, entrée : {result.usage?.input_tokens ?? "?"} · sortie :{" "}
             {result.usage?.output_tokens ?? "?"} · stop:{" "}
             <strong
               style={{
@@ -2073,7 +2073,7 @@ function ArticleView({
       {result.article && (
         <>
           <div className="cocon-admin-usage">
-            Tokens — total entrée :{" "}
+            Tokens, total entrée :{" "}
             <strong>{result.usage?.total_input ?? "?"}</strong> · total sortie :{" "}
             <strong>{result.usage?.total_output ?? "?"}</strong> · stop:{" "}
             <strong
@@ -2167,7 +2167,7 @@ function ArticleView({
               {isPublishing
                 ? "Image + Ghost (~30-60 s)..."
                 : publishResult?.ok
-                  ? `✓ ${publishResult.mode === "created" ? "Créé" : "Mis à jour"} dans Ghost — republier`
+                  ? `✓ ${publishResult.mode === "created" ? "Créé" : "Mis à jour"} dans Ghost, republier`
                   : "Publier en draft sur Ghost"}
             </button>
             <button
@@ -2234,7 +2234,7 @@ function ArticleView({
                   {publishResult.featureImage.error ?? "fal.ai a échoué"}
                   <span className="cocon-publish-image-hint">
                     {" "}
-                    — l'article est publié sans image, tu peux en ajouter une à la main dans Ghost.
+                   , l'article est publié sans image, tu peux en ajouter une à la main dans Ghost.
                   </span>
                 </div>
               )}
@@ -2311,7 +2311,7 @@ function MetaField({
 Adapte la couleur d'accent à `<ACCENT_COLOR>` (par défaut `#5C3BFF`).
 
 ```css
-/* Cocon admin — UI interne minimale, non destinée au public. */
+/* Cocon admin, UI interne minimale, non destinée au public. */
 
 .cocon-login,
 .cocon-admin {
@@ -2865,15 +2865,15 @@ Ajoute (ou crée) `<PROJECT_ROOT>/.env.example` avec ces 4 entrées en plus de l
 ```dotenv
 # === Cocon Admin (génération d'articles assistée) ===
 
-# Anthropic — clé API pour P1 (Sonnet 4.6) et P2 (Opus 4.7)
+# Anthropic, clé API pour P1 (Sonnet 4.6) et P2 (Opus 4.7)
 # Génère sur https://console.anthropic.com → API Keys
 ANTHROPIC_API_KEY=sk-ant-...
 
-# fal.ai — clé API pour la génération d'image hero (nano-banana-2)
+# fal.ai, clé API pour la génération d'image hero (nano-banana-2)
 # Génère sur https://fal.ai → API Keys
 FAL_KEY=
 
-# Ghost Admin API — pour pousser les articles en draft
+# Ghost Admin API, pour pousser les articles en draft
 # Format : "<24-hex-id>:<64-hex-secret>" (Ghost admin → Settings → Integrations → Claude Code)
 GHOST_ADMIN_API_KEY=
 
@@ -2882,12 +2882,12 @@ GHOST_ADMIN_API_KEY=
 COCON_ADMIN_PASSWORD=
 ```
 
-⚠️ **Ne mets jamais les vraies valeurs dans `.env.example`** — c'est un fichier commité. Les vraies valeurs vont dans `.env.local` (jamais commité, déjà gitignoré par défaut dans Next.js) ou directement dans le dashboard Vercel.
+⚠️ **Ne mets jamais les vraies valeurs dans `.env.example`**, c'est un fichier commité. Les vraies valeurs vont dans `.env.local` (jamais commité, déjà gitignoré par défaut dans Next.js) ou directement dans le dashboard Vercel.
 
 Vérifie aussi que `data/` est dans `.gitignore` (le store local des briefs/articles ne doit pas être commité) :
 
 ```gitignore
-# Cocon admin — cache local des briefs/articles générés
+# Cocon admin, cache local des briefs/articles générés
 data/
 ```
 
@@ -2926,7 +2926,7 @@ Attends la confirmation.
 > # Doit retourner : HTTP/1.1 200 (page de login)
 > ```
 >
-> *(Adapte le port 3000 au port que ton `pnpm dev` utilise — c'est probablement 3000 par défaut, ou autre si tu l'as personnalisé.)*
+> *(Adapte le port 3000 au port que ton `pnpm dev` utilise, c'est probablement 3000 par défaut, ou autre si tu l'as personnalisé.)*
 >
 > **Test fonctionnel** :
 >
@@ -2934,8 +2934,8 @@ Attends la confirmation.
 > 2. Tu vois un formulaire de login. Saisis ton `COCON_ADMIN_PASSWORD`.
 > 3. Tu arrives sur le dashboard : tous tes piliers du cocon listés, avec chaque petite-fille `planned` ou `draft` et un bouton « Générer l'article ».
 > 4. Clique « Brief seul » sur un article test pour valider la chaîne Anthropic. Tu dois voir un JSON brief s'afficher en ~10 s.
-> 5. Si OK : clique « Générer l'article » sur le même (ou un autre) — tu vois P1+P2 tourner en ~30-60 s, puis le HTML rendu en preview.
-> 6. Clique « Publier en draft sur Ghost » — image fal.ai générée + post créé/mis à jour en draft Ghost. Tu reçois un lien direct vers l'éditeur Ghost.
+> 5. Si OK : clique « Générer l'article » sur le même (ou un autre), tu vois P1+P2 tourner en ~30-60 s, puis le HTML rendu en preview.
+> 6. Clique « Publier en draft sur Ghost », image fal.ai générée + post créé/mis à jour en draft Ghost. Tu reçois un lien direct vers l'éditeur Ghost.
 >
 > Si une étape échoue, on debug. Sinon, on clôture. »
 
@@ -2962,7 +2962,7 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 > - 9 fichiers générés dans ton projet (5 helpers `lib/`, 3 routes API, 3 fichiers admin)
 > - 4 env vars ajoutées dans Vercel (Anthropic, fal.ai, Ghost Admin, password admin)
 > - Pipeline P1 brief → P2 article → fal.ai image → push Ghost draft, piloté depuis ton navigateur
-> - État persisté dans `data/cocon/` (briefs/articles/published) — tu retrouves ton travail entre sessions
+> - État persisté dans `data/cocon/` (briefs/articles/published), tu retrouves ton travail entre sessions
 > - Auth simple par cookie + password (8h de session)
 >
 > URL admin :
@@ -2975,11 +2975,11 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 > 2. **Middleware Auth maison** (intermédiaire) : crée `middleware.ts` à la racine qui rejette les requêtes vers `/cocon/admin` ET `/api/cocon/*` sans cookie valide. Garde une exception pour la page de login.
 > 3. **Basic Auth Cloudflare/nginx** (avancé) : si tu as un reverse proxy devant Vercel.
 >
-> ⚠️ **Filesystem read-only sur Vercel** : `lib/cocon-storage.ts` écrit dans `data/cocon/`. Vercel serverless est read-only — l'admin **fonctionnera à la lecture initiale** (briefs/articles déjà commités) mais **pas à l'écriture**. Trois options pour la prod :
+> ⚠️ **Filesystem read-only sur Vercel** : `lib/cocon-storage.ts` écrit dans `data/cocon/`. Vercel serverless est read-only, l'admin **fonctionnera à la lecture initiale** (briefs/articles déjà commités) mais **pas à l'écriture**. Trois options pour la prod :
 >
 > 1. **Usage local uniquement** (recommandé) : tu lances l'admin en `pnpm dev` sur ta machine, tu génères les articles, tu pushes les drafts dans Ghost. Le déploiement Vercel ne sert qu'à l'affichage public du blog (`/blog`), pas à la génération.
 > 2. **Vercel Blob** : remplace `lib/cocon-storage.ts` par un client `@vercel/blob` qui stocke les JSON dans Vercel Blob. ~5 lignes à changer.
-> 3. **Hébergeur avec FS persistant** : Render, Railway, VPS — `node:fs` marche tel quel.
+> 3. **Hébergeur avec FS persistant** : Render, Railway, VPS, `node:fs` marche tel quel.
 >
 > Coexistence avec `/blog:article` (CLI) : les deux pipelines partagent le même `cocon.json` et les mêmes prompts P1/P2. Tu peux utiliser l'admin UI pour la prod (équipe, vue d'ensemble) et `/blog:article` pour les itérations rapides en CLI. Aucun conflit.
 >
@@ -2987,11 +2987,11 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 
 ## Notes de design
 
-- **Modèles Anthropic** : P1 utilise Sonnet 4.6 (économie, ~0,02 €/brief), P2 utilise Opus 4.7 (qualité long-form non négociable, ~0,13 €/article). Tu peux passer P1 sur Opus 4.7 si tu veux maximum qualité — modifie `model: "claude-sonnet-4-6"` en `"claude-opus-4-7"` dans `app/api/cocon/brief/route.ts` et `app/api/cocon/article/route.ts` (phase P1).
-- **Parsing JSON robuste** : le scaffold strip les fences markdown éventuelles (```` ```json ... ``` ````) avant `JSON.parse`. C'est un filet de sécurité — l'instruction "JSON pur" du system prompt suffit dans 99% des cas, mais pas 100%.
-- **Knowledge base inline** : la KB factuelle vit dans `lib/cocon.ts` (variable `KNOWLEDGE_BASE`). Tu peux la déporter dans `knowledge.json` à la racine et la lire au runtime — bouge alors le bloc dans son propre fichier et exporte-la. Choix ici : inline pour simplifier le scaffold, à toi de la versionner via git.
+- **Modèles Anthropic** : P1 utilise Sonnet 4.6 (économie, ~0,02 €/brief), P2 utilise Opus 4.7 (qualité long-form non négociable, ~0,13 €/article). Tu peux passer P1 sur Opus 4.7 si tu veux maximum qualité, modifie `model: "claude-sonnet-4-6"` en `"claude-opus-4-7"` dans `app/api/cocon/brief/route.ts` et `app/api/cocon/article/route.ts` (phase P1).
+- **Parsing JSON robuste** : le scaffold strip les fences markdown éventuelles (```` ```json ... ``` ````) avant `JSON.parse`. C'est un filet de sécurité, l'instruction "JSON pur" du system prompt suffit dans 99% des cas, mais pas 100%.
+- **Knowledge base inline** : la KB factuelle vit dans `lib/cocon.ts` (variable `KNOWLEDGE_BASE`). Tu peux la déporter dans `knowledge.json` à la racine et la lire au runtime, bouge alors le bloc dans son propre fichier et exporte-la. Choix ici : inline pour simplifier le scaffold, à toi de la versionner via git.
 - **Pas de `output_config.format.json_schema`** : option Anthropic SDK avancée non utilisée pour rester compatible avec toutes les versions du SDK. Le system prompt impose JSON strict et on parse à la main. Si tu veux la garantie schéma stricte côté Anthropic, ajoute l'option dans les 2 routes API.
 - **Stockage local par défaut** : `data/cocon/` permet de retrouver ses briefs/articles entre sessions. Pas de DB à gérer. À l'échelle (équipe, prod), bascule sur Vercel Blob ou Postgres.
-- **Statut Ghost forcé draft** : `lib/ghost-admin.ts` force `status: "draft"` dans `upsertPost()`. Non négociable — relecture humaine obligatoire avant publication. Aligné avec `/blog:article` CLI.
+- **Statut Ghost forcé draft** : `lib/ghost-admin.ts` force `status: "draft"` dans `upsertPost()`. Non négociable, relecture humaine obligatoire avant publication. Aligné avec `/blog:article` CLI.
 - **Pas de TOC, pas de progress bar** : l'admin est une UI interne minimale. Pas d'enjeu de polish UX, fonctionnel d'abord.
-- **Coexistence avec `/blog:article` CLI** : les deux pipelines lisent le même `cocon.json` et utilisent les mêmes prompts. Tu peux mixer librement — par exemple : générer en CLI sur ta machine de dev, garder l'admin UI ouverte pour suivre l'état d'avancement à plusieurs.
+- **Coexistence avec `/blog:article` CLI** : les deux pipelines lisent le même `cocon.json` et utilisent les mêmes prompts. Tu peux mixer librement, par exemple : générer en CLI sur ta machine de dev, garder l'admin UI ouverte pour suivre l'état d'avancement à plusieurs.

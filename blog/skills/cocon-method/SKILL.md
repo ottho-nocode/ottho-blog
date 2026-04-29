@@ -56,7 +56,7 @@ Tu pars du `brief.md` produit par la skill `brief-method` (objectif business + a
 
 Critères de choix entre 3 candidates :
 - **Volume de recherche** suffisant (sinon personne ne te trouvera)
-- **Intention commerciale** (pas juste informative — ton ICP doit être prêt à acheter à terme)
+- **Intention commerciale** (pas juste informative, ton ICP doit être prêt à acheter à terme)
 - **Concurrence accessible** (si la SERP est verrouillée par Le Monde et Wikipedia, choisis un cran en dessous)
 
 L'IA ne tranche pas seule : elle **propose 3 candidates** au minimum (avec une justification courte sur volume/intention/concurrence pour chacune) et l'utilisateur valide celle qu'il veut viser. Si aucune ne convient, l'IA en propose 3 nouvelles.
@@ -69,7 +69,7 @@ Pour chaque fille, tu fixes :
 - un `slug` (URL : `/blog/pilier/<pilier_slug>`)
 - un `keyword` principal (1-3 mots, intention informationnelle)
 - une `description` (≤ 160 caractères, sert aussi à la meta description)
-- un `persona` cible (entrepreneur, opérationnel, dirigeant — détermine le ton)
+- un `persona` cible (entrepreneur, opérationnel, dirigeant, détermine le ton)
 - un `cta_principal` (URL de l'offre commerciale vers laquelle cette branche pousse)
 
 ## Trouver les petites-filles
@@ -90,7 +90,7 @@ Voici le schéma que la skill produit à la fin du dialogue. C'est ce fichier qu
   "site": "https://exemple.com",
   "mere": {
     "slug": "apprendre-claude",
-    "title": "Apprendre Claude — Le guide complet pour francophones",
+    "title": "Apprendre Claude, Le guide complet pour francophones",
     "keyword_principal": "apprendre claude",
     "keywords_secondaires": ["formation claude", "claude ia français"]
   },
@@ -121,7 +121,7 @@ Voici le schéma que la skill produit à la fin du dialogue. C'est ce fichier qu
 Notes :
 - `slug` (interne) ≠ `pilier_slug` (URL publique du pilier). Le `slug` peut contenir le préfixe thématique (`claude-blog`), le `pilier_slug` est la version courte et propre (`pipeline-blog`).
 - `status` se propage : une fille `planned` n'a que des petites-filles `planned` ou `draft` ; une fille passe `published` quand au moins 1 petite-fille est publiée.
-- Un seul `cta_principal` par branche — c'est ce qui donne au cocon son sens commercial.
+- Un seul `cta_principal` par branche, c'est ce qui donne au cocon son sens commercial.
 
 ## Protocole d'interaction IA → utilisateur
 
@@ -135,7 +135,7 @@ C'est ce que `/blog:cocon` doit exécuter, dans cet ordre :
 
 4. **Proposition des petites-filles, fille par fille.** Pour chaque fille validée, l'IA propose **3 à 5 petites-filles** : `slug`, `title`, `keyword`, `intent`. Même boucle valider/modifier/supprimer/ajouter.
 
-5. **Validation de pertinence par recherche web** *(nouvelle étape, V1.1+)*. Avant la consolidation finale, l'IA passe en revue chaque petite-fille proposée et appelle des outils de recherche web pour vérifier la pertinence SEO de chaque keyword. Voir la section « Validation de pertinence — protocole web search » plus bas.
+5. **Validation de pertinence par recherche web** *(nouvelle étape, V1.1+)*. Avant la consolidation finale, l'IA passe en revue chaque petite-fille proposée et appelle des outils de recherche web pour vérifier la pertinence SEO de chaque keyword. Voir la section « Validation de pertinence, protocole web search » plus bas.
 
 6. **Consolidation finale.** L'IA reproposa l'arbre complet en intégrant les ajustements issus de la validation web (drops, repositionnements long-tail, ajouts depuis les suggestions). L'utilisateur valide le tout en bloc.
 
@@ -143,13 +143,13 @@ C'est ce que `/blog:cocon` doit exécuter, dans cet ordre :
 
 8. **Sortie.** L'IA suggère l'étape suivante : passer à `/blog:article` pour générer chaque petite-fille, ou éditer manuellement `cocon.json` si l'utilisateur veut ajuster plus tard.
 
-## Validation de pertinence — protocole web search
+## Validation de pertinence, protocole web search
 
 Avant de finaliser le cocon, l'IA doit valider chaque petite-fille proposée par recherche web. Cette étape évite le piège du « cocon LLM-only » : un arbre qui paraît bon mais qui cible des requêtes 0 search ou ultra-saturées (Wikipedia + .gov + grands médias dans le top 10).
 
 ### Outils mobilisés (par ordre de préférence)
 
-1. **`WebSearch` (built-in Anthropic, dispo dans Claude Code)** — pour chaque petite-fille, fais une recherche Google sur le `keyword` cible. Note les domaines du top 10 et évalue :
+1. **`WebSearch` (built-in Anthropic, dispo dans Claude Code)**, pour chaque petite-fille, fais une recherche Google sur le `keyword` cible. Note les domaines du top 10 et évalue :
    - **Saturation** : top 10 dominé par `wikipedia.org`, `.gov`, `lemonde.fr`, `lefigaro.fr`, `youtube.com`, `reddit.com` = saturation extrême → drop ou repositionne sur une variante long-tail
    - **Pertinence** : moins de 3 résultats vraiment liés au sujet = niche faible ou intention floue → drop ou requalifie
    - **Format dominant** : présence d'un featured snippet (paragraphe court / liste / table) ou de PAA = opportunité de cibler ce format dans l'article
@@ -166,7 +166,7 @@ Si l'agent n'a accès à aucun outil web, **bascule en mode validation assistée
 
 > « Je n'ai pas d'accès web search direct. Pour valider la pertinence de chaque pilier, ouvre **Google Trends** (trends.google.com) + **AlsoAsked** (alsoasked.com) avec ton mot-clé pilier, copie-colle ici les graphes d'intérêt 12 mois et la liste des PAA. Je réajuste avec ces données réelles, pilier par pilier. »
 
-C'est l'option de repli — moins fluide mais aussi sérieuse, car les données sont les vraies.
+C'est l'option de repli, moins fluide mais aussi sérieuse, car les données sont les vraies.
 
 ### Output attendu (format minirapport)
 

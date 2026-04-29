@@ -3,16 +3,16 @@ name: article
 description: Pipeline complet de génération d'un article du cocon. Sélectionne une petite-fille planifiée, génère brief (P1) puis article (P2), image hero (fal.ai), publie en draft sur Ghost. Met à jour cocon.json. Statut Ghost forcé à draft.
 ---
 
-# /blog:article — Génération d'un article du cocon (P1 + P2 + image + Ghost draft)
+# /blog:article, Génération d'un article du cocon (P1 + P2 + image + Ghost draft)
 
 Tu vas accompagner l'étudiant dans la génération d'un article complet : sélection d'une petite-fille du cocon, brief stratégique, rédaction long-form, image hero, publication en **draft** sur Ghost. À la fin, l'étudiant a un article relisable dans l'admin Ghost, qu'il valide et publie à la main.
 
-**Charge ces 4 skills** avant tout — elles contiennent les system prompts, schemas, sanitizers, validateurs et garde-fous factuels :
+**Charge ces 4 skills** avant tout, elles contiennent les system prompts, schemas, sanitizers, validateurs et garde-fous factuels :
 
-- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`) — system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **Cette skill contient les prompts à reproduire intégralement.**
-- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`) — algorithme de validation des `<a href>` internes contre une whitelist, fallback vers la pilier-parent.
-- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`) — pattern de la KB factuelle (`knowledge.json`) injectée dans P2 pour empêcher les hallucinations chiffrées.
-- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`) — structure de `cocon.json` (mère, filles, petites-filles), règles de maillage, contexte de linking.
+- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **Cette skill contient les prompts à reproduire intégralement.**
+- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes contre une whitelist, fallback vers la pilier-parent.
+- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`), pattern de la KB factuelle (`knowledge.json`) injectée dans P2 pour empêcher les hallucinations chiffrées.
+- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`), structure de `cocon.json` (mère, filles, petites-filles), règles de maillage, contexte de linking.
 
 **Temps estimé** : ~3 min en interactif (40 s d'API + dialogues de validation + 1 image fal.ai).
 
@@ -56,7 +56,7 @@ Ouvre la commande par ce message :
 
 Avant toute exécution, vérifie les 4 pré-requis ci-dessous. Si l'un manque, **mets en pause** et redirige.
 
-### Pré-requis 1 — `cocon.json` existe
+### Pré-requis 1, `cocon.json` existe
 
 > « Je vérifie que `cocon.json` existe à la racine du projet. »
 
@@ -64,7 +64,7 @@ Si absent : pause et redirige :
 
 > « Tu n'as pas encore de cocon. Lance d'abord `/blog:cocon` pour cartographier ta mère + 3-7 filles + 3-5 petites-filles par fille. Reviens ici quand le fichier `cocon.json` est généré et validé. »
 
-### Pré-requis 2 — Ghost en place + MCP Ghost dispo
+### Pré-requis 2, Ghost en place + MCP Ghost dispo
 
 > « Je vérifie que ton instance Ghost et le MCP Ghost sont opérationnels. »
 
@@ -72,7 +72,7 @@ Si absent : pause et redirige :
 
 > « Tu n'as pas encore Ghost. Lance `/blog:setup-ghost` pour créer ton instance PikaPods, brancher le sous-domaine et installer le MCP Ghost. Reviens ici quand l'admin Ghost s'ouvre dans ton navigateur. »
 
-### Pré-requis 3 — Theme Ghost actif
+### Pré-requis 3, Theme Ghost actif
 
 > « Je vérifie que ton theme Ghost est actif. »
 
@@ -80,7 +80,7 @@ Si absent : pause et redirige :
 
 > « Lance `/blog:theme` pour activer le theme Ottho (ou ton theme custom) avant de générer le premier article. »
 
-### Pré-requis 4 — MCP fal.ai dispo (vu au cours précédent)
+### Pré-requis 4, MCP fal.ai dispo (vu au cours précédent)
 
 > « Je vérifie que le MCP fal.ai est configuré (vu dans le chapitre précédent du cours). »
 
@@ -90,19 +90,19 @@ Si absent : warning **mais on continue** :
 
 ---
 
-## Étape 1 — Charger le contexte
+## Étape 1, Charger le contexte
 
-### 1.1 — Lire `cocon.json`
+### 1.1, Lire `cocon.json`
 
 Lis `cocon.json` à la racine du projet. Parse-le. Vérifie qu'il a bien la structure attendue (`mere`, `filles[]`, `filles[].petites_filles[]`). Si parsing échoue ou structure invalide, propose à l'étudiant de relancer `/blog:cocon`.
 
-### 1.2 — Lire `knowledge.json` (KB)
+### 1.2, Lire `knowledge.json` (KB)
 
 Lis `knowledge.json` à la racine du projet.
 
 ⚠️ **Si `knowledge.json` n'existe pas** : c'est obligatoire pour P2. Propose à l'étudiant de la créer maintenant :
 
-> « Tu n'as pas encore de `knowledge.json`. Sans elle, P2 hallucine des chiffres et des versions — ta marque ne tolère pas ça.
+> « Tu n'as pas encore de `knowledge.json`. Sans elle, P2 hallucine des chiffres et des versions, ta marque ne tolère pas ça.
 >
 > Je peux te générer un squelette à partir du pattern de la skill `knowledge-base`. Tu auras juste à remplir les sections `pricing`, `business`, `ecosystem` avec tes propres données. Ça prend 5 minutes.
 >
@@ -110,7 +110,7 @@ Lis `knowledge.json` à la racine du projet.
 
 Si l'étudiant accepte : génère `knowledge.json` avec la structure-type de la skill `knowledge-base` (sections `validated_at`, `version`, `pricing`, `models`, `ecosystem`, `business`, `rules`), pré-remplie avec des placeholders explicites (`"REMPLIR : prix mensuel de ton offre principale en €"`). Pause le pipeline tant que la KB n'est pas remplie.
 
-### 1.3 — Charger les 4 skills
+### 1.3, Charger les 4 skills
 
 Charge en mémoire les contenus des 4 skills mentionnées en haut. Tu vas en avoir besoin :
 
@@ -121,15 +121,15 @@ Charge en mémoire les contenus des 4 skills mentionnées en haut. Tu vas en avo
 
 ---
 
-## Étape 2 — Sélectionner la petite-fille à écrire
+## Étape 2, Sélectionner la petite-fille à écrire
 
 Liste toutes les petites-filles avec `status: "planned"` ou `status: "draft"`, **groupées par pilier**. Affiche en table compacte :
 
 ```
 Pilier : pipeline-blog (3 articles à écrire)
-  [1] cocon-semantique-ia          — keyword "cocon sémantique ia"     [planned]
-  [2] blog-headless-ghost-nextjs   — keyword "blog headless ghost"     [planned]
-  [3] rediger-article-seo-claude   — keyword "rédiger article seo claude" [planned]
+  [1] cocon-semantique-ia         , keyword "cocon sémantique ia"     [planned]
+  [2] blog-headless-ghost-nextjs  , keyword "blog headless ghost"     [planned]
+  [3] rediger-article-seo-claude  , keyword "rédiger article seo claude" [planned]
 
 Pilier : creer-site-web-claude (4 articles à écrire)
   [4] ...
@@ -143,7 +143,7 @@ Capture le choix. Stocke `<FILLE_SLUG>`, `<PETITE_FILLE_SLUG>`, `<KEYWORD>`, `<P
 
 ---
 
-## Étape 3 — Construire le `linking_context`
+## Étape 3, Construire le `linking_context`
 
 Identifie depuis `cocon.json` :
 
@@ -153,7 +153,7 @@ Identifie depuis `cocon.json` :
 - **Outils linkés** : `cocon.json` → `linked_outils[]` du pilier-parent, ou liste statique si vide
 - **CTA principal** : `cta_principal` du pilier-parent (ex. `/claude-mastery`)
 
-### 3.1 — Récupérer les articles déjà publiés dans Ghost
+### 3.1, Récupérer les articles déjà publiés dans Ghost
 
 Appelle le MCP Ghost (Content API) pour lister les slugs de tous les posts déjà publiés. Pseudo-code :
 
@@ -166,7 +166,7 @@ const publishedSlugs = await mcp.ghost.posts_browse({
 // → ["serveur-mcp-claude", "premier-prompt-claude", ...]
 ```
 
-### 3.2 — Construire la whitelist d'URLs
+### 3.2, Construire la whitelist d'URLs
 
 Selon le protocole de la skill `link-validation`, agrège dans un `Set<string>` toutes les URLs autorisées :
 
@@ -183,13 +183,13 @@ Stocke comme `<ALLOWED_URLS>` pour l'étape 8 (link-validation).
 
 ---
 
-## Étape 4 — Générer le brief (P1)
+## Étape 4, Générer le brief (P1)
 
-### 4.1 — Charger le system prompt P1
+### 4.1, Charger le system prompt P1
 
-Charge **intégralement** le system prompt P1 depuis la skill `article-quality` (section « P1 — System prompt (brief) »). ⚠️ **Ne le réécris pas, copie-le tel quel.**
+Charge **intégralement** le system prompt P1 depuis la skill `article-quality` (section « P1, System prompt (brief) »). ⚠️ **Ne le réécris pas, copie-le tel quel.**
 
-### 4.2 — Construire le user message P1
+### 4.2, Construire le user message P1
 
 ```
 KEYWORD CIBLE : <KEYWORD>
@@ -197,8 +197,8 @@ TITRE PROPOSÉ : <PETITE_FILLE_TITLE>
 WORD COUNT TARGET : 1500
 
 CONTEXTE COCON :
-- Mère : <MERE_SLUG> (URL : /<MERE_SLUG>) — keyword "<MERE_KEYWORD>"
-- Pilier-parent : <PILIER_SLUG> (URL : /blog/pilier/<PILIER_SLUG>) — titre "<PILIER_TITLE>"
+- Mère : <MERE_SLUG> (URL : /<MERE_SLUG>), keyword "<MERE_KEYWORD>"
+- Pilier-parent : <PILIER_SLUG> (URL : /blog/pilier/<PILIER_SLUG>), titre "<PILIER_TITLE>"
 - Piliers-sœurs : <SISTERS_LIST_avec_URLs>
 - Outils linkés : <LINKED_OUTILS_avec_URLs>
 - CTA principal : <CTA_PRINCIPAL>
@@ -207,11 +207,11 @@ PERSONA CIBLE : <PERSONA>
 INTENT : <intent_de_la_petite_fille>
 ```
 
-### 4.3 — Appeler l'API Anthropic
+### 4.3, Appeler l'API Anthropic
 
 ```typescript
 const briefResponse = await anthropic.messages.create({
-  model: "claude-sonnet-4-6",     // ~10 s, ~0,02 € — qualité brief suffisante
+  model: "claude-sonnet-4-6",     // ~10 s, ~0,02 €, qualité brief suffisante
   max_tokens: 2000,
   system: P1_SYSTEM_PROMPT,
   messages: [{ role: "user", content: P1_USER_MESSAGE }],
@@ -233,7 +233,7 @@ Parse le JSON. Vérifie qu'il respecte `BRIEF_SCHEMA` (champs `intent_summary`, 
 
 ---
 
-## Étape 5 — Validation user du brief
+## Étape 5, Validation user du brief
 
 Affiche le brief de manière lisible et compacte :
 
@@ -245,9 +245,9 @@ TON : <tone>
 WORD COUNT TARGET : <word_count_target>
 
 PLAN H2 :
-  1. <h2_1> — <what_1>
-  2. <h2_2> — <what_2>
-  3. <h2_3> — <what_3>
+  1. <h2_1>, <what_1>
+  2. <h2_2>, <what_2>
+  3. <h2_3>, <what_3>
   ...
 
 KEY TAKEAWAYS :
@@ -279,18 +279,18 @@ Stocke le brief final comme `<BRIEF>`.
 
 ---
 
-## Étape 6 — Générer l'article (P2)
+## Étape 6, Générer l'article (P2)
 
-### 6.1 — Charger le system prompt P2
+### 6.1, Charger le system prompt P2
 
-Charge **intégralement** le system prompt P2 depuis la skill `article-quality` (section « P2 — System prompt (rédaction) »). ⚠️ **Reproduis-le tel quel.**
+Charge **intégralement** le system prompt P2 depuis la skill `article-quality` (section « P2, System prompt (rédaction) »). ⚠️ **Reproduis-le tel quel.**
 
-### 6.2 — Construire le user message P2
+### 6.2, Construire le user message P2
 
 L'ordre des sections compte (KB **avant** les instructions créatives, voir skill `knowledge-base`) :
 
 ```
-KNOWLEDGE BASE 2026 (validée le <validated_at>) — utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').
+KNOWLEDGE BASE 2026 (validée le <validated_at>), utilise EXCLUSIVEMENT ces faits pour tout chiffre, prix, statistique, version. Si une info manque : OMETS-LA ou utilise un conditionnel ('environ', 'à partir de', 'selon les données disponibles').
 
 <JSON.stringify(knowledge_base, null, 2)>
 
@@ -301,7 +301,7 @@ BRIEF DE L'ARTICLE :
 
 ---
 
-LIENS_AUTORISES (whitelist stricte — ne perds pas de tokens à inventer des URLs, le système les supprime hors whitelist) :
+LIENS_AUTORISES (whitelist stricte, ne perds pas de tokens à inventer des URLs, le système les supprime hors whitelist) :
 <liste des URLs depuis ALLOWED_URLS, une par ligne>
 
 ---
@@ -319,11 +319,11 @@ CONTRAINTES :
 - Terminer par un H2 actionnable type "Passer à la pratique" ou "Et maintenant"
 ```
 
-### 6.3 — Appeler l'API Anthropic
+### 6.3, Appeler l'API Anthropic
 
 ```typescript
 const articleResponse = await anthropic.messages.create({
-  model: "claude-opus-4-7",         // ~30 s, ~0,13 € — qualité long-form
+  model: "claude-opus-4-7",         // ~30 s, ~0,13 €, qualité long-form
   max_tokens: 8000,
   system: P2_SYSTEM_PROMPT,
   messages: [{ role: "user", content: P2_USER_MESSAGE }],
@@ -348,11 +348,11 @@ Stocke comme `<ARTICLE>` (pré-sanitizer).
 
 ---
 
-## Étape 7 — Sanitizer
+## Étape 7, Sanitizer
 
 ⚠️ **Filet de sécurité non-négociable**, même si le prompt P2 a déjà l'instruction « pas de cadratin ». Le modèle peut occasionnellement glisser un `—`, et Ghost rejette les payloads avec `custom_excerpt > 300 caractères`.
 
-### 7.1 — Strip cadratin sur tous les champs string
+### 7.1, Strip cadratin sur tous les champs string
 
 Applique `sanitizeArticle(<ARTICLE>)` (depuis skill `article-quality`) qui passe `stripEmDashes` sur :
 
@@ -367,13 +367,13 @@ Heuristiques (ordre = priorité, voir skill) :
 
 | Pattern | Sortie |
 |---|---|
-| `" — "` | `", "` |
+| `", "` | `", "` |
 | `"— "` | `": "` |
 | `" —"` | `","` |
 | `"—"` | `":"` |
 | `"–"` | `"-"` |
 
-### 7.2 — Clamp limites Ghost (caractères, pas mots)
+### 7.2, Clamp limites Ghost (caractères, pas mots)
 
 Pour chaque champ avec une limite, applique `clampToWord(s, max)` (trim au mot entier le plus proche + ellipsis `…`) :
 
@@ -389,11 +389,11 @@ Stocke comme `<ARTICLE_SANITIZED>`.
 
 ---
 
-## Étape 8 — Validation des liens internes ⚠️
+## Étape 8, Validation des liens internes ⚠️
 
 ⚠️ **Non-négociable.** Sans validation, les `<a href="/...">` inventés par le modèle deviennent des 404 dans Ghost.
 
-### 8.1 — Charger le validator
+### 8.1, Charger le validator
 
 Charge l'algorithme depuis la skill `link-validation`. Le contrat :
 
@@ -413,7 +413,7 @@ function validateLinks(
 ): ValidationResult;
 ```
 
-### 8.2 — Exécuter la validation
+### 8.2, Exécuter la validation
 
 ```typescript
 const result = validateLinks(
@@ -435,13 +435,13 @@ Stocke `<LINK_REPORT>` pour le rapport final.
 
 ---
 
-## Étape 9 — Image hero (fal.ai)
+## Étape 9, Image hero (fal.ai)
 
-### 9.1 — Récupérer le prompt image depuis P2
+### 9.1, Récupérer le prompt image depuis P2
 
 Le `feature_image_prompt` du JSON P2 est en anglais, format « editorial magazine photograph, Kodak Portra 400 film grain, [sujet spécifique], muted palette, photorealistic ».
 
-### 9.2 — Appeler le MCP fal.ai
+### 9.2, Appeler le MCP fal.ai
 
 ```typescript
 try {
@@ -472,7 +472,7 @@ try {
 
 ---
 
-## Étape 10 — Upload image dans Ghost
+## Étape 10, Upload image dans Ghost
 
 Si `imageBlob` n'est pas null :
 
@@ -491,7 +491,7 @@ Stocke `<GHOST_IMAGE_URL>`. Si pas d'image : `GHOST_IMAGE_URL = null`.
 
 ---
 
-## Étape 11 — Création post draft dans Ghost ⚠️
+## Étape 11, Création post draft dans Ghost ⚠️
 
 ⚠️ **Statut FORCÉ à `draft`.** Quoi qu'il arrive, on ne publie pas directement.
 
@@ -502,7 +502,7 @@ const post = await mcp.ghost.posts_add({
     title: ARTICLE_SANITIZED.meta_title,         // titre éditorial
     slug: PETITE_FILLE_SLUG,                     // slug de la petite-fille du cocon
     html: ARTICLE_SANITIZED.html,                // HTML sanitizé + links validés
-    status: "draft",                             // ⚠️ FORCÉ — JAMAIS published
+    status: "draft",                             // ⚠️ FORCÉ, JAMAIS published
     feature_image: GHOST_IMAGE_URL,              // null si fal.ai a échoué
     tags: [
       { name: ARTICLE_SANITIZED.primary_tag },   // = pilier_slug
@@ -525,7 +525,7 @@ Stocke `<GHOST_POST_ID>`, `<GHOST_ADMIN_EDIT_URL>`, `<GHOST_PUBLIC_URL>`.
 
 ---
 
-## Étape 12 — Update `cocon.json`
+## Étape 12, Update `cocon.json`
 
 Met à jour la petite-fille concernée dans `cocon.json` :
 
@@ -550,7 +550,7 @@ fs.writeFileSync(
 
 ---
 
-## Étape 13 — Rapport final
+## Étape 13, Rapport final
 
 Affiche un rapport structuré et lisible :
 
@@ -577,7 +577,7 @@ LIENS INTERNES :
 
 IMAGE HERO :
   <Si OK : "✅ Générée par fal.ai + uploadée Ghost (URL : <GHOST_IMAGE_URL>)">
-  <Si KO : "⚠️ Échec fal.ai — article sans feature_image. Ajoute-en une à la main dans Ghost.">
+  <Si KO : "⚠️ Échec fal.ai, article sans feature_image. Ajoute-en une à la main dans Ghost.">
 
 TOKENS UTILISÉS :
   P1 brief    : in <X> / out <Y> (Sonnet 4.6)
@@ -612,7 +612,7 @@ Termine par ce message :
 
 > « Ton article est en draft sur Ghost : <GHOST_ADMIN_EDIT_URL>.
 >
-> Va le relire dans l'admin Ghost, ajuste si besoin (image hero, ponctuation, paragraphe à reformuler), puis **publie depuis l'admin Ghost en cliquant sur "Publish"**. Le plugin ne publie jamais à ta place — c'est ton garde-fou éditorial.
+> Va le relire dans l'admin Ghost, ajuste si besoin (image hero, ponctuation, paragraphe à reformuler), puis **publie depuis l'admin Ghost en cliquant sur "Publish"**. Le plugin ne publie jamais à ta place, c'est ton garde-fou éditorial.
 >
 > Prochaine étape :
 >

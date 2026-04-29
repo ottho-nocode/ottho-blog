@@ -9,7 +9,7 @@ Cette skill définit le protocole de validation des liens internes après géné
 
 ## Pourquoi valider les liens internes
 
-Même avec un prompt strict qui liste les URLs autorisées, le LLM peut inventer des liens — un slug qui sonne juste mais n'existe pas (`/blog/le-bon-prompt`), un pilier mal orthographié (`/blog/pilier/setups`), une formation qui n'existe pas (`/claude-pro`).
+Même avec un prompt strict qui liste les URLs autorisées, le LLM peut inventer des liens, un slug qui sonne juste mais n'existe pas (`/blog/le-bon-prompt`), un pilier mal orthographié (`/blog/pilier/setups`), une formation qui n'existe pas (`/claude-pro`).
 
 Sans filet de validation, ces liens passent dans Ghost et l'article publié contient des **404** :
 
@@ -111,7 +111,7 @@ function isAnchor(href: string): boolean {
 
 ---
 
-## Fallback URL — choix du remplacement
+## Fallback URL, choix du remplacement
 
 **Par défaut : la page pilier parent** de l'article validé.
 
@@ -164,7 +164,7 @@ Liens vérifiés : 14 (8 internes, 6 externes)
   /claude-pro         → /blog/pilier/setup
 ```
 
-**Signal d'amélioration** : si `rewritten.length > 0` régulièrement sur les générations, c'est un signal pour ajuster le prompt P2 — soit la whitelist n'a pas été bien fournie en entrée, soit le LLM est sous-instruit sur la liste des URLs autorisées.
+**Signal d'amélioration** : si `rewritten.length > 0` régulièrement sur les générations, c'est un signal pour ajuster le prompt P2, soit la whitelist n'a pas été bien fournie en entrée, soit le LLM est sous-instruit sur la liste des URLs autorisées.
 
 ---
 
@@ -176,5 +176,5 @@ Une implémentation TypeScript de référence (fichier `lib/link-validator.ts`) 
 
 Cette skill est invoquée par :
 
-- `/blog:article` — après le sanitizer HTML, avant publication Ghost
-- `/blog:batch` — appliquée individuellement à chaque article généré dans le lot
+- `/blog:article`, après le sanitizer HTML, avant publication Ghost
+- `/blog:batch`, appliquée individuellement à chaque article généré dans le lot

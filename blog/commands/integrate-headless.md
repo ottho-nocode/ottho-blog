@@ -1,13 +1,13 @@
 ---
 name: integrate-headless
-description: Génère le scaffold de code (lib + routes + sitemap + webhook + .env) pour qu'un site Next.js 16 consomme l'API Ghost et rende le blog directement à <site>/blog/* (scénario C — headless API). Astro et SvelteKit en V1.5.
+description: Génère le scaffold de code (lib + routes + sitemap + webhook + .env) pour qu'un site Next.js 16 consomme l'API Ghost et rende le blog directement à <site>/blog/* (scénario C, headless API). Astro et SvelteKit en V1.5.
 ---
 
-# /blog:integrate-headless — Scaffold du blog headless dans ton site
+# /blog:integrate-headless, Scaffold du blog headless dans ton site
 
 Tu vas générer dans le projet de l'élève **tout le code nécessaire** pour que son site Next.js 16 (App Router) consomme la Ghost Content API et rende lui-même les pages `/blog` et `/blog/<slug>`. À la fin de cette commande, l'élève a 7 fichiers générés, ses 3 variables d'env documentées dans `.env.example`, et les instructions pour configurer Vercel + le webhook Ghost de revalidation.
 
-Cette commande **n'a de sens qu'en scénario C** (headless API). Si l'élève a choisi le scénario A (URL PikaPods native) ou B (sous-domaine custom) dans `/blog:setup-ghost`, le rendu est servi par Ghost directement et cette commande n'a rien à faire — redirige-le vers `/blog:theme`.
+Cette commande **n'a de sens qu'en scénario C** (headless API). Si l'élève a choisi le scénario A (URL PikaPods native) ou B (sous-domaine custom) dans `/blog:setup-ghost`, le rendu est servi par Ghost directement et cette commande n'a rien à faire, redirige-le vers `/blog:theme`.
 
 **Temps estimé** : ~10 min (lecture des questions + génération + collage des 3 env vars dans Vercel + config webhook Ghost).
 
@@ -15,7 +15,7 @@ Cette commande **n'a de sens qu'en scénario C** (headless API). Si l'élève a 
 
 ## Pré-requis
 
-### Pré-requis 1 — `ghost-config.md` existe et scénario = C
+### Pré-requis 1, `ghost-config.md` existe et scénario = C
 
 Lis `ghost-config.md` à la racine du projet. Vérifie qu'il contient bien `**Type** : headless API rendu par le framework` (ou variante claire indiquant scénario C).
 
@@ -25,9 +25,9 @@ Si absent :
 
 Si le scénario n'est **pas** C :
 
-> « Ton `ghost-config.md` indique que tu es en scénario <A | B>. Cette commande ne sert qu'au scénario C (headless API, où ton framework JS rend le blog à `<site>/blog`). Dans ton cas, Ghost sert directement le rendu — pas besoin de scaffolder du code. Passe à `/blog:theme` pour habiller ton blog Ghost à ta charte. »
+> « Ton `ghost-config.md` indique que tu es en scénario <A | B>. Cette commande ne sert qu'au scénario C (headless API, où ton framework JS rend le blog à `<site>/blog`). Dans ton cas, Ghost sert directement le rendu, pas besoin de scaffolder du code. Passe à `/blog:theme` pour habiller ton blog Ghost à ta charte. »
 
-### Pré-requis 2 — `<GHOST_BACKEND_URL>` est connue
+### Pré-requis 2, `<GHOST_BACKEND_URL>` est connue
 
 Récupère depuis `ghost-config.md` la valeur de `Instance backend (PikaPods)` ou `Ghost backend (jamais visible)`. Stocke-la comme `<GHOST_BACKEND_URL>` (ex. `https://wonderful-caribou.pikapod.net`).
 
@@ -55,14 +55,14 @@ Ouvre la commande par ce message :
 
 Pose les questions **UNE PAR UNE**. Attends la réponse avant de passer à la suivante.
 
-### Question 1 — Framework
+### Question 1, Framework
 
 > « Quel framework JS fait tourner ton site sur Vercel ?
 >
-> 1. **Next.js 16** (App Router) — supporté en V1, génération automatique
-> 2. **Astro** — V1.5 ; pour l'instant, lis le code de référence dans le code de démonstration fourni par le formateur (`lib/ghost.ts`, `app/blog/`) et adapte manuellement à `src/pages/blog/`
-> 3. **SvelteKit** — V1.5 ; idem, adapte manuellement à `src/routes/blog/`
-> 4. **Nuxt / Remix** — non supporté en V1, mais le pattern est identique : un client `lib/ghost.ts` + 2 routes serveur + un sitemap + un webhook
+> 1. **Next.js 16** (App Router), supporté en V1, génération automatique
+> 2. **Astro**, V1.5 ; pour l'instant, lis le code de référence dans le code de démonstration fourni par le formateur (`lib/ghost.ts`, `app/blog/`) et adapte manuellement à `src/pages/blog/`
+> 3. **SvelteKit**, V1.5 ; idem, adapte manuellement à `src/routes/blog/`
+> 4. **Nuxt / Remix**, non supporté en V1, mais le pattern est identique : un client `lib/ghost.ts` + 2 routes serveur + un sitemap + un webhook
 >
 > Quel est ton framework ? »
 
@@ -84,15 +84,15 @@ Stocke la réponse comme `<FRAMEWORK>`.
 >    - Astro : `src/pages/blog/index.astro` + `src/pages/blog/[slug].astro` + `src/pages/api/revalidate-blog.ts` + `astro.config.mjs` avec `output: 'server'` ou `'hybrid'`
 >    - SvelteKit : `src/routes/blog/+page.server.ts` + `src/routes/blog/[slug]/+page.server.ts` + `src/routes/api/revalidate-blog/+server.ts`
 >
-> Le scaffold automatique <FRAMEWORK> arrive en V1.5. Pour l'instant, je te conseille de copier les fichiers de référence à la main dans ton projet et de demander à Claude de les adapter à la convention de ton framework — il sait faire.
+> Le scaffold automatique <FRAMEWORK> arrive en V1.5. Pour l'instant, je te conseille de copier les fichiers de référence à la main dans ton projet et de demander à Claude de les adapter à la convention de ton framework, il sait faire.
 >
-> Si tu veux quand même tenter le scaffold automatique en t'imaginant que c'est Next.js, je peux le faire — mais les fichiers générés seront à 80% à réécrire. Tu préfères lire le code de référence ou tenter le scaffold ? »
+> Si tu veux quand même tenter le scaffold automatique en t'imaginant que c'est Next.js, je peux le faire, mais les fichiers générés seront à 80% à réécrire. Tu préfères lire le code de référence ou tenter le scaffold ? »
 
-Si l'élève insiste pour `<FRAMEWORK>` non-Next, **stoppe la commande** proprement et redirige vers le repo de référence. Ne génère rien — ce serait du code mort.
+Si l'élève insiste pour `<FRAMEWORK>` non-Next, **stoppe la commande** proprement et redirige vers le repo de référence. Ne génère rien, ce serait du code mort.
 
 **Si `<FRAMEWORK>` = Next.js**, continue.
 
-### Question 2 — App Router
+### Question 2, App Router
 
 > « Tu utilises bien l'App Router (dossier `app/` à la racine du projet, pas `pages/`) ? L'App Router est le standard depuis Next.js 13. Le Pages Router n'est pas supporté en V1. »
 
@@ -107,7 +107,7 @@ Si `pages/` :
 
 Stoppe si `pages/`. Continue uniquement si l'App Router est confirmé.
 
-### Question 3 — Path racine du projet
+### Question 3, Path racine du projet
 
 > « Quel est le path racine de ton projet Next.js ? Par défaut `.` (le dossier courant). C'est le dossier qui contient `package.json`, `next.config.js` ou `next.config.ts`, et `app/`. »
 
@@ -121,13 +121,13 @@ Si l'un manque :
 
 > « Je ne trouve pas <fichier manquant> dans <PROJECT_ROOT>. Vérifie le path et redonne-moi-le. »
 
-### Question 4 — Couleur d'accent
+### Question 4, Couleur d'accent
 
 > « Quelle couleur d'accent veux-tu pour les liens, tags et CTA du blog ? Donne un hex (ex. `#7C4DFF`) ou laisse vide pour le défaut violet `#7C4DFF` (cohérent avec le code de démonstration fourni par le formateur). »
 
 Stocke `<ACCENT_COLOR>` (par défaut `#7C4DFF`).
 
-### Question 5 — Police principale
+### Question 5, Police principale
 
 > « Quelle famille de police pour le corps du texte ? Donne un nom CSS (ex. `Inter`, `Geist`, `system-ui`) ou laisse vide pour le défaut `system-ui, sans-serif`. »
 
@@ -141,7 +141,7 @@ Crée les fichiers ci-dessous dans `<PROJECT_ROOT>`. **Si un fichier existe déj
 
 Avant chaque écriture, **annonce le fichier**. Après chaque écriture, confirme « ✓ écrit ».
 
-### Fichier 1/7 — `lib/ghost.ts`
+### Fichier 1/7, `lib/ghost.ts`
 
 ```typescript
 /**
@@ -233,7 +233,7 @@ async function ghostFetch<T>(url: string): Promise<T> {
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(
-      `Ghost API ${res.status} ${res.statusText} — ${url}\n${body}`,
+      `Ghost API ${res.status} ${res.statusText}, ${url}\n${body}`,
     );
   }
   return res.json() as Promise<T>;
@@ -290,7 +290,7 @@ export function formatPublishedDate(iso: string): string {
 export const GHOST_CACHE_TAG = BLOG_TAG;
 ```
 
-### Fichier 2/7 — `app/blog/page.tsx`
+### Fichier 2/7, `app/blog/page.tsx`
 
 ```typescript
 import Link from "next/link";
@@ -307,7 +307,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
 
 export const metadata = {
-  title: "Blog — Articles récents",
+  title: "Blog, Articles récents",
   description: "Analyses, tutos, retours d'expérience.",
   alternates: { canonical: "/blog" },
 };
@@ -457,9 +457,9 @@ async function safeGetPosts(): Promise<GhostPost[]> {
 }
 ```
 
-### Fichier 3/7 — `app/blog/[slug]/page.tsx`
+### Fichier 3/7, `app/blog/[slug]/page.tsx`
 
-⚠️ **Next.js 16 — `params` est un `Promise<...>` qu'il faut `await`.** C'est le breaking change majeur depuis Next 15. Ne le supprime jamais.
+⚠️ **Next.js 16, `params` est un `Promise<...>` qu'il faut `await`.** C'est le breaking change majeur depuis Next 15. Ne le supprime jamais.
 
 ```typescript
 import type { Metadata } from "next";
@@ -676,12 +676,12 @@ export default async function BlogPostPage({
 }
 ```
 
-### Fichier 4/7 — `app/blog/styles.css`
+### Fichier 4/7, `app/blog/styles.css`
 
 Adapte la couleur d'accent et la police aux valeurs `<ACCENT_COLOR>` et `<FONT_FAMILY>` répondues plus haut. Le CSS ci-dessous est scopé sous `.blog-root` (page détail).
 
 ```css
-/* /blog/<slug> — page détail article. Scoped sous .blog-root. */
+/* /blog/<slug>, page détail article. Scoped sous .blog-root. */
 
 .blog-root {
   --paper: #FFFFFF;
@@ -990,10 +990,10 @@ Adapte la couleur d'accent et la police aux valeurs `<ACCENT_COLOR>` et `<FONT_F
 }
 ```
 
-### Fichier 5/7 — `app/blog/list-styles.css`
+### Fichier 5/7, `app/blog/list-styles.css`
 
 ```css
-/* /blog (listing) — Scoped sous .blog-list-root. */
+/* /blog (listing), Scoped sous .blog-list-root. */
 
 .blog-list-root {
   --paper: #FFFFFF;
@@ -1255,9 +1255,9 @@ Adapte la couleur d'accent et la police aux valeurs `<ACCENT_COLOR>` et `<FONT_F
 }
 ```
 
-### Fichier 6/7 — `app/sitemap.ts` (création OU patch)
+### Fichier 6/7, `app/sitemap.ts` (création OU patch)
 
-#### Cas A — `app/sitemap.ts` n'existe pas encore
+#### Cas A, `app/sitemap.ts` n'existe pas encore
 
 Crée le fichier minimal :
 
@@ -1304,7 +1304,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 ```
 
-#### Cas B — `app/sitemap.ts` existe déjà
+#### Cas B, `app/sitemap.ts` existe déjà
 
 ⚠️ **Ne remplace pas le fichier.** Affiche son contenu actuel à l'élève et propose un patch précis :
 
@@ -1335,7 +1335,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 Si l'élève accepte, applique le patch via Edit. Sinon, écris le snippet et passe à la suite.
 
-### Fichier 7/7 — `app/api/revalidate-blog/route.ts`
+### Fichier 7/7, `app/api/revalidate-blog/route.ts`
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
@@ -1349,7 +1349,7 @@ import { GHOST_CACHE_TAG } from "@/lib/ghost";
  *   Events: Post published, Post updated, Post unpublished, Post deleted
  *   URL:    https://<site>/api/revalidate-blog?token=<REVALIDATE_SECRET>
  *
- * Env var: REVALIDATE_SECRET — shared secret matching the ?token query param.
+ * Env var: REVALIDATE_SECRET, shared secret matching the ?token query param.
  */
 export async function POST(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
@@ -1364,7 +1364,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (token !== secret) {
-    console.warn("[revalidate-blog] unauthorized — token mismatch");
+    console.warn("[revalidate-blog] unauthorized, token mismatch");
     return NextResponse.json(
       { ok: false, error: "invalid token" },
       { status: 401 },
@@ -1386,7 +1386,7 @@ export async function POST(req: NextRequest) {
     revalidatePath("/blog");
     if (slug) revalidatePath(`/blog/${slug}`);
     console.log(
-      `[revalidate-blog] ok — tag=${GHOST_CACHE_TAG} slug=${slug ?? "(none)"}`,
+      `[revalidate-blog] ok, tag=${GHOST_CACHE_TAG} slug=${slug ?? "(none)"}`,
     );
   } catch (err) {
     console.error("[revalidate-blog] revalidation failed:", err);
@@ -1416,7 +1416,7 @@ Ajoute (ou crée) `<PROJECT_ROOT>/.env.example` avec ces 3 entrées en plus de l
 # URL de ton instance Ghost sur PikaPods (sans slash final)
 GHOST_URL=https://<ton-instance>.pikapod.net
 
-# Clé Content API (read-only) — Ghost admin → Settings → Integrations → Claude Code
+# Clé Content API (read-only), Ghost admin → Settings → Integrations → Claude Code
 # Format : 24 caractères hexadécimaux
 GHOST_CONTENT_API_KEY=
 
@@ -1428,7 +1428,7 @@ REVALIDATE_SECRET=
 NEXT_PUBLIC_SITE_URL=https://<ton-site>.vercel.app
 ```
 
-⚠️ **Ne mets jamais les vraies valeurs dans `.env.example`** — c'est un fichier commité. Les vraies valeurs vont dans `.env.local` (jamais commité, déjà gitignoré par défaut dans Next.js) ou directement dans le dashboard Vercel.
+⚠️ **Ne mets jamais les vraies valeurs dans `.env.example`**, c'est un fichier commité. Les vraies valeurs vont dans `.env.local` (jamais commité, déjà gitignoré par défaut dans Next.js) ou directement dans le dashboard Vercel.
 
 ## Configuration sur Vercel
 
@@ -1475,7 +1475,7 @@ Attends la confirmation.
 
 > « On vérifie que tout marche.
 >
-> 1. Ouvre `<SITE_URL>/blog` dans ton navigateur. Tu dois voir la liste des articles Ghost (ou « Aucun article publié pour le moment » si Ghost est encore vide — c'est OK).
+> 1. Ouvre `<SITE_URL>/blog` dans ton navigateur. Tu dois voir la liste des articles Ghost (ou « Aucun article publié pour le moment » si Ghost est encore vide, c'est OK).
 > 2. Ouvre `<SITE_URL>/blog/<un-slug>` (clique sur un article). Tu dois voir le rendu détail avec ton CSS.
 > 3. Ouvre `<SITE_URL>/sitemap.xml`. Tu dois y voir tes URLs `/blog/<slug>`.
 >
@@ -1515,7 +1515,7 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 > - Cache Next.js : 1h ISR fallback + invalidation immédiate via webhook (`revalidateTag('blog', 'max')`)
 > - SEO : metadata par article + JSON-LD `BlogPosting` + `BreadcrumbList` + sitemap mergé
 >
-> Ton blog vit maintenant à `<SITE_URL>/blog`. Ghost reste sur PikaPods et fait office de CMS — il n'est jamais visible des visiteurs.
+> Ton blog vit maintenant à `<SITE_URL>/blog`. Ghost reste sur PikaPods et fait office de CMS, il n'est jamais visible des visiteurs.
 >
 > Prochaine étape : si tu n'as pas encore de cocon, lance `/blog:cocon`. Sinon `/blog:article` pour publier ton premier article. »
 
@@ -1525,4 +1525,4 @@ Si un point ne passe pas, **retourne sur l'étape correspondante** avant de clô
 - **`<Image unoptimized>`** : on évite de configurer `remotePatterns` dans `next.config.ts` (Ghost-hosted images). Si tu publies beaucoup d'images, bascule en `remotePatterns` explicite et enlève `unoptimized` pour bénéficier de l'optimisation Vercel.
 - **JSON-LD inline** : pas de wrapper `<JsonLd />` factorisé pour rester autonome. Si tu veux mutualiser, crée `components/JsonLd.tsx` qui prend `{ data }: { data: object | object[] }` et émet `<script type="application/ld+json">{JSON.stringify(data)}</script>`.
 - **Pas de TOC sticky / progress bar** : le code de démonstration fourni par le formateur en a une (`BlogReadingChrome.tsx`) mais elle dépend de `transformBlogHtml` + `extractHeadings` (`lib/blog-html.ts`). Volontairement omis pour rester en scaffolding minimal. Tu peux l'ajouter ensuite en lisant le repo de référence.
-- **Pas de pages pilier (`/blog/pilier/<slug>`)** : également présentes dans le code de démonstration fourni par le formateur, dépendent de `lib/cocon.ts`. À ajouter manuellement si tu veux des pages pilier — la donnée vient de ton `cocon.json` généré par `/blog:cocon`.
+- **Pas de pages pilier (`/blog/pilier/<slug>`)** : également présentes dans le code de démonstration fourni par le formateur, dépendent de `lib/cocon.ts`. À ajouter manuellement si tu veux des pages pilier, la donnée vient de ton `cocon.json` généré par `/blog:cocon`.

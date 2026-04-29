@@ -13,13 +13,13 @@ Le choix dépend de la **techno du site existant** ET de la **disponibilité d'u
 
 | Scénario | URL publique | Techno requise | Quand l'utiliser |
 |---|---|---|---|
-| **A — PikaPods URL** | `wonderful-caribou.pikapod.net` | toute (HTML pur OK) | par défaut, pas de DNS, pas de domaine custom |
-| **B — Sous-domaine custom** | `blog.<domaine>` | toute (HTML pur OK) | l'élève a un domaine custom, veut un blog branding clean |
-| **C — Headless API** | `<site>/blog` (rendu par le framework de l'élève) | Next.js / Astro / SvelteKit / Nuxt / Remix uniquement | demande d'écrire ~150 lignes côté framework ; scaffold automatique pour Next.js via `/blog:integrate-headless` |
+| **A, PikaPods URL** | `wonderful-caribou.pikapod.net` | toute (HTML pur OK) | par défaut, pas de DNS, pas de domaine custom |
+| **B, Sous-domaine custom** | `blog.<domaine>` | toute (HTML pur OK) | l'élève a un domaine custom, veut un blog branding clean |
+| **C, Headless API** | `<site>/blog` (rendu par le framework de l'élève) | Next.js / Astro / SvelteKit / Nuxt / Remix uniquement | demande d'écrire ~150 lignes côté framework ; scaffold automatique pour Next.js via `/blog:integrate-headless` |
 
 ⚠️ **Anti-pattern à NE PAS proposer** : un rewrite Vercel proxy `/blog/* → ghost.pikapod.net/blog/*`. Ghost servirait directement les pages mais croirait toujours vivre à son URL native (le template Ghost de PikaPods n'expose pas la variable `url` au top-level), ce qui casserait les `<link rel="canonical">`, le sitemap et les liens internes du theme. Pour avoir l'URL `<site>/blog` proprement, c'est scénario C uniquement (= rendu par framework JS, pas par Ghost).
 
-Les 9 étapes ci-dessous décrivent la procédure pour le scénario B (sous-domaine custom, le plus complet). Pour le scénario A, sauter l'étape 3 (DNS + Custom Domain) — l'URL Ghost est l'URL PikaPods native. Pour le scénario C, sauter aussi l'étape 3 et utiliser l'URL PikaPods comme `GHOST_BACKEND_URL` (le visiteur ne la verra jamais ; c'est le framework qui rend `<site>/blog`).
+Les 9 étapes ci-dessous décrivent la procédure pour le scénario B (sous-domaine custom, le plus complet). Pour le scénario A, sauter l'étape 3 (DNS + Custom Domain), l'URL Ghost est l'URL PikaPods native. Pour le scénario C, sauter aussi l'étape 3 et utiliser l'URL PikaPods comme `GHOST_BACKEND_URL` (le visiteur ne la verra jamais ; c'est le framework qui rend `<site>/blog`).
 
 ## Pourquoi Ghost (et pas WordPress, Notion, Substack)
 
@@ -34,26 +34,26 @@ Ghost est un CMS pensé **pour les rédacteurs**, open-source, écrit en Node.js
 
 - **Hébergeur européen, RGPD-compliant.** Datacenters en Allemagne et aux Pays-Bas. Aucun transfert de données vers les US. Critique si tu collectes des emails newsletter.
 - **Une instance Ghost lancée en 2 minutes.** Catalogue de pods pré-configurés. Tu cliques, tu choisis une taille, c'est en ligne.
-- **~5 €/mois pour démarrer** (à vérifier sur la page tarifs PikaPods, les prix évoluent). Ghost-Pro démarre à 9 $/mois mais limite les intégrations sur le plan de base. Un VPS self-hosted (Hetzner, OVH) coûte moins cher mais demande de gérer les mises à jour, les backups, le HTTPS, le firewall — pas le scope du cours.
+- **~5 €/mois pour démarrer** (à vérifier sur la page tarifs PikaPods, les prix évoluent). Ghost-Pro démarre à 9 $/mois mais limite les intégrations sur le plan de base. Un VPS self-hosted (Hetzner, OVH) coûte moins cher mais demande de gérer les mises à jour, les backups, le HTTPS, le firewall, pas le scope du cours.
 - **Pas de gestion serveur.** Mises à jour Ghost gérées en un clic, backups quotidiens automatiques, HTTPS Let's Encrypt automatique.
 
-## Étape 1 — Créer un compte PikaPods
+## Étape 1, Créer un compte PikaPods
 
 1. Aller sur https://www.pikapods.com → bouton **Sign up**
 2. Email + mot de passe fort (utilise un gestionnaire de mots de passe : 1Password, Bitwarden, le trousseau Apple)
 3. PikaPods offre des crédits gratuits à l'inscription pour tester (montant à vérifier sur leur page d'accueil, ça évolue). C'est suffisant pour valider l'installation avant de passer à un paiement mensuel.
 
-## Étape 2 — Lancer une instance Ghost
+## Étape 2, Lancer une instance Ghost
 
 1. Une fois connecté → **Catalog** → tape « Ghost » dans la recherche
 2. Clique sur la fiche Ghost → bouton **Run pod**
-3. **Taille** : choisis **S (256 MB RAM)** — largement suffisant pour un blog qui démarre. Tu pourras upgrader si tu publies des centaines d'articles avec beaucoup d'images.
-4. **Région** : choisis **Europe** (Allemagne ou Pays-Bas) — meilleure latence pour tes lecteurs européens et RGPD direct
+3. **Taille** : choisis **S (256 MB RAM)**, largement suffisant pour un blog qui démarre. Tu pourras upgrader si tu publies des centaines d'articles avec beaucoup d'images.
+4. **Région** : choisis **Europe** (Allemagne ou Pays-Bas), meilleure latence pour tes lecteurs européens et RGPD direct
 5. Clique **Deploy**. L'instance démarre en 2 à 3 minutes. Tu obtiens une URL technique du type `https://wonderful-caribou.pikapod.net`
 
 À ce stade ton Ghost tourne, mais tu vas le brancher sur ton vrai sous-domaine avant la première connexion admin.
 
-## Étape 3 — Sous-domaine `blog.tonsite.com`
+## Étape 3, Sous-domaine `blog.tonsite.com`
 
 Chez ton registrar de domaine (OVH, Gandi, Namecheap, Cloudflare DNS, Infomaniak) :
 
@@ -72,9 +72,9 @@ dig blog.tonsite.com CNAME
 dig +short blog.tonsite.com
 ```
 
-Tu peux aussi utiliser https://dnschecker.org en y entrant `blog.tonsite.com` — tu dois voir l'enregistrement CNAME pointer vers l'URL PikaPods sur les serveurs du monde entier.
+Tu peux aussi utiliser https://dnschecker.org en y entrant `blog.tonsite.com`, tu dois voir l'enregistrement CNAME pointer vers l'URL PikaPods sur les serveurs du monde entier.
 
-## Étape 4 — Configurer le custom domain dans Ghost (côté PikaPods)
+## Étape 4, Configurer le custom domain dans Ghost (côté PikaPods)
 
 1. PikaPods dashboard → ton pod Ghost → onglet **Domains** (ou **Settings** selon la version de l'interface)
 2. **Add domain** → entre `blog.tonsite.com`
@@ -83,7 +83,7 @@ Tu peux aussi utiliser https://dnschecker.org en y entrant `blog.tonsite.com` �
 
 Si tu vois une erreur SSL ou un timeout, attends 5-10 minutes de plus (le certificat peut prendre du temps à se générer la première fois).
 
-## Étape 5 — Premier login Ghost admin
+## Étape 5, Premier login Ghost admin
 
 1. URL : `https://blog.tonsite.com/ghost`
 2. Crée le compte admin (owner) :
@@ -92,12 +92,12 @@ Si tu vois une erreur SSL ou un timeout, attends 5-10 minutes de plus (le certif
    - **Mot de passe** : fort (12+ caractères, mélange casse + chiffres + symboles)
 3. Configuration de base, à faire tout de suite :
    - **Settings → General → Site title** : nom du blog (ex : « Mon Blog »)
-   - **Settings → General → Site description** : 1 phrase, 150 caractères max — utilisée comme meta description par défaut
+   - **Settings → General → Site description** : 1 phrase, 150 caractères max, utilisée comme meta description par défaut
    - **Settings → General → Timezone** : `Europe/Paris`
    - **Settings → General → Publication language** : `fr`
    - **Settings → General → Navigation** : 3-4 entrées max pour démarrer (Accueil, À propos, Contact)
 
-## Étape 6 — Créer une Custom Integration (Admin + Content API keys)
+## Étape 6, Créer une Custom Integration (Admin + Content API keys)
 
 C'est l'étape qui débloque l'usage de Ghost depuis Claude Code.
 
@@ -106,9 +106,9 @@ C'est l'étape qui débloque l'usage de Ghost depuis Claude Code.
 3. **Nom** : `Claude Code` (ou le nom de ton projet)
 4. Une fois créée, tu vois 3 valeurs critiques :
 
-   - **Content API Key** — 24 caractères hexadécimaux (ex : `2b1c4d5e6f7a8b9c0d1e2f3a`). Clé **publique en lecture seule**. C'est elle qu'on utilise pour afficher les articles côté front (lib/ghost.ts dans le code de référence).
-   - **Admin API Key** — format `id:secret` où `id` fait 24 hex et `secret` fait 64 hex (ex : `5a1b...:6c2d...`). Clé **privée en lecture/écriture**. C'est elle qui permet à Claude Code de **créer et publier des articles** via l'API Admin.
-   - **API URL** — l'URL de ton instance Ghost, donc `https://blog.tonsite.com`
+   - **Content API Key**, 24 caractères hexadécimaux (ex : `2b1c4d5e6f7a8b9c0d1e2f3a`). Clé **publique en lecture seule**. C'est elle qu'on utilise pour afficher les articles côté front (lib/ghost.ts dans le code de référence).
+   - **Admin API Key**, format `id:secret` où `id` fait 24 hex et `secret` fait 64 hex (ex : `5a1b...:6c2d...`). Clé **privée en lecture/écriture**. C'est elle qui permet à Claude Code de **créer et publier des articles** via l'API Admin.
+   - **API URL**, l'URL de ton instance Ghost, donc `https://blog.tonsite.com`
 
 5. **Stockage de ces valeurs** :
    - Pour un projet HTML/CSS/JS pur sans build : copie-les dans un fichier local non commité (ex : `secrets.md` dans `.gitignore`) et passe-les à la config MCP (étape 7).
@@ -116,9 +116,9 @@ C'est l'étape qui débloque l'usage de Ghost depuis Claude Code.
 
 **Ne jamais committer ces clés dans git.** L'Admin API Key permet de tout faire sur ton blog, y compris supprimer des articles.
 
-## Étape 7 — Installer le MCP Ghost dans Claude Code
+## Étape 7, Installer le MCP Ghost dans Claude Code
 
-Le MCP Ghost donne à Claude Code l'accès direct à ton instance — il pourra lister, lire, créer, éditer des articles via les outils `mcp__ghost__posts_*`.
+Le MCP Ghost donne à Claude Code l'accès direct à ton instance, il pourra lister, lire, créer, éditer des articles via les outils `mcp__ghost__posts_*`.
 
 1. Dans Claude Code, lance la commande :
 
@@ -139,11 +139,11 @@ Le MCP Ghost donne à Claude Code l'accès direct à ton instance — il pourra 
    /mcp ping ghost
    ```
 
-   Tu dois recevoir une réponse `OK` ou équivalent. Si tu obtiens une erreur 401, tes clés ne sont pas correctes — repasse par Settings → Integrations dans Ghost admin pour les régénérer.
+   Tu dois recevoir une réponse `OK` ou équivalent. Si tu obtiens une erreur 401, tes clés ne sont pas correctes, repasse par Settings → Integrations dans Ghost admin pour les régénérer.
 
 4. Test fonctionnel : demande à Claude Code « liste mes 5 derniers articles Ghost ». Il doit utiliser `mcp__ghost__posts_browse` et te répondre. Sur une instance fraîche, tu auras les 3 articles de démo Ghost (« Coming soon », « Start here », etc.).
 
-## Étape 8 — Mode privé (optionnel mais recommandé pendant l'installation)
+## Étape 8, Mode privé (optionnel mais recommandé pendant l'installation)
 
 Tant que ton blog est vide ou en chantier, tu ne veux pas que Google indexe les articles de démo.
 
@@ -153,7 +153,7 @@ Tant que ton blog est vide ou en chantier, tu ne veux pas que Google indexe les 
 
 Quand le désactiver : **dès que tu publies ton premier vrai article**. Avant, tu indexes du contenu vide ou de mauvaise qualité, ce qui dégrade ton référencement futur.
 
-## Étape 9 — Webhooks (avancé, pour plus tard)
+## Étape 9, Webhooks (avancé, pour plus tard)
 
 Les webhooks Ghost servent à **notifier ton site qu'un article a été publié/modifié**, pour qu'il rafraîchisse son cache.
 
@@ -167,7 +167,7 @@ Les webhooks Ghost servent à **notifier ton site qu'un article a été publié/
 À la fin de l'exécution de la commande, l'agent doit avoir créé un fichier `ghost-config.md` à la racine du projet de l'étudiant, **sans aucun secret**, contenant :
 
 ```markdown
-# Ghost — Configuration de mon blog
+# Ghost, Configuration de mon blog
 
 - **URL admin** : https://blog.tonsite.com/ghost
 - **URL publique** : https://blog.tonsite.com
@@ -183,4 +183,4 @@ Les webhooks Ghost servent à **notifier ton site qu'un article a été publié/
 - Ne jamais committer les clés dans git.
 ```
 
-Ce fichier sert de mémoire au projet — l'étudiant saura toujours d'où vient son blog et ce qui reste à faire.
+Ce fichier sert de mémoire au projet, l'étudiant saura toujours d'où vient son blog et ce qui reste à faire.

@@ -3,9 +3,9 @@ name: status
 description: Affiche l'état du cocon : total articles, published, drafts, planned, répartition par pilier, dernière publication, prochaine suggestion. Lecture seule, pas d'API LLM consommée.
 ---
 
-# /blog:status — État du cocon
+# /blog:status, État du cocon
 
-Tu vas afficher à l'étudiant un instantané de son cocon : combien d'articles total, combien publiés, combien en draft Ghost, combien encore à écrire, et un découpage par pilier. **Lecture seule** — pas de prompt LLM, pas d'image, pas d'écriture sur disque, pas d'appel à une skill. Juste de la donnée croisée entre `cocon.json` et Ghost.
+Tu vas afficher à l'étudiant un instantané de son cocon : combien d'articles total, combien publiés, combien en draft Ghost, combien encore à écrire, et un découpage par pilier. **Lecture seule**, pas de prompt LLM, pas d'image, pas d'écriture sur disque, pas d'appel à une skill. Juste de la donnée croisée entre `cocon.json` et Ghost.
 
 L'objectif : une vue d'ensemble en 2 secondes, comme un `git status` mais pour le cocon éditorial.
 
@@ -13,17 +13,17 @@ L'objectif : une vue d'ensemble en 2 secondes, comme un `git status` mais pour l
 
 Avant de démarrer, vérifie qu'un fichier `cocon.json` existe à la racine du projet. Sinon, dis-lui :
 
-> « Je ne trouve pas de `cocon.json` à la racine du projet. Cette commande lit l'état du cocon — il faut donc qu'il existe d'abord. Lance `/blog:cocon` pour le cartographier, puis reviens sur `/blog:status`. »
+> « Je ne trouve pas de `cocon.json` à la racine du projet. Cette commande lit l'état du cocon, il faut donc qu'il existe d'abord. Lance `/blog:cocon` pour le cartographier, puis reviens sur `/blog:status`. »
 
 Et arrête-toi là.
 
-Pas besoin de `ghost-config.md` à proprement parler — si le MCP Ghost n'est pas branché, tu te contentes des status présents dans `cocon.json` et tu signales l'absence de cross-référence.
+Pas besoin de `ghost-config.md` à proprement parler, si le MCP Ghost n'est pas branché, tu te contentes des status présents dans `cocon.json` et tu signales l'absence de cross-référence.
 
 ## Protocole
 
 Tu vas dérouler **4 étapes** silencieusement (pas de dialogue), puis afficher le résultat.
 
-### Étape 1 — Lire `cocon.json`
+### Étape 1, Lire `cocon.json`
 
 1. Ouvre `cocon.json` à la racine du projet.
 2. Parse le JSON.
@@ -34,7 +34,7 @@ Si le JSON est invalide ou si la structure attendue manque (`mere`, `filles`, `p
 
 > « Ton `cocon.json` est cassé ou incomplet (clé manquante : `<clé>`). Relance `/blog:cocon` pour le régénérer proprement. »
 
-### Étape 2 — Lire l'état Ghost (via MCP)
+### Étape 2, Lire l'état Ghost (via MCP)
 
 Si le MCP Ghost est disponible :
 
@@ -51,7 +51,7 @@ Si le MCP Ghost n'est **pas** disponible (erreur de connexion ou MCP non install
 - Utilise les `status` tels quels dans `cocon.json` (sans cross-référence).
 - Note dans l'output final que la cross-référence Ghost n'a pas pu être faite.
 
-### Étape 3 — Calculs
+### Étape 3, Calculs
 
 À partir des status effectifs, calcule :
 
@@ -64,7 +64,7 @@ Si le MCP Ghost n'est **pas** disponible (erreur de connexion ou MCP non install
 - **Prochain à écrire** : parmi les petites-filles `planned`, prends celle du pilier le plus avancé (= pilier avec le plus haut ratio `published/total`, hors piliers déjà 100 % terminés). En cas d'égalité, prends celle qui apparaît en premier dans le JSON. Affiche son `title` et son `pilier_slug`.
 - **Articles hors cocon** : la liste collectée à l'étape 2 (slugs Ghost non rattachés).
 
-### Étape 4 — Output
+### Étape 4, Output
 
 Affiche le résultat en un seul bloc, exactement dans le format ci-dessous (français, sobre, type CLI, ASCII pour les arborescences). Remplace `<...>` par les valeurs calculées. Aligne les colonnes proprement.
 
@@ -104,7 +104,7 @@ Prochain à écrire    : "<title>" (pilier <pilier_slug>)
 ✓ publié sur le blog public  ◐ draft sur Ghost (en attente de relecture)  ○ planifié dans le cocon, à écrire
 ```
 
-**Section optionnelle — Articles hors cocon**
+**Section optionnelle, Articles hors cocon**
 
 Si la cross-référence Ghost a renvoyé des posts non rattachés au cocon, ajoute après la légende :
 
@@ -118,13 +118,13 @@ Si la cross-référence Ghost a renvoyé des posts non rattachés au cocon, ajou
 
 Sinon, omets entièrement cette section.
 
-**Section conditionnelle — MCP Ghost indisponible**
+**Section conditionnelle, MCP Ghost indisponible**
 
 Si l'étape 2 n'a pas pu se faire (MCP Ghost absent ou en erreur), ajoute après la légende :
 
 ```
 
-ℹ️  Cross-référence Ghost indisponible — affichage basé sur les status de cocon.json uniquement.
+ℹ️  Cross-référence Ghost indisponible, affichage basé sur les status de cocon.json uniquement.
    Branche le MCP Ghost (`/blog:setup-ghost`) pour un état temps réel.
 ```
 
@@ -148,7 +148,7 @@ Une fois l'output affiché, ajoute en pied de réponse :
 ## Règles de comportement
 
 - **Lecture seule, toujours.** Cette commande ne modifie jamais `cocon.json`, ne publie rien sur Ghost, ne déclenche aucun prompt LLM coûteux. Si l'étudiant te demande pendant l'exécution « peux-tu corriger un slug ? », arrête-toi et redirige : « Pour modifier le cocon, lance `/blog:cocon` (mode édition à l'étape concernée). Ici, je ne fais que lire. »
-- **Pas de dialogue interactif.** Tu déroules les 4 étapes en silence et tu affiches le résultat. Si quelque chose bloque (cocon.json absent ou cassé), tu signales et tu t'arrêtes — pas de protocole de réparation ici.
+- **Pas de dialogue interactif.** Tu déroules les 4 étapes en silence et tu affiches le résultat. Si quelque chose bloque (cocon.json absent ou cassé), tu signales et tu t'arrêtes, pas de protocole de réparation ici.
 - **Tutoiement direct.**
 - **ASCII propre.** Pas d'emoji superflu en dehors des 3 marqueurs de status (`✓`, `◐`, `○`) et des 2 marqueurs de section (`⚠️`, `ℹ️`). Pas de couleurs ANSI (l'output doit rester lisible dans n'importe quel terminal et copiable en markdown).
 - **Si le cocon est vide** (mère sans filles, ou filles sans petites-filles), affiche le message minimal :

@@ -1,13 +1,13 @@
 ---
 name: start
-description: Commande MASTER — orchestre les 6 phases du cours « Claude + Blog » de A à Z (setup Ghost → theme → cocon → premier article → batch auto → audit SEO) avec un checkpoint à chaque étape. Reprenable via .ottho-blog/state.json.
+description: Commande MASTER, orchestre les 6 phases du cours « Claude + Blog » de A à Z (setup Ghost → theme → cocon → premier article → batch auto → audit SEO) avec un checkpoint à chaque étape. Reprenable via .ottho-blog/state.json.
 ---
 
-# /start — Orchestrateur complet du cours « Claude + Blog »
+# /start, Orchestrateur complet du cours « Claude + Blog »
 
 Tu vas orchestrer la création **complète** d'un blog headless avec cocon sémantique, de A à Z, en enchaînant les phases dans l'ordre, avec un **checkpoint** à chaque étape. L'utilisateur peut dire STOP à tout moment et reprendre plus tard.
 
-## Étape 0 — Gestion de l'état
+## Étape 0, Gestion de l'état
 
 ### Si `.ottho-blog/state.json` existe
 
@@ -42,22 +42,22 @@ Crée `.ottho-blog/state.json` :
 }
 ```
 
-## Étape 1 — Annonce du parcours
+## Étape 1, Annonce du parcours
 
 Affiche :
 
 ```
-🚀 /blog:start — Création de blog Ghost, de A à Z
+🚀 /blog:start, Création de blog Ghost, de A à Z
 
 Tu vas enchaîner 6 phases, avec une validation à chaque étape.
 Tu peux dire STOP à tout moment, je garde ta progression.
 
-Phase 1 — Setup Ghost (15-30 min)     [PikaPods + URL PikaPods OU sous-domaine custom + MCP Ghost]
-Phase 2 — Theme à ta charte (20 min)  [fork Source + override CSS + upload]
-Phase 3 — Cocon sémantique (15 min)   [propose + valide → cocon.json]
-Phase 4 — Premier article (5 min)     [pipeline complet : brief → article → image → draft Ghost]
-Phase 5 — Batch 3 articles (15 min)   [variante batch avec review HITL]
-Phase 6 — Audit SEO (5 min)           [score 8 critères + suggestions]
+Phase 1, Setup Ghost (15-30 min)     [PikaPods + URL PikaPods OU sous-domaine custom + MCP Ghost]
+Phase 2, Theme à ta charte (20 min)  [fork Source + override CSS + upload]
+Phase 3, Cocon sémantique (15 min)   [propose + valide → cocon.json]
+Phase 4, Premier article (5 min)     [pipeline complet : brief → article → image → draft Ghost]
+Phase 5, Batch 3 articles (15 min)   [variante batch avec review HITL]
+Phase 6, Audit SEO (5 min)           [score 8 critères + suggestions]
 
 Temps total estimé : ~1h30 (si tu as déjà ton site avec brief.md et charte.md prêts).
 
@@ -70,11 +70,11 @@ Pré-requis vérifiés ?
 - [ ] Compte PikaPods (gratuit ou ~5 €/mois)
 - [ ] Compte fal.ai (déjà dans Claude Code, du cours précédent)
 
-⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel — y compris la `vercel.app` par défaut.
+⚠️ **Pas besoin d'avoir un nom de domaine custom.** Le scénario par défaut (`/blog:setup-ghost` te demandera de choisir) marche avec n'importe quelle URL Vercel, y compris la `vercel.app` par défaut.
 
 ⚠️ **La techno de ton site change l'architecture du blog.** `/blog:setup-ghost` te demandera dès le début quelle techno fait tourner ton site sur Vercel :
 - **HTML/CSS/JS pur** → 2 scénarios disponibles (URL PikaPods native, ou sous-domaine custom `blog.<domaine>` si tu as un domaine).
-- **Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** → 3 scénarios disponibles (les 2 ci-dessus + headless API qui rend le blog directement à `<ton-site>/blog` via ton framework — scaffold automatique pour Next.js via `/blog:integrate-headless`).
+- **Framework JS avec rendu serveur (Next.js, Astro, SvelteKit, Nuxt, Remix)** → 3 scénarios disponibles (les 2 ci-dessus + headless API qui rend le blog directement à `<ton-site>/blog` via ton framework, scaffold automatique pour Next.js via `/blog:integrate-headless`).
 
 Tu n'as pas à pré-juger ici, la commande `/blog:setup-ghost` détectera la techno et te proposera les bons choix.
 
@@ -87,30 +87,30 @@ Si l'utilisateur n'a pas un des pré-requis, redirige :
 - Pas de `charte.md` → cours « Claude + Site web » chapitre Design
 - Pas de compte PikaPods → continue, on en crée un en Phase 1
 
-**Ne pose JAMAIS de question sur un nom de domaine custom NI sur la techno à ce stade.** Le détecteur de techno (HTML pur vs framework JS) et le scénario d'hébergement (URL PikaPods, sous-domaine custom, ou headless API) sont gérés à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel — peu importe son URL et sa techno.
+**Ne pose JAMAIS de question sur un nom de domaine custom NI sur la techno à ce stade.** Le détecteur de techno (HTML pur vs framework JS) et le scénario d'hébergement (URL PikaPods, sous-domaine custom, ou headless API) sont gérés à l'intérieur de `/blog:setup-ghost` (Phase 1). Ta seule pré-requis est qu'un site soit déployé sur Vercel, peu importe son URL et sa techno.
 
-**Ne propose JAMAIS le subpath `<site>/blog` via rewrite Vercel proxy.** Cette option a été retirée du plugin parce que le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes du theme. Pour obtenir `<site>/blog` proprement, il faut soit un sous-domaine custom (Scénario B), soit un framework JS qui consomme l'API Ghost (Scénario C, headless API — uniquement disponible si la techno détectée à l'étape 0 de `/blog:setup-ghost` est Next.js/Astro/SvelteKit/Nuxt/Remix).
+**Ne propose JAMAIS le subpath `<site>/blog` via rewrite Vercel proxy.** Cette option a été retirée du plugin parce que le template Ghost de PikaPods n'expose pas la variable `url` au top-level, ce qui casserait les liens canoniques, le sitemap et les liens internes du theme. Pour obtenir `<site>/blog` proprement, il faut soit un sous-domaine custom (Scénario B), soit un framework JS qui consomme l'API Ghost (Scénario C, headless API, uniquement disponible si la techno détectée à l'étape 0 de `/blog:setup-ghost` est Next.js/Astro/SvelteKit/Nuxt/Remix).
 
 Sinon, attends `oui` et passe à la Phase 1.
 
-## Phase 1 — Setup Ghost
+## Phase 1, Setup Ghost
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 1/6 — Setup Ghost. ~15-30 min. On va créer ton instance Ghost sur PikaPods, détecter la techno de ton site, choisir où vit ton blog (URL PikaPods native / sous-domaine custom / headless API selon la techno), et installer le MCP Ghost dans Claude Code. »
+1. Annonce : « Phase 1/6, Setup Ghost. ~15-30 min. On va créer ton instance Ghost sur PikaPods, détecter la techno de ton site, choisir où vit ton blog (URL PikaPods native / sous-domaine custom / headless API selon la techno), et installer le MCP Ghost dans Claude Code. »
 2. Lance la logique de **`/blog:setup-ghost`** (charge la skill `ghost-config`). C'est cette commande qui détecte la techno (`<TECHNO>` = A pour HTML pur, B pour framework JS) puis demande à l'utilisateur quel scénario d'hébergement choisir : A (URL PikaPods par défaut) toujours dispo, B (sous-domaine custom) toujours dispo, C (headless API) **uniquement si `<TECHNO>` = B**. Tu n'as PAS à pré-juger ici.
 3. À la fin de cette phase, vérifie que `ghost-config.md` existe à la racine et que le MCP Ghost répond.
 4. **Checkpoint :** « Ghost est en ligne sur `<BLOG_URL>` (l'URL exacte dépend du scénario choisi dans setup-ghost). Le MCP répond bien. On passe au theme ? (oui / stop) »
 5. Marque Phase 1 complétée dans le state, note `ghost_url` (l'URL publique), `ghost_scenario` (`A`, `B` ou `C`) et `techno` (`A` ou `B`).
-6. **Si `<SCENARIO>` = C (headless API)** : skip la Phase 2 « Theme » classique et lance la Phase 2-bis (intégration headless) à la place. Annonce : « Tu es en headless API : le theme Ghost ne sert à rien dans ton cas. On saute le `/blog:theme` classique et on bascule sur `/blog:integrate-headless` (Phase 2-bis) qui scaffolde le code blog dans ton framework — Next.js 16 supporté en V1, Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de référence. »
+6. **Si `<SCENARIO>` = C (headless API)** : skip la Phase 2 « Theme » classique et lance la Phase 2-bis (intégration headless) à la place. Annonce : « Tu es en headless API : le theme Ghost ne sert à rien dans ton cas. On saute le `/blog:theme` classique et on bascule sur `/blog:integrate-headless` (Phase 2-bis) qui scaffolde le code blog dans ton framework, Next.js 16 supporté en V1, Astro/SvelteKit en V1.5 avec adaptation manuelle depuis le code de référence. »
 
-## Phase 2 — Theme à ta charte (scénarios A et B)
+## Phase 2, Theme à ta charte (scénarios A et B)
 
 **Si phase non complétée ET `<SCENARIO>` ∈ {A, B} :**
 
-*(Skip cette phase entièrement si `<SCENARIO>` = C — voir Phase 2-bis ci-dessous.)*
+*(Skip cette phase entièrement si `<SCENARIO>` = C, voir Phase 2-bis ci-dessous.)*
 
-1. Annonce : « Phase 2/6 — Theme. ~20 min. On va générer un theme Ghost custom à partir de ta `charte.md`, pour que ton blog ressemble à ton site existant. »
+1. Annonce : « Phase 2/6, Theme. ~20 min. On va générer un theme Ghost custom à partir de ta `charte.md`, pour que ton blog ressemble à ton site existant. »
 2. Vérifie que `charte.md` est lisible. Si absent, propose-en la création rapide en lisant les couleurs/fonts depuis le site existant.
 3. Lance la logique de **`/blog:theme`** (charge la skill `ghost-theme`).
 4. À la fin, le theme est uploadé et activé dans Ghost. L'utilisateur visite l'URL publique du blog (`<BLOG_URL>` notée en Phase 1) pour valider visuellement.
@@ -118,16 +118,16 @@ Sinon, attends `oui` et passe à la Phase 1.
 6. Si l'utilisateur veut itérer : reste en Phase 2, applique les modifs CSS demandées, ré-uploade.
 7. Marque Phase 2 complétée dans le state.
 
-## Phase 2-bis — Intégration headless (scénario C uniquement)
+## Phase 2-bis, Intégration headless (scénario C uniquement)
 
 **Si phase non complétée ET `<SCENARIO>` = C :**
 
-*(Skip cette phase entièrement si `<SCENARIO>` ∈ {A, B} — la Phase 2 « Theme » s'en charge à la place.)*
+*(Skip cette phase entièrement si `<SCENARIO>` ∈ {A, B}, la Phase 2 « Theme » s'en charge à la place.)*
 
-1. Annonce : « Phase 2-bis/6 — Intégration headless. ~10 min. On va scaffolder le code blog dans ton site Next.js / Astro / SvelteKit pour qu'il consomme la Ghost Content API et rende le blog directement à `<ton-site>/blog`. »
+1. Annonce : « Phase 2-bis/6, Intégration headless. ~10 min. On va scaffolder le code blog dans ton site Next.js / Astro / SvelteKit pour qu'il consomme la Ghost Content API et rende le blog directement à `<ton-site>/blog`. »
 2. Lance la logique de **`/blog:integrate-headless`**. La commande détecte le framework :
    - **Next.js 16** : génération automatique des 7 fichiers (lib, routes, sitemap, webhook, CSS) + guide pour env vars Vercel + webhook Ghost.
-   - **Astro / SvelteKit** : V1.5 — redirige vers le code de démonstration fourni par le formateur à adapter manuellement.
+   - **Astro / SvelteKit** : V1.5, redirige vers le code de démonstration fourni par le formateur à adapter manuellement.
    - **Autres frameworks** : non supporté en V1.
 3. À la fin de cette phase :
    - 7 fichiers générés dans le projet
@@ -137,21 +137,21 @@ Sinon, attends `oui` et passe à la Phase 1.
 4. **Checkpoint :** « Le blog répond à `<SITE_URL>/blog` ? On passe au cocon ? (oui / itère sur le scaffolding / stop) »
 5. Marque Phase 2-bis complétée dans le state.
 
-## Phase 3 — Cocon sémantique
+## Phase 3, Cocon sémantique
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 3/6 — Cocon sémantique. ~15 min. Je vais lire ton `brief.md`, te proposer une structure de cocon (1 mère + 3-7 piliers + 3-5 articles par pilier), tu valides chaque pilier. »
+1. Annonce : « Phase 3/6, Cocon sémantique. ~15 min. Je vais lire ton `brief.md`, te proposer une structure de cocon (1 mère + 3-7 piliers + 3-5 articles par pilier), tu valides chaque pilier. »
 2. Lance la logique de **`/blog:cocon`** (charge la skill `cocon-method`).
 3. À la fin, `cocon.json` est écrit à la racine.
 4. **Checkpoint :** « Le cocon est cartographié dans `cocon.json`. On écrit ton premier article ? (oui / stop) »
 5. Marque Phase 3 complétée, note `cocon_path: ./cocon.json`.
 
-## Phase 4 — Premier article (méthode manuelle assistée)
+## Phase 4, Premier article (méthode manuelle assistée)
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 4/6 — Ton premier article. ~5 min. On va générer un article du cocon de A à Z : brief, rédaction, image hero, publication en draft sur Ghost. Tu valides à chaque étape pour comprendre la mécanique. »
+1. Annonce : « Phase 4/6, Ton premier article. ~5 min. On va générer un article du cocon de A à Z : brief, rédaction, image hero, publication en draft sur Ghost. Tu valides à chaque étape pour comprendre la mécanique. »
 
 2. **Branchement CLI vs admin UI (uniquement si scénario C)** :
 
@@ -161,7 +161,7 @@ Sinon, attends `oui` et passe à la Phase 1.
 
    > « Pour générer cet article, tu as deux options. Les deux utilisent le même pipeline (P1 brief Sonnet 4.6 → P2 article Opus 4.7 → image fal.ai → push Ghost draft), même `cocon.json`, même statut Ghost forcé `draft`. Seule l'interface change.
    >
-   > **A. CLI Claude Code** (`/blog:article`) — *recommandé pour ce premier article*
+   > **A. CLI Claude Code** (`/blog:article`), *recommandé pour ce premier article*
    >
    > Dialogue interactif dans Claude Code, ici. Pas de scaffold supplémentaire à générer. Idéal pour un premier article où tu veux comprendre le pipeline pas-à-pas, et pour un rythme régulier solo.
    >
@@ -169,7 +169,7 @@ Sinon, attends `oui` et passe à la Phase 1.
    > ✓ Tu vois chaque étape du pipeline en clair dans le terminal
    > ✓ Pas de password à gérer
    >
-   > **B. Admin UI** (`/blog:integrate-admin` puis `<site>/cocon/admin` dans le navigateur) — *recommandé si tu travailles à plusieurs ou veux une vue d'ensemble*
+   > **B. Admin UI** (`/blog:integrate-admin` puis `<site>/cocon/admin` dans le navigateur), *recommandé si tu travailles à plusieurs ou veux une vue d'ensemble*
    >
    > Scaffolde un back-office Next.js (~12 min de setup) qui pilote le même pipeline depuis une interface graphique : tous les articles `planned` listés avec un bouton "Générer l'article", persistance locale dans `data/cocon/`, auth password.
    >
@@ -197,33 +197,33 @@ Sinon, attends `oui` et passe à la Phase 1.
 5. **Checkpoint :** « Ton premier article est en draft sur Ghost. Tu l'as relu et publié ? On passe au mode auto-pilote ? (oui / stop / refais un article avant) »
 6. Marque Phase 4 complétée, note `<ARTICLE_INTERFACE>` dans le state, incrémente `articles_published_drafts`.
 
-## Phase 5 — Batch 3 articles (mode auto-pilote)
+## Phase 5, Batch 3 articles (mode auto-pilote)
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 5/6 — Mode auto-pilote. ~15 min. On va lancer un batch de 3 articles d'un coup, avec une review humaine entre chaque. Tu apprends à gérer un batch propre. »
+1. Annonce : « Phase 5/6, Mode auto-pilote. ~15 min. On va lancer un batch de 3 articles d'un coup, avec une review humaine entre chaque. Tu apprends à gérer un batch propre. »
 2. Recommandation : « Si tu n'es pas à l'aise avec le résultat de l'article unique, refais 1-2 articles manuellement avant ce batch. »
 3. Lance la logique de **`/blog:batch 3`** (charge les mêmes skills que Phase 4 + rate-limit + HITL renforcé).
 4. À la fin, 3 articles supplémentaires sont en draft Ghost. L'utilisateur les relit et publie depuis Ghost admin.
 5. **Checkpoint :** « 3 articles sont en draft. Relis-les et publie ceux qui te plaisent (15 min par article environ). On passe à l'audit SEO ? (oui / stop) »
 6. Marque Phase 5 complétée, incrémente `articles_published_drafts` de 3.
 
-## Phase 6 — Audit SEO
+## Phase 6, Audit SEO
 
 **Si phase non complétée :**
 
-1. Annonce : « Phase 6/6 — Audit SEO. ~5 min. On va checker la qualité SEO des articles déjà publiés (8 critères), pour identifier ce qui mérite des corrections. »
+1. Annonce : « Phase 6/6, Audit SEO. ~5 min. On va checker la qualité SEO des articles déjà publiés (8 critères), pour identifier ce qui mérite des corrections. »
 2. Lance la logique de **`/blog:seo-audit`** (charge la skill `seo-blog`).
 3. À la fin, un rapport `seo-audit-{date}.md` est écrit à la racine.
 4. **Checkpoint :** « L'audit est dans `seo-audit-{date}.md`. Tu peux maintenant corriger les top 3 articles à score bas dans Ghost admin. »
 5. Marque Phase 6 complétée.
 
-## Étape finale — Clôture
+## Étape finale, Clôture
 
 Affiche :
 
 ```
-🎉 /blog:start — Parcours terminé.
+🎉 /blog:start, Parcours terminé.
 
 Bilan :
 - Ghost en ligne sur {ghost_url}
