@@ -52,7 +52,7 @@ Le maillage est ce qui transforme une simple liste de pages en cocon. **Toujours
 
 ## Trouver la mère depuis le brief
 
-Tu pars du `brief.md` produit par la skill `brief-method` (objectif business + audience + ICP + zone de chalandise). Tu en extrais la **requête commerciale max** : la phrase la plus large que ton ICP pourrait taper sur Google quand il a le problème que tu résous.
+Tu pars du `brief.md` produit par la commande `/ottho:brief` (objectif business + audience + ICP + zone de chalandise). Tu en extrais la **requête commerciale max** : la phrase la plus large que ton ICP pourrait taper sur Google quand il a le problème que tu résous.
 
 Critères de choix entre 3 candidates :
 - **Volume de recherche** suffisant (sinon personne ne te trouvera)
@@ -83,7 +83,7 @@ Critères :
 
 ## Format `cocon.json`
 
-Voici le schéma que la skill produit à la fin du dialogue. C'est ce fichier que les autres skills (`brief-method`, `article-method`) consomment pour générer chaque article.
+Voici le schéma que la skill produit à la fin du dialogue. C'est ce fichier que les commandes `/blog:article` et `/blog:batch` consomment pour générer chaque article.
 
 ```json
 {
@@ -127,7 +127,7 @@ Notes :
 
 C'est ce que `/blog:cocon` doit exécuter, dans cet ordre :
 
-1. **Lecture du brief.** L'IA ouvre `brief.md` à la racine du projet utilisateur. Si le fichier n'existe pas, elle redirige vers la skill `brief-method` et s'arrête.
+1. **Lecture du brief.** L'IA ouvre `brief.md` à la racine du projet utilisateur. Si le fichier n'existe pas, elle redirige vers la commande `/ottho:brief` et s'arrête.
 
 2. **Proposition de la mère.** L'IA propose **3 candidates** pour la requête mère, avec pour chacune : keyword cible, justification courte (volume/intention/concurrence accessible), titre de page suggéré. L'utilisateur choisit une candidate, en demande de nouvelles, ou propose la sienne. Le dialogue continue jusqu'à validation.
 

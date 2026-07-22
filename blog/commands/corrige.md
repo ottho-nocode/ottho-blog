@@ -130,7 +130,7 @@ Le theme ne s'applique pas, ou Ghost rejette le ZIP. Déroule :
    ```bash
    ls -lh brief.md
    ```
-   Si absent → `/blog:cocon` a besoin de ce fichier en entrée. Crée-le ou relance `/blog:setup` si la commande existe dans ton workflow.
+   Si absent → `/blog:cocon` a besoin de ce fichier en entrée. Crée-le ou relance `/blog:setup-ghost` si la commande existe dans ton workflow.
 
 2. `cocon.json` est-il un JSON valide ?
    ```bash

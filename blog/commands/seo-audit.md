@@ -225,5 +225,5 @@ Une fois le fichier écrit :
 - **Article en draft** : audite normalement. Précise dans le rapport « (draft) » à côté du slug. La validation JSON-LD via `curl` n'est pas possible (pas d'URL publique), marque le critère 8 comme `n/a, draft non publié`.
 - **Theme Ghost par défaut (Casper) au lieu du theme custom** : critère 8 sera systématiquement fail. Signale-le en tête du rapport et redirige vers la skill `ghost-theme` pour installer le theme custom avant le prochain audit.
 - **Aucun article publié ou en draft** : interromps la commande avec :
-  > « Aucun article trouvé sur ton instance Ghost. Lance d'abord `/blog:create-article` (ou rédige un draft dans Ghost admin), puis reviens. »
+  > « Aucun article trouvé sur ton instance Ghost. Lance d'abord `/blog:article` (ou rédige un draft dans Ghost admin), puis reviens. »
 - **Erreur MCP Ghost** : redirige vers `/blog:setup-ghost` pour vérifier les API keys et la connectivité.

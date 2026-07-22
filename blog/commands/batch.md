@@ -11,10 +11,10 @@ C'est la variante « auto-pilote encadré » de `/blog:article`. Tu reprends exa
 
 **Charge ces 4 skills** avant tout, identiques à `/blog:article` :
 
-- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **À reproduire intégralement.**
-- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes, fallback vers la pilier-parent.
-- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`), pattern de la KB factuelle injectée dans P2.
-- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`), structure de `cocon.json`, règles de maillage, contexte de linking.
+- **`article-quality`** (`skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **À reproduire intégralement.**
+- **`link-validation`** (`skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes, fallback vers la pilier-parent.
+- **`knowledge-base`** (`skills/knowledge-base/SKILL.md`), pattern de la KB factuelle injectée dans P2.
+- **`cocon-method`** (`skills/cocon-method/SKILL.md`), structure de `cocon.json`, règles de maillage, contexte de linking.
 
 **Temps estimé** : ~5 min par article × N (interactif), soit ~15 min pour 3 articles, ~25 min pour 5.
 
@@ -248,7 +248,7 @@ Identifie depuis `cocon.json` :
 
 Récupère les slugs Ghost déjà publiés via `mcp__ghost__posts_browse` (filter `status:published`, fields `slug`).
 
-Construis la whitelist `<ALLOWED_URLS>` selon la skill `link-validation` (mère, 10 piliers, articles publiés, outils, formations CTA, pages structurelles).
+Construis la whitelist `<ALLOWED_URLS>` selon la skill `link-validation` (mère, filles du cocon, articles publiés, outils, formations CTA, pages structurelles).
 
 ### 4.2, Phase A : Générer le brief (P1)
 

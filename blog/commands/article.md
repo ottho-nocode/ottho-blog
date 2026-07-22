@@ -9,10 +9,10 @@ Tu vas accompagner l'étudiant dans la génération d'un article complet : séle
 
 **Charge ces 4 skills** avant tout, elles contiennent les system prompts, schemas, sanitizers, validateurs et garde-fous factuels :
 
-- **`article-quality`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **Cette skill contient les prompts à reproduire intégralement.**
-- **`link-validation`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes contre une whitelist, fallback vers la pilier-parent.
-- **`knowledge-base`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/knowledge-base/SKILL.md`), pattern de la KB factuelle (`knowledge.json`) injectée dans P2 pour empêcher les hallucinations chiffrées.
-- **`cocon-method`** (`/Users/thibaultmarty/ottho-blog-plugin/skills/cocon-method/SKILL.md`), structure de `cocon.json` (mère, filles, petites-filles), règles de maillage, contexte de linking.
+- **`article-quality`** (`skills/article-quality/SKILL.md`), system prompts P1 et P2, schemas JSON `BRIEF_SCHEMA` / `ARTICLE_SCHEMA`, sanitizer cadratin, clamp Ghost. ⚠️ **Cette skill contient les prompts à reproduire intégralement.**
+- **`link-validation`** (`skills/link-validation/SKILL.md`), algorithme de validation des `<a href>` internes contre une whitelist, fallback vers la pilier-parent.
+- **`knowledge-base`** (`skills/knowledge-base/SKILL.md`), pattern de la KB factuelle (`knowledge.json`) injectée dans P2 pour empêcher les hallucinations chiffrées.
+- **`cocon-method`** (`skills/cocon-method/SKILL.md`), structure de `cocon.json` (mère, filles, petites-filles), règles de maillage, contexte de linking.
 
 **Temps estimé** : ~3 min en interactif (40 s d'API + dialogues de validation + 1 image fal.ai).
 
@@ -173,7 +173,7 @@ Selon le protocole de la skill `link-validation`, agrège dans un `Set<string>` 
 | Source | Format URL |
 |---|---|
 | Mère | `/<mere-slug>` |
-| 10 piliers du cocon | `/blog/pilier/<pilier-slug>` (×10) |
+| Filles du cocon (3-7) | `/blog/pilier/<pilier-slug>` |
 | Articles déjà publiés (Ghost) | `/blog/<slug>` (récupérés à l'étape 3.1) |
 | Outils du site | `/outils/<slug>` |
 | Formations CTA | `/claude-mastery`, `/claude-builders`, `/claude-agent` |

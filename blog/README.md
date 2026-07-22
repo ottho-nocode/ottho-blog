@@ -51,6 +51,10 @@ Tous s'installent par dialogue dans Claude Code (« Installe le MCP [nom] »). Z
 
 Toutes les commandes sont namespacées sous `/blog:` pour éviter les conflits avec d'autres plugins.
 
+### `/blog:start`
+
+Commande master : orchestre les 6 phases du cours de bout en bout (setup Ghost → thème → cocon → premier article → batch auto → audit SEO), avec un checkpoint de validation à chaque étape. Reprenable via `.ottho-blog/state.json`. C'est le point d'entrée recommandé pour un nouveau projet ; les commandes ci-dessous peuvent aussi se lancer une par une.
+
 ### `/blog:setup-ghost`
 
 Guide pas-à-pas pour mettre Ghost en place sur PikaPods. Détecte d'abord la techno du site (HTML pur vs framework JS), puis propose les scénarios d'hébergement adaptés :

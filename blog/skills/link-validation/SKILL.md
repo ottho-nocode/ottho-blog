@@ -40,7 +40,7 @@ La whitelist est l'ensemble des URLs que le LLM est autorisé à citer. Elle est
 | Source | URLs ajoutées | Origine |
 |---|---|---|
 | **Mère du cocon** | `/<mere-slug>` (ex. `/apprendre-claude`) | `cocon.json` → `mere.slug` |
-| **10 piliers du cocon** | `/blog/pilier/<pilier-slug>` (ex. `/blog/pilier/setup`) | `cocon.json` → `piliers[].slug` |
+| **Filles du cocon (3-7)** | `/blog/pilier/<pilier-slug>` (ex. `/blog/pilier/setup`) | `cocon.json` → `filles[].pilier_slug` |
 | **Articles déjà publiés** | `/blog/<slug>` | Fetch Ghost Content API au moment de la validation |
 | **Outils du site** | `/outils/<slug>` (ex. `/outils/claude-code`) | `cocon.json` → `linked_outils[]` ou liste statique |
 | **Formations CTA** | `/claude-mastery`, `/claude-builders`, `/claude-agent` | Liste statique (pages CTA des piliers) |

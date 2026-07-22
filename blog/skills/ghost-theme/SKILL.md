@@ -283,4 +283,4 @@ Aucun rebuild de site nécessaire. Ghost recharge le theme à la volée à chaqu
 Cette skill est invoquée par :
 
 - `/blog:theme`, usage principal (lit `charte.md`, fork Source, génère le theme, upload via MCP Ghost).
-- `/blog:setup`, peut référencer cette skill pour expliquer le rôle du theme dans le pipeline d'installation.
+- `/blog:setup-ghost`, peut référencer cette skill pour expliquer le rôle du theme dans le pipeline d'installation.
