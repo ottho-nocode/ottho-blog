@@ -47,7 +47,7 @@ Avant utilisation, les MCPs suivants doivent être connectés (procédures couve
 
 Tous s'installent par dialogue dans Claude Code (« Installe le MCP [nom] »). Zéro commande bash.
 
-## Les 11 commandes
+## Les 12 commandes
 
 Toutes les commandes sont namespacées sous `/blog:` pour éviter les conflits avec d'autres plugins.
 
@@ -133,6 +133,10 @@ Coût : ~0,15 € par article. Durée : ~60 s. Statut Ghost **toujours draft**, 
 
 Variante batch de `/blog:article` pour générer N articles consécutifs (1 ≤ N ≤ 5). Review human-in-the-loop entre chaque article (brief + article validés avant publication), rate-limit 30 s, abort sur 2 erreurs consécutives, status forcé draft. Coût : ~0,15 € × N. Recommandation : tester `/blog:article` au moins 1× avant le premier batch.
 
+### `/blog:routine`
+
+Met le blog en pilote automatique : une tâche planifiée de Claude Desktop rédige le prochain article du cocon chaque semaine et le dépose en draft dans Ghost. La commande génère le prompt autonome (`.ottho-blog/routine/prompt.md`, zéro question pendant l'exécution) et le journal (`.ottho-blog/journal-auto.md`), lance un test à blanc dans la session, puis donne les valeurs exactes pour créer la tâche dans Desktop (onglet Code, **Scheduled**, **New task**) et le premier Run now. La relecture humaine se fait après, dans l'admin Ghost, avant « Publish ». Un article par exécution, deux au plus par jour. Pré-requis : au moins un article écrit avec `/blog:article`.
+
 ### `/blog:seo-audit`
 
 Audite la qualité SEO d'un article (par slug) ou de tout le cocon. Score sur 8 critères :
@@ -197,6 +201,7 @@ L'ordre suit les chapitres du cours :
 6. **Chapitre 6**, `/blog:batch 3` → mode auto-pilote
 7. **Chapitre 7**, `/blog:seo-audit` + `/blog:opportunities` → optimisation continue
 8. **Transverse**, `/blog:status` à tout moment, `/blog:corrige` quand ça coince
+9. **Ensuite** (module Automatisation de Claude Mastery), `/blog:routine` → un article par semaine en draft, sans toi
 
 ## Philosophie
 

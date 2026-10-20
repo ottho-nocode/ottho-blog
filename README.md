@@ -16,6 +16,7 @@ Met en place un blog Ghost en headless, l'habille à la charte du site existant,
 - `/blog:cocon`, propose un cocon sémantique depuis `brief.md`, dialogue de validation, écrit `cocon.json`
 - `/blog:article`, pipeline 1 article : brief (P1) → article (P2) → image fal.ai → publish draft Ghost
 - `/blog:batch <N>`, variante batch (1 ≤ N ≤ 5) avec review human-in-the-loop entre chaque
+- `/blog:routine`, tâche planifiée Claude Desktop : un article du cocon par semaine en draft Ghost, relu par toi avant publication
 - `/blog:seo-audit`, audit SEO 8 critères par article ou pour tout le cocon
 - `/blog:opportunities`, *(V1.5)* mining des opportunités SEO via Google Search Console
 - `/blog:status`, état du cocon (publiés / drafts / planifiés, par pilier)
@@ -80,6 +81,8 @@ Cocon complet de 50 articles : **~12,50 €** (vs 200-500 €/article chez un r�
 Le plugin est conçu pour être utilisé en tandem avec le cours « Claude + Blog » sur [academy.ottho.co/claude-blog](https://academy.ottho.co/claude-blog). Chaque chapitre du cours mobilise une commande du plugin.
 
 ## Versioning
+
+**v1.3.0**, Ajout de `/blog:routine` (tâche planifiée Claude Desktop, un article par semaine en draft). 7 skills, 12 commandes.
 
 **v1.2.0**, Ajout de `/blog:integrate-admin` (back-office UI Next.js pour le scénario C). 7 skills, 11 commandes.
 
